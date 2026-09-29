@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+@theme {
+  --color-space: #050a12;
+  --color-surface: #0b1220;
+  --color-surface-elevated: #111a2e;
+  --color-earth-cyan: #36bffa;
+  --color-agri-green: #59d98e;
+  --color-warm-earth: #d7a86e;
+  --color-primary-text: #f8fafc;
+  --color-muted-text: #94a3b8;
+  --color-warning: #f5c451;
+
+  --font-space: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  --background: #050a12;
+  --foreground: #f8fafc;
+}
+
+body {
+  background-color: #050a12;
+  color: #f8fafc;
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Editorial Typography Classes */
+.font-space {
+  font-family: var(--font-space-grotesk), sans-serif;
+}
+
+.font-body {
+  font-family: var(--font-inter), sans-serif;
+}
+
+/* Subtle background telemetry grid */
+.bg-telemetry-grid {
+  background-image: 
+    linear-gradient(to right, rgba(54, 191, 250, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(54, 191, 250, 0.03) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+/* Atmospheric and glow utilities used with restraint */
+.glow-cyan-atmospheric {
+  box-shadow: 0 0 120px 40px rgba(54, 191, 250, 0.18), inset 0 0 80px 20px rgba(54, 191, 250, 0.25);
+}
+
+.glow-cyan-button {
+  box-shadow: 0 0 24px -2px rgba(54, 191, 250, 0.35);
+}
+
+.glow-cyan-button:hover {
+  box-shadow: 0 0 32px 0px rgba(54, 191, 250, 0.55);
+}
+
+.glow-field-beacon {
+  box-shadow: 0 0 18px 4px rgba(89, 217, 142, 0.45);
+}
+
+/* Keyframes for subtle atmospheric drift and pulse */
+@keyframes beaconPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+@keyframes orbitDrift {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: 1000;
+  }
+}
+
+.animate-beacon-pulse {
+  animation: beaconPulse 2.8s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+}
+
+/* Accessibility: reduce motion adjustments */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
