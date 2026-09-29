@@ -26,11 +26,12 @@ export const HERO_CONTENT = {
     label: "Explore the Science",
     href: "#science",
   },
-  trustLine: "Earth data • Scientific evidence • Farmer action",
-  telemetry: {
-    orbitAlt: "705 km SSO",
-    spectralBands: "VNIR / SWIR / TIR",
-    spatialRes: "10m - 30m Grid",
-    status: "MISSION READY • 2026",
+  trustLine: "Evidence before advice • Earth data • Farmer action",
+  demoContext: {
+    satelliteLayer: "EARTH OBSERVATION LAYER",
+    orbitalContext: "ORBITAL + CLIMATE CONTEXT",
+    demoRegion: "RAJSHAHI • BANGLADESH",
+    previewMode: "DEMONSTRATION PREVIEW",
+    status: "MISSION CONCEPT • PHASE 1",
   },
 };

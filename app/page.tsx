@@ -21,12 +21,14 @@ export default function Home() {
       <footer className="w-full bg-[#050A12] border-t border-white/5 py-8 text-center text-xs font-mono text-[#94A3B8]/60">
         <div className="max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#59D98E]" />
             <span>AGRILUME • NASA SPACE APPS CHALLENGE 2026</span>
           </div>
           <div className="flex items-center gap-6">
-            <span>EARTH OBSERVATION LEVEL 1–4</span>
-            <span>SYSTEM STATUS: NOMINAL</span>
+            <span>EARTH INTELLIGENCE PLATFORM</span>
+            <div className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#59D98E]" />
+              <span>MISSION EXPERIENCE • PHASE 1</span>
+            </div>
           </div>
         </div>
       </footer>

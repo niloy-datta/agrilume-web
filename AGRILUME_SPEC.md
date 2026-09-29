@@ -41,20 +41,20 @@ PHASE 1 IMPLEMENTED SCOPE
    - Restrained scientific eyebrow: "EARTH INTELLIGENCE FOR AGRICULTURE"
    - Scientific supporting copy
    - Dual action CTAs with glow effects
-   - Verified data trust line: "Earth data • Scientific evidence • Farmer action"
+   - Verified data trust line: "Evidence before advice • Earth data • Farmer action"
 
 5. Hero Visual (Earth Orbital System):
    - Multi-layer vector planetary sphere with atmospheric limb glow
    - Tilted elliptical orbital trajectory
-   - Orbiting satellite marker (Landsat-Next / 705 km SSO)
-   - Active field ground beacon with concentric radar pulses (31.18° N, 29.89° E)
+   - Contextual satellite marker (Earth Observation Layer / Orbital & Climate Context)
+   - Demonstration field beacon with concentric radar pulses (Rajshahi, Bangladesh Demo Context)
    - Desktop mouse parallax depth tracking with spring physics
    - Prefers-reduced-motion safety fallback
 
 6. Initial Scroll Transition Section:
    - Visual transition warming from deep space black to #0B1220
-   - Downlink telemetry banner (Level 01)
-   - 3-step pipeline preview (Satellite Telemetry → Scientific Evidence → Farmer Action)
+   - Conceptual architecture preview banner
+   - 3-step pipeline preview (Earth Data → Scientific Analysis → Farmer Decision)
 
 =============================================================================
 STRICT PHASE BOUNDARIES (NOT INCLUDED IN PHASE 1)

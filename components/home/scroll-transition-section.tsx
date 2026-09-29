@@ -22,46 +22,46 @@ export function ScrollTransitionSection() {
         <div className="flex flex-col items-center text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0B1220] border border-white/10 text-[10px] font-mono tracking-widest text-[#94A3B8] uppercase">
             <Radio className="w-3 h-3 text-[#36BFFA] animate-pulse" />
-            <span>DOWNLINK ACTIVE • LEVEL 01</span>
+            <span>CONCEPTUAL ARCHITECTURE • PREVIEW</span>
           </div>
 
           <h2 className="mt-5 text-xl sm:text-2xl lg:text-3xl font-space font-medium text-[#F8FAFC] tracking-tight max-w-2xl">
-            From raw orbital spectral radiances to actionable field agronomy.
+            FROM EARTH DATA TO FIELD DECISIONS.
           </h2>
 
           <p className="mt-3 text-sm sm:text-base text-[#94A3B8] max-w-xl">
-            Every pixel represents verifiable physical ground reality—calibrated against ground truth sensors and agronomic models.
+            AgriLume transforms environmental observations and climate context into transparent, explainable signals designed to support farmer decisions.
           </p>
 
-          {/* Minimal 3-step pipeline preview (visual anchor, not full problem section) */}
+          {/* Minimal 3-step pipeline preview (Architectural concept) */}
           <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 w-full max-w-4xl text-left">
             <div className="p-5 rounded-xl bg-[#050A12]/60 border border-white/5 backdrop-blur-sm hover:border-[#36BFFA]/25 transition-colors">
               <div className="flex items-center gap-2 text-xs font-mono text-[#36BFFA]">
                 <Layers className="w-3.5 h-3.5" />
-                <span>01. SATELLITE TELEMETRY</span>
+                <span>01. EARTH DATA</span>
               </div>
               <p className="mt-2 text-xs text-[#94A3B8]">
-                Multispectral surface reflectance & thermal emissions captured at 705km altitude.
+                Satellite and climate observations provide environmental context for the field.
               </p>
             </div>
 
             <div className="p-5 rounded-xl bg-[#050A12]/60 border border-white/5 backdrop-blur-sm hover:border-[#59D98E]/25 transition-colors">
               <div className="flex items-center gap-2 text-xs font-mono text-[#59D98E]">
                 <Activity className="w-3.5 h-3.5" />
-                <span>02. SCIENTIFIC EVIDENCE</span>
+                <span>02. SCIENTIFIC ANALYSIS</span>
               </div>
               <p className="mt-2 text-xs text-[#94A3B8]">
-                Deterministic biophysical retrieval: root-zone soil moisture and canopy evapotranspiration.
+                Transparent methods transform observations into interpretable agricultural signals.
               </p>
             </div>
 
             <div className="p-5 rounded-xl bg-[#050A12]/60 border border-white/5 backdrop-blur-sm hover:border-[#D7A86E]/25 transition-colors">
               <div className="flex items-center gap-2 text-xs font-mono text-[#D7A86E]">
                 <ArrowDown className="w-3.5 h-3.5" />
-                <span>03. FARMER ACTION</span>
+                <span>03. FARMER DECISION</span>
               </div>
               <p className="mt-2 text-xs text-[#94A3B8]">
-                Targeted irrigation & nutrient timing explained in plain language for immediate field intervention.
+                Evidence, confidence, and limitations are translated into clear next-step guidance.
               </p>
             </div>
           </div>

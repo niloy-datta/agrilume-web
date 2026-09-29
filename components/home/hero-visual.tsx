@@ -338,35 +338,40 @@ export function HeroVisual() {
               <div className="absolute -right-3 w-2.5 h-1 bg-[#36BFFA]/70 rounded-xs" />
             </div>
 
-            {/* Satellite Telemetry Tag */}
+            {/* Satellite / Earth Observation Context Tag */}
             <div className="hidden sm:flex flex-col bg-[#050A12]/80 backdrop-blur-md px-2.5 py-1 rounded border border-[#36BFFA]/30 text-[10px] font-mono leading-tight">
               <span className="text-[#36BFFA] font-medium flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#59D98E]" />
-                EO-LANDSAT-NEXT
+                EARTH OBSERVATION LAYER
               </span>
-              <span className="text-[#94A3B8] text-[9px]">ALT: 705 KM • SSO</span>
+              <span className="text-[#94A3B8] text-[9px]">ORBITAL + CLIMATE CONTEXT</span>
             </div>
           </motion.div>
 
-          {/* Active Field Telemetry Card (Anchored to ground target 265, 235) */}
+          {/* Demonstration Field Context Card (Anchored to ground target beacon) */}
           <div className="absolute top-[38%] left-[26%] sm:top-[38%] sm:left-[30%] pointer-events-auto">
             <div className="relative">
               {/* Connecting pointer line */}
               <div className="w-8 sm:w-12 h-px bg-gradient-to-r from-[#59D98E] to-[#59D98E]/20" />
               <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-[#59D98E]/80" />
 
-              {/* Minimal Mission Control Data Tag */}
-              <div className="ml-8 sm:ml-12 -mt-4 bg-[#0B1220]/85 backdrop-blur-md px-3 py-2 rounded-lg border border-[#59D98E]/25 shadow-[0_8px_24px_rgba(0,0,0,0.6)]">
-                <div className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#59D98E] animate-pulse" />
-                  <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[#59D98E]">
-                    FIELD TARGET LOCKED
+              {/* Minimal Field Context Tag (Explicitly non-live demonstration) */}
+              <div className="ml-8 sm:ml-12 -mt-4 bg-[#0B1220]/90 backdrop-blur-md px-3 py-2 rounded-lg border border-[#59D98E]/25 shadow-[0_8px_24px_rgba(0,0,0,0.6)]">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#59D98E] animate-pulse" />
+                    <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[#59D98E]">
+                      FIELD CONTEXT
+                    </span>
+                  </div>
+                  <span className="text-[8px] font-mono uppercase px-1.5 py-0.2 rounded bg-white/5 text-[#94A3B8] border border-white/10">
+                    DEMO PREVIEW
                   </span>
                 </div>
-                <div className="mt-1 flex flex-col font-mono text-[9px] text-[#94A3B8] space-y-0.5">
-                  <span className="text-white/90">COORD: 31.18° N, 29.89° E</span>
-                  <span>NDVI ANOMALY: -0.18</span>
-                  <span className="text-[#F5C451]">SOIL WATER DEFICIT: CRITICAL</span>
+                <div className="mt-1.5 flex flex-col font-mono text-[9px] text-[#94A3B8] space-y-0.5">
+                  <span className="text-white/90 font-medium">RAJSHAHI • BANGLADESH</span>
+                  <span className="text-[#36BFFA]/90">EARTH DATA CONTEXT</span>
+                  <span className="text-[#94A3B8]/70">MISSION CONCEPT MODEL</span>
                 </div>
               </div>
             </div>
