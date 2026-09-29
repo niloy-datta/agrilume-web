@@ -80,13 +80,13 @@ export function Navbar() {
           ))}
         </nav>
 
-        {/* Desktop Primary CTA */}
+        {/* Desktop Primary CTA: Prioritize App Download */}
         <div className="hidden md:flex items-center gap-4">
           <Link
-            href="#mission"
+            href="#download"
             className="group relative inline-flex items-center justify-center gap-2 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[#050A12] bg-[#36BFFA] hover:bg-[#70D4FF] rounded-full transition-all duration-200 glow-cyan-button focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#36BFFA] focus-visible:ring-offset-2 focus-visible:ring-offset-[#050A12]"
           >
-            <span>Launch Mission</span>
+            <span>Download App</span>
             <ArrowUpRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </Link>
         </div>
@@ -129,11 +129,11 @@ export function Navbar() {
 
         <div className="flex flex-col gap-4 pt-6 border-t border-white/10">
           <Link
-            href="#mission"
+            href="#download"
             onClick={() => setMobileMenuOpen(false)}
             className="w-full flex items-center justify-center gap-2 py-3.5 text-sm font-semibold uppercase tracking-wider text-[#050A12] bg-[#36BFFA] rounded-full glow-cyan-button text-center"
           >
-            <span>Launch Mission</span>
+            <span>Download App</span>
             <ArrowUpRight className="w-4 h-4" />
           </Link>
           <div className="text-center">

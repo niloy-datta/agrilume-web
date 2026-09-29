@@ -2,11 +2,21 @@
 
 import React from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowRight, ChevronDown, Compass, ShieldCheck } from "lucide-react";
+import { ArrowDown, ChevronDown, Compass, ShieldCheck } from "lucide-react";
 import { HERO_CONTENT } from "@/lib/constants";
 import { HeroVisual } from "./hero-visual";
 import { Reveal, StaggerContainer, StaggerItem } from "../motion/reveal";
+
+// Dynamic client import for 3D WebGL scene with seamless SVG/vector fallback
+const OrbitalFieldCanvas = dynamic(
+  () => import("@/components/3d/orbital-field-canvas").then((mod) => mod.OrbitalFieldCanvas),
+  {
+    ssr: false,
+    loading: () => <HeroVisual />,
+  }
+);
 
 export function HeroSection() {
   const shouldReduceMotion = useReducedMotion();
@@ -77,7 +87,7 @@ export function HeroSection() {
                   className="group relative inline-flex items-center justify-center gap-2.5 px-7 py-4 text-sm font-semibold tracking-wider uppercase text-[#050A12] bg-[#36BFFA] hover:bg-[#70D4FF] rounded-full transition-all duration-300 glow-cyan-button focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#36BFFA] focus-visible:ring-offset-2 focus-visible:ring-offset-[#050A12]"
                 >
                   <span>{HERO_CONTENT.primaryCta.label}</span>
-                  <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
+                  <ArrowDown className="w-4 h-4 transition-transform duration-200 group-hover:translate-y-0.5" />
                 </Link>
 
                 {/* Secondary CTA */}
@@ -100,9 +110,9 @@ export function HeroSection() {
             </Reveal>
           </div>
 
-          {/* RIGHT COLUMN: Earth Orbital Cinematic Visual (Columns 8-12 on desktop) */}
+          {/* RIGHT COLUMN: 3D Orbital Field (with SVG fallback) */}
           <div className="lg:col-span-5 flex items-center justify-center w-full mt-6 lg:mt-0">
-            <HeroVisual />
+            <OrbitalFieldCanvas />
           </div>
         </div>
       </div>
