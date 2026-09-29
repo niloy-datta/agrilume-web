@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowUpRight, Menu, X, Satellite } from "lucide-react";
+import { ArrowUpRight, Menu, X } from "lucide-react";
 import { NAV_LINKS, SITE_CONFIG } from "@/lib/constants";
 
 export function Navbar() {
@@ -44,24 +44,21 @@ export function Navbar() {
       }`}
     >
       <div className="max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12 flex items-center justify-between">
-        {/* Brand Wordmark & Sensor Icon */}
+        {/* Brand Wordmark & Sprout Icon */}
         <Link
           href="/"
-          className="group flex items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#36BFFA] focus-visible:ring-offset-2 focus-visible:ring-offset-[#050A12] rounded-md transition-opacity"
+          className="group flex items-center gap-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#59D98E] rounded-md transition-opacity"
           aria-label={`${SITE_CONFIG.name} Home`}
         >
-          <div className="relative flex items-center justify-center w-8 h-8 rounded-lg bg-[#0B1220] border border-[#36BFFA]/20 group-hover:border-[#36BFFA]/50 transition-colors">
-            <Satellite className="w-4 h-4 text-[#36BFFA] transition-transform duration-300 group-hover:scale-110" />
+          <div className="relative flex items-center justify-center w-8 h-8 rounded-lg bg-[#0B1220] border border-[#59D98E]/30 group-hover:border-[#59D98E]/60 transition-colors shadow-[0_0_12px_rgba(89,217,142,0.2)]">
+            <svg viewBox="0 0 24 24" className="w-5 h-5 fill-[#59D98E]" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2C6.48 2 2 6.48 2 12c0 3.73 2.06 6.98 5.11 8.68-.07-.56-.11-1.14-.11-1.73 0-5.52 4.48-10 10-10 .59 0 1.17.04 1.73.11C18.98 4.06 15.73 2 12 2zm8 8c-4.42 0-8 3.58-8 8 0 1.48.4 2.86 1.1 4.05C18.66 21.37 22 17.08 22 12c0-.68-.07-1.35-.19-2-.27.06-.54.09-.81.09z" />
+            </svg>
             <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-[#59D98E] animate-pulse" />
           </div>
-          <div className="flex flex-col">
-            <span className="font-space font-bold tracking-[0.16em] text-base text-[#F8FAFC] group-hover:text-white transition-colors">
-              AGRILUME
-            </span>
-            <span className="text-[9px] tracking-[0.2em] font-mono text-[#94A3B8] uppercase -mt-0.5">
-              Earth Obs Intel
-            </span>
-          </div>
+          <span className="font-space font-bold tracking-tight text-lg text-[#F8FAFC] group-hover:text-white transition-colors">
+            AgriLume
+          </span>
         </Link>
 
         {/* Desktop Navigation Links */}
@@ -73,7 +70,7 @@ export function Navbar() {
             <Link
               key={link.label}
               href={link.href}
-              className="text-sm font-medium text-[#94A3B8] hover:text-[#F8FAFC] transition-colors duration-200 relative py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#36BFFA] rounded"
+              className="text-sm font-medium text-[#94A3B8] hover:text-[#F8FAFC] transition-colors duration-200 relative py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#59D98E] rounded"
             >
               {link.label}
             </Link>
@@ -84,10 +81,10 @@ export function Navbar() {
         <div className="hidden md:flex items-center gap-4">
           <Link
             href="#download"
-            className="group relative inline-flex items-center justify-center gap-2 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[#050A12] bg-[#36BFFA] hover:bg-[#70D4FF] rounded-full transition-all duration-200 glow-cyan-button focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#36BFFA] focus-visible:ring-offset-2 focus-visible:ring-offset-[#050A12]"
+            className="group relative inline-flex items-center justify-center gap-2 px-5 py-2 text-xs font-semibold uppercase tracking-wider text-[#050A12] bg-[#59D98E] hover:bg-[#72e5a2] rounded-full transition-all duration-200 shadow-[0_0_20px_rgba(89,217,142,0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#59D98E]"
           >
             <span>Download App</span>
-            <ArrowUpRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            <span className="transition-transform duration-200 group-hover:translate-y-0.5">↓</span>
           </Link>
         </div>
 

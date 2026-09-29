@@ -32,13 +32,21 @@ export function ScienceTrustSection() {
 
       <div className="max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
         
+        {/* Section Index Marker */}
+        <div className="flex items-center gap-2 mb-4 text-xs font-mono text-[#94A3B8]/60">
+          <span className="text-[#59D98E]">07</span>
+          <span>Science & Trust</span>
+          <span>•</span>
+          <span>Evidence before advice</span>
+        </div>
+
         {/* Section Header */}
         <div className="flex flex-col items-center text-center max-w-3xl mx-auto">
           <Reveal delay={0.1} yOffset={16}>
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0B1220] border border-[#59D98E]/20 mb-6">
               <ShieldCheck className="w-3.5 h-3.5 text-[#59D98E]" />
               <span className="text-[11px] font-mono tracking-[0.18em] text-[#59D98E] uppercase">
-                {SCIENCE_TRUST_CONTENT.eyebrow}
+                SCIENTIFIC FOUNDATION
               </span>
             </div>
           </Reveal>
@@ -48,13 +56,13 @@ export function ScienceTrustSection() {
               id="trust-title"
               className="font-space font-bold tracking-tight text-3xl sm:text-4xl lg:text-5xl text-[#F8FAFC] leading-[1.08]"
             >
-              {SCIENCE_TRUST_CONTENT.headline}
+              EVIDENCE <span className="text-[#59D98E]">BEFORE</span> ADVICE.
             </h2>
           </Reveal>
 
           <Reveal delay={0.32} yOffset={18}>
             <p className="mt-4 text-base sm:text-lg text-[#94A3B8] font-light leading-relaxed">
-              {SCIENCE_TRUST_CONTENT.supporting}
+              AgriLume is designed to show where information comes from, what context was used, and what the limitations are.
             </p>
           </Reveal>
         </div>

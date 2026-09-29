@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useCallback } from "react";
+import Image from "next/image";
 import { useReducedMotion } from "framer-motion";
 import { Eye, Layers, ArrowLeftRight, Sparkles, Shield, ChevronLeft, ChevronRight } from "lucide-react";
 import { FIELD_COMPARISON_CONTENT } from "@/lib/constants";
@@ -59,14 +60,22 @@ export function FieldComparisonSection() {
 
       <div className="max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
         
+        {/* Section Index Marker */}
+        <div className="flex items-center gap-2 mb-4 text-xs font-mono text-[#94A3B8]/60">
+          <span className="text-[#59D98E]">03</span>
+          <span>Same Field More Context</span>
+          <span>•</span>
+          <span>One field. Two perspectives.</span>
+        </div>
+
         {/* Section Header */}
         <div className="flex flex-col items-center text-center max-w-3xl mx-auto">
           {/* Eyebrow */}
           <Reveal delay={0.1} yOffset={16}>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0B1220] border border-[#36BFFA]/20 mb-6 shadow-[0_2px_12px_rgba(54,191,250,0.08)]">
-              <Sparkles className="w-3.5 h-3.5 text-[#36BFFA]" />
-              <span className="text-[11px] font-mono tracking-[0.18em] text-[#36BFFA] uppercase">
-                {FIELD_COMPARISON_CONTENT.eyebrow}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0B1220] border border-[#59D98E]/20 mb-6 shadow-[0_2px_12px_rgba(89,217,142,0.08)]">
+              <Sparkles className="w-3.5 h-3.5 text-[#59D98E]" />
+              <span className="text-[11px] font-mono tracking-[0.18em] text-[#59D98E] uppercase">
+                ONE FIELD • TWO PERSPECTIVES
               </span>
             </div>
           </Reveal>
@@ -77,26 +86,15 @@ export function FieldComparisonSection() {
               id="comparison-heading"
               className="font-space font-bold tracking-tight text-3xl sm:text-4xl lg:text-5xl text-[#F8FAFC] leading-[1.08]"
             >
-              {FIELD_COMPARISON_CONTENT.headline}
+              SAME FIELD. <span className="text-[#59D98E]">MORE CONTEXT.</span>
             </h2>
           </Reveal>
 
           {/* Supporting Statement */}
           <Reveal delay={0.32} yOffset={18}>
             <p className="mt-4 text-base sm:text-lg text-[#94A3B8] font-light leading-relaxed">
-              {FIELD_COMPARISON_CONTENT.supporting}
+              AgriLume combines what farmers already know with environmental evidence that can be difficult to see from the ground alone.
             </p>
-          </Reveal>
-
-          {/* Core Visual Equation Banner */}
-          <Reveal delay={0.44} yOffset={16}>
-            <div className="mt-8 inline-flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 px-5 py-2.5 rounded-full bg-[#0B1220]/90 border border-white/10 text-xs sm:text-sm font-mono text-[#F8FAFC]">
-              <span className="text-[#D7A86E] font-medium">{FIELD_COMPARISON_CONTENT.equation.left}</span>
-              <span className="text-[#94A3B8]">{FIELD_COMPARISON_CONTENT.equation.operator1}</span>
-              <span className="text-[#36BFFA] font-medium">{FIELD_COMPARISON_CONTENT.equation.middle}</span>
-              <span className="text-[#94A3B8]">{FIELD_COMPARISON_CONTENT.equation.operator2}</span>
-              <span className="text-[#59D98E] font-semibold">{FIELD_COMPARISON_CONTENT.equation.right}</span>
-            </div>
           </Reveal>
         </div>
 
@@ -121,7 +119,7 @@ export function FieldComparisonSection() {
               onClick={() => setMobileActiveView("agrilume")}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-mono font-medium transition-all duration-200 ${
                 mobileActiveView === "agrilume"
-                  ? "bg-[#36BFFA] text-[#050A12] shadow"
+                  ? "bg-[#59D98E] text-[#050A12] shadow"
                   : "text-[#94A3B8] hover:text-[#F8FAFC]"
               }`}
             >
@@ -138,15 +136,15 @@ export function FieldComparisonSection() {
             <div className="flex items-center gap-2 text-[#D7A86E]">
               <Eye className="w-4 h-4" />
               <span className="font-semibold uppercase tracking-wider">
-                {FIELD_COMPARISON_CONTENT.farmerView.title}
+                WHAT THE FARMER SEES
               </span>
               <span className="text-[10px] text-[#94A3B8]">• Ground-level observation</span>
             </div>
 
-            <div className="flex items-center gap-2 text-[#36BFFA]">
+            <div className="flex items-center gap-2 text-[#59D98E]">
               <span className="text-[10px] text-[#94A3B8]">Earth observation & climate context •</span>
               <span className="font-semibold uppercase tracking-wider">
-                {FIELD_COMPARISON_CONTENT.agrilumeView.title}
+                WHAT AGRILUME SEES
               </span>
               <Layers className="w-4 h-4" />
             </div>
@@ -161,7 +159,14 @@ export function FieldComparisonSection() {
             className="relative w-full h-[540px] sm:h-[600px] lg:h-[640px] rounded-2xl overflow-hidden border border-white/10 bg-[#050A12] shadow-[0_24px_64px_rgba(0,0,0,0.8)] cursor-ew-resize touch-none"
           >
             {/* 1. LAYER ONE: WHAT THE FARMER SEES (Base Layer - always rendered) */}
-            <div className="absolute inset-0 w-full h-full bg-gradient-to-b from-[#0A1628] via-[#0E2038] to-[#122824]">
+            <div className="absolute inset-0 w-full h-full bg-[#050A12]">
+              <Image
+                src="/images/agrilume-field-photo.jpg"
+                alt="Pristine agricultural rice paddy field at golden hour"
+                fill
+                className="object-cover object-center"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#050A12] via-transparent to-[#050A12]/40" />
               {/* Natural Field Sky & Horizon SVG */}
               <svg
                 viewBox="0 0 1000 640"
@@ -270,7 +275,7 @@ export function FieldComparisonSection() {
               style={{
                 clipPath: `inset(0 0 0 ${sliderPos}%)`,
               }}
-              className={`mobile-comparison-layer absolute inset-0 w-full h-full bg-gradient-to-b from-[#061528] via-[#081B34] to-[#0A242E] transition-all duration-200 ${
+              className={`mobile-comparison-layer absolute inset-0 w-full h-full bg-[#050A12] transition-all duration-200 ${
                 mobileActiveView === "agrilume"
                   ? "max-md:opacity-100 max-md:pointer-events-auto"
                   : "max-md:opacity-0 max-md:pointer-events-none"
@@ -278,6 +283,13 @@ export function FieldComparisonSection() {
                 shouldReduceMotion ? "transition-none" : "md:transition-[clip-path] md:duration-75 md:ease-out"
               }`}
             >
+              <Image
+                src="/images/agrilume-field-photo.jpg"
+                alt="AgriLume analytical field view"
+                fill
+                className="object-cover object-center filter hue-rotate-15 contrast-125 brightness-90 opacity-60"
+              />
+              <div className="absolute inset-0 bg-[#061528]/80 mix-blend-multiply" />
               {/* Remote Sensing Raster Grid & Intelligence SVG */}
               <svg
                 viewBox="0 0 1000 640"

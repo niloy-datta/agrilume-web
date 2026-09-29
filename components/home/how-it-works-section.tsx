@@ -33,13 +33,21 @@ export function HowItWorksSection() {
 
       <div className="max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
         
+        {/* Section Index Marker */}
+        <div className="flex items-center gap-2 mb-4 text-xs font-mono text-[#94A3B8]/60">
+          <span className="text-[#36BFFA]">04</span>
+          <span>How It Works</span>
+          <span>•</span>
+          <span>From data to decision</span>
+        </div>
+
         {/* Section Header */}
         <div className="flex flex-col items-center text-center max-w-3xl mx-auto">
           <Reveal delay={0.1} yOffset={16}>
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0B1220] border border-[#36BFFA]/20 mb-6">
               <span className="w-1.5 h-1.5 rounded-full bg-[#36BFFA] animate-pulse" />
               <span className="text-[11px] font-mono tracking-[0.18em] text-[#36BFFA] uppercase">
-                {HOW_IT_WORKS_CONTENT.eyebrow}
+                A SIMPLE AND TRANSPARENT JOURNEY
               </span>
             </div>
           </Reveal>
@@ -49,13 +57,13 @@ export function HowItWorksSection() {
               id="how-it-works-title"
               className="font-space font-bold tracking-tight text-3xl sm:text-4xl lg:text-5xl text-[#F8FAFC] leading-[1.08]"
             >
-              {HOW_IT_WORKS_CONTENT.headline}
+              HOW AGRILUME WORKS
             </h2>
           </Reveal>
 
           <Reveal delay={0.32} yOffset={18}>
             <p className="mt-4 text-base sm:text-lg text-[#94A3B8] font-light leading-relaxed">
-              {HOW_IT_WORKS_CONTENT.supporting}
+              From Earth data to practical guidance — a clear journey for real field decisions.
             </p>
           </Reveal>
         </div>

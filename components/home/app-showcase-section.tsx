@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Smartphone, WifiOff, AlertCircle, Droplets } from "lucide-react";
-import { APP_SHOWCASE_CONTENT } from "@/lib/constants";
 import { Reveal } from "../motion/reveal";
 
 export function AppShowcaseSection() {
@@ -34,13 +33,21 @@ export function AppShowcaseSection() {
 
       <div className="max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
         
+        {/* Section Index Marker */}
+        <div className="flex items-center gap-2 mb-4 text-xs font-mono text-[#94A3B8]/60">
+          <span className="text-[#59D98E]">05</span>
+          <span>App Showcase</span>
+          <span>•</span>
+          <span>Complex intelligence. Simple experience.</span>
+        </div>
+
         {/* Section Header */}
         <div className="flex flex-col items-center text-center max-w-3xl mx-auto">
           <Reveal delay={0.1} yOffset={16}>
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0B1220] border border-[#59D98E]/25 mb-6">
               <Smartphone className="w-3.5 h-3.5 text-[#59D98E]" />
               <span className="text-[11px] font-mono tracking-[0.18em] text-[#59D98E] uppercase">
-                {APP_SHOWCASE_CONTENT.eyebrow}
+                MOBILE APPLICATION
               </span>
             </div>
           </Reveal>
@@ -50,13 +57,14 @@ export function AppShowcaseSection() {
               id="app-showcase-title"
               className="font-space font-bold tracking-tight text-3xl sm:text-4xl lg:text-5xl text-[#F8FAFC] leading-[1.08]"
             >
-              {APP_SHOWCASE_CONTENT.headline}
+              THE INTELLIGENCE STAYS COMPLEX.{" "}
+              <span className="text-[#59D98E]">THE EXPERIENCE STAYS SIMPLE.</span>
             </h2>
           </Reveal>
 
           <Reveal delay={0.32} yOffset={18}>
             <p className="mt-4 text-base sm:text-lg text-[#94A3B8] font-light leading-relaxed">
-              {APP_SHOWCASE_CONTENT.supporting}
+              A clean and intuitive mobile app designed for farmers, backed by Earth and climate intelligence.
             </p>
           </Reveal>
         </div>

@@ -28,21 +28,29 @@ export function DownloadSection() {
 
       <div className="max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
         
+        {/* Section Index Marker */}
+        <div className="flex items-center gap-2 mb-4 text-xs font-mono text-[#94A3B8]/60">
+          <span className="text-[#59D98E]">06</span>
+          <span>Download AgriLume</span>
+          <span>•</span>
+          <span>Take AgriLume to the field.</span>
+        </div>
+
         {/* Main Download Card Box */}
         <div className="p-8 sm:p-12 lg:p-16 rounded-3xl bg-gradient-to-b from-[#0B1220] via-[#0D1829] to-[#0B1220] border border-white/10 shadow-[0_24px_64px_rgba(0,0,0,0.8)] relative overflow-hidden">
           
           {/* Subtle top border illumination */}
-          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#36BFFA]/40 to-transparent" />
+          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#59D98E]/40 to-transparent" />
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
             
             {/* LEFT: Download Details & Call to Action (Columns 1-7) */}
             <div className="lg:col-span-7 flex flex-col">
               <Reveal delay={0.1} yOffset={16}>
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#050A12] border border-[#36BFFA]/25 mb-6 self-start">
-                  <Download className="w-3.5 h-3.5 text-[#36BFFA]" />
-                  <span className="text-[11px] font-mono tracking-[0.18em] text-[#36BFFA] uppercase">
-                    {DOWNLOAD_CONTENT.eyebrow}
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#050A12] border border-[#59D98E]/25 mb-6 self-start">
+                  <Download className="w-3.5 h-3.5 text-[#59D98E]" />
+                  <span className="text-[11px] font-mono tracking-[0.18em] text-[#59D98E] uppercase">
+                    MOBILE DOWNLOAD
                   </span>
                 </div>
               </Reveal>
@@ -52,7 +60,7 @@ export function DownloadSection() {
                   id="download-title"
                   className="font-space font-bold tracking-tight text-3xl sm:text-4xl lg:text-5xl text-[#F8FAFC] leading-[1.08]"
                 >
-                  {DOWNLOAD_CONTENT.headline}
+                  TAKE <span className="text-[#59D98E]">AGRILUME</span> TO THE FIELD.
                 </h2>
               </Reveal>
 
