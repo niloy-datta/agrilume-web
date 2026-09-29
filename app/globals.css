@@ -88,6 +88,13 @@ body {
   animation: beaconPulse 2.8s cubic-bezier(0.25, 1, 0.5, 1) infinite;
 }
 
+/* Mobile split-screen toggle support */
+@media (max-width: 767px) {
+  .mobile-comparison-layer {
+    clip-path: none !important;
+  }
+}
+
 /* Accessibility: reduce motion adjustments */
 @media (prefers-reduced-motion: reduce) {
   *,

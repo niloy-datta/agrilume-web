@@ -1,6 +1,8 @@
 import { Navbar } from "@/components/layout/navbar";
 import { HeroSection } from "@/components/home/hero-section";
 import { ScrollTransitionSection } from "@/components/home/scroll-transition-section";
+import { FarmerProblemSection } from "@/components/home/farmer-problem-section";
+import { FieldComparisonSection } from "@/components/home/field-comparison-section";
 
 export default function Home() {
   return (
@@ -15,6 +17,12 @@ export default function Home() {
 
         {/* Scroll Transition into Next Phase */}
         <ScrollTransitionSection />
+
+        {/* Phase 2: The Decision on the Ground (Human Problem) */}
+        <FarmerProblemSection />
+
+        {/* Phase 2: What the Farmer Sees vs What AgriLume Sees (Interactive Split-Screen) */}
+        <FieldComparisonSection />
       </main>
 
       {/* 3. Minimal Mission Footer / Status Bar */}
@@ -27,7 +35,7 @@ export default function Home() {
             <span>EARTH INTELLIGENCE PLATFORM</span>
             <div className="flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-[#59D98E]" />
-              <span>MISSION EXPERIENCE • PHASE 1</span>
+              <span>DECISION STORYTELLING • PHASE 2</span>
             </div>
           </div>
         </div>
