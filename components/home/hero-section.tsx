@@ -1,14 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import dynamic from "next/dynamic";
-import { motion } from "framer-motion";
 import {
   ArrowDown,
   ArrowRight,
-  ChevronDown,
   Compass,
   Bell,
   ChevronRight,
@@ -19,40 +16,28 @@ import {
   Home,
   SlidersHorizontal,
   Globe,
-  Smartphone,
+  BarChart3,
+  Sprout,
 } from "lucide-react";
 import { HERO_CONTENT } from "@/lib/constants";
-import { HeroVisual } from "./hero-visual";
 import { Reveal, StaggerContainer, StaggerItem } from "../motion/reveal";
 
-// Dynamic client import for 3D WebGL scene with seamless SVG/vector fallback
-const OrbitalFieldCanvas = dynamic(
-  () => import("@/components/3d/orbital-field-canvas").then((mod) => mod.OrbitalFieldCanvas),
-  {
-    ssr: false,
-    loading: () => <HeroVisual />,
-  }
-);
-
 export function HeroSection() {
-  const [activeVisual, setActiveVisual] = useState<"app" | "3d">("app");
-
   return (
     <section className="relative min-h-[100svh] w-full flex flex-col justify-between pt-24 pb-8 sm:pt-28 md:pt-32 bg-[#050A12] overflow-hidden">
       
       {/* 1. Cinematic Panoramic Background */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="/images/agrilume-hero-bg.jpg"
+          src="/images/hero-cinematic-bg.jpg"
           alt="Planet Earth in space over golden sunrise and rice terrace fields"
           fill
           priority
           className="object-cover object-center opacity-60"
         />
         {/* Layered Vignette Gradients for Text Legibility */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#050A12] via-[#050A12]/80 to-[#050A12]/40" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#050A12] via-transparent to-[#050A12]/70" />
-        <div className="absolute inset-0 bg-telemetry-grid opacity-20 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#050A12] via-[#050A12]/80 to-[#050A12]/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#050A12] via-transparent to-[#050A12]/60" />
       </div>
 
       {/* Atmospheric Glow Highlights */}
@@ -60,28 +45,29 @@ export function HeroSection() {
       <div className="absolute -bottom-24 left-0 w-[400px] h-[400px] bg-[#59D98E]/8 rounded-full blur-[140px] pointer-events-none z-0" />
 
       {/* Floating Scientific Annotation Callouts (Desktop) */}
-      <div className="hidden xl:block absolute top-[18%] left-[45%] z-10 pointer-events-none">
+      <div className="hidden xl:block absolute top-[18%] left-[42%] z-10 pointer-events-none">
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#050A12]/85 backdrop-blur-md border border-[#36BFFA]/30 shadow-lg text-[10px] font-mono">
           <span className="w-1.5 h-1.5 rounded-full bg-[#36BFFA] animate-ping" />
           <span className="text-[#36BFFA] font-medium">EARTH OBSERVATION</span>
-          <span className="text-[#94A3B8]">• Satellite Data</span>
+          <span className="text-[#94A3B8]">• Satellite data and climate signals</span>
         </div>
-        <div className="w-px h-12 bg-gradient-to-b from-[#36BFFA] to-transparent ml-6 mt-1" />
+        <div className="w-px h-16 bg-gradient-to-b from-[#36BFFA] to-transparent ml-6 mt-1" />
       </div>
 
-      <div className="hidden xl:block absolute top-[28%] right-[22%] z-10 pointer-events-none">
+      <div className="hidden xl:block absolute top-[30%] right-[18%] z-10 pointer-events-none">
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#050A12]/85 backdrop-blur-md border border-[#36BFFA]/30 shadow-lg text-[10px] font-mono">
           <span className="w-1.5 h-1.5 rounded-full bg-[#36BFFA]" />
           <span className="text-[#36BFFA] font-medium">CLIMATE CONTEXT</span>
-          <span className="text-[#94A3B8]">• Environmental Patterns</span>
+          <span className="text-[#94A3B8]">• Environmental patterns</span>
         </div>
       </div>
 
-      <div className="hidden xl:block absolute top-[45%] right-[28%] z-10 pointer-events-none">
+      <div className="hidden xl:block absolute top-[48%] right-[25%] z-10 pointer-events-none">
+        <div className="w-px h-10 bg-gradient-to-b from-transparent to-[#59D98E] ml-6 mb-1" />
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#050A12]/85 backdrop-blur-md border border-[#59D98E]/30 shadow-lg text-[10px] font-mono">
           <span className="w-1.5 h-1.5 rounded-full bg-[#59D98E] animate-pulse" />
           <span className="text-[#59D98E] font-medium">FIELD CONTEXT</span>
-          <span className="text-[#94A3B8]">• Agricultural Intel</span>
+          <span className="text-[#94A3B8]">• Agricultural intelligence</span>
         </div>
       </div>
 
@@ -164,178 +150,145 @@ export function HeroSection() {
               </div>
             </Reveal>
 
-            {/* Trust Badges */}
+            {/* Trust Badges — matching blueprint exactly */}
             <Reveal delay={0.8} yOffset={16}>
               <div className="mt-8 pt-6 border-t border-white/10 flex flex-wrap items-center gap-6 text-xs font-mono text-[#94A3B8]">
                 <div className="flex items-center gap-2">
-                  <span className="text-[#36BFFA]">🌐</span>
+                  <Globe className="w-4 h-4 text-[#36BFFA]" />
                   <span>Earth context</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[#59D98E]">📊</span>
+                  <BarChart3 className="w-4 h-4 text-[#59D98E]" />
                   <span>Evidence</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[#D7A86E]">🌱</span>
+                  <Sprout className="w-4 h-4 text-[#D7A86E]" />
                   <span>Farmer action</span>
                 </div>
               </div>
             </Reveal>
           </div>
 
-          {/* RIGHT COLUMN: Interactive 3D Phone Mockup & 3D Orbital Field (Columns 8-12) */}
+          {/* RIGHT COLUMN: Phone Mockup (Columns 8-12) — Blueprint-accurate app preview */}
           <div className="lg:col-span-5 flex flex-col items-center justify-center w-full mt-4 lg:mt-0 relative">
             
-            {/* View Mode Toggle Pill */}
-            <div className="mb-4 z-20 flex items-center p-1 rounded-full bg-[#0B1220]/90 border border-white/10 backdrop-blur-md shadow-lg">
-              <button
-                type="button"
-                onClick={() => setActiveVisual("app")}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-medium transition-all ${
-                  activeVisual === "app"
-                    ? "bg-[#59D98E] text-[#050A12] shadow"
-                    : "text-[#94A3B8] hover:text-[#F8FAFC]"
-                }`}
-              >
-                <Smartphone className="w-3.5 h-3.5" />
-                <span>APP PREVIEW</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveVisual("3d")}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-medium transition-all ${
-                  activeVisual === "3d"
-                    ? "bg-[#36BFFA] text-[#050A12] shadow"
-                    : "text-[#94A3B8] hover:text-[#F8FAFC]"
-                }`}
-              >
-                <Globe className="w-3.5 h-3.5" />
-                <span>3D ORBITAL</span>
-              </button>
+            {/* Glow behind phone */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="w-[320px] h-[500px] bg-[#59D98E]/10 rounded-full blur-[80px]" />
             </div>
 
-            {/* Visual 1: Mobile App Phone Mockup */}
-            {activeVisual === "app" ? (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.35 }}
-                className="relative w-[300px] sm:w-[330px] h-[610px] sm:h-[650px] rounded-[48px] p-3.5 bg-gradient-to-b from-[#1E293B] via-[#0F172A] to-[#0B1220] shadow-[0_25px_70px_rgba(0,0,0,0.9),0_0_40px_rgba(89,217,142,0.15)] border-[3px] border-white/20 select-none"
-              >
-                {/* Speaker Notch */}
-                <div className="absolute top-5 inset-x-0 mx-auto w-24 h-4 rounded-full bg-black z-30 flex items-center justify-center">
-                  <span className="w-2 h-2 rounded-full bg-white/20" />
+            {/* Phone Mockup */}
+            <div className="relative w-[280px] sm:w-[310px] h-[580px] sm:h-[620px] rounded-[44px] p-3 bg-gradient-to-b from-[#1E293B] via-[#0F172A] to-[#0B1220] shadow-[0_25px_70px_rgba(0,0,0,0.9),0_0_40px_rgba(89,217,142,0.15)] border-[3px] border-white/20 select-none z-10">
+              
+              {/* Speaker Notch */}
+              <div className="absolute top-4 inset-x-0 mx-auto w-20 h-3.5 rounded-full bg-black z-30 flex items-center justify-center">
+                <span className="w-1.5 h-1.5 rounded-full bg-white/20" />
+              </div>
+
+              {/* Inner Screen */}
+              <div className="w-full h-full rounded-[36px] bg-[#050A12] overflow-hidden flex flex-col relative border border-white/10 p-3.5 pt-8">
+                
+                {/* App Header */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-md bg-[#59D98E]/20 flex items-center justify-center">
+                      <span className="text-[10px]">🌱</span>
+                    </div>
+                    <span className="font-space font-bold text-xs text-[#F8FAFC]">AgriLume</span>
+                  </div>
+                  <div className="w-6 h-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
+                    <Bell className="w-3 h-3 text-[#94A3B8]" />
+                  </div>
                 </div>
 
-                {/* Inner Screen */}
-                <div className="w-full h-full rounded-[38px] bg-[#050A12] overflow-hidden flex flex-col justify-between relative border border-white/10 p-4 pt-9">
-                  
-                  {/* App Header */}
+                {/* Greeting */}
+                <div className="mt-3">
+                  <div className="text-sm font-space font-semibold text-[#F8FAFC]">
+                    Good morning, Farmer
+                  </div>
+                  <div className="text-[10px] text-[#94A3B8]">
+                    Healthier fields. Brighter tomorrows.
+                  </div>
+                </div>
+
+                {/* Your Fields Card */}
+                <div className="mt-3 p-2.5 rounded-xl bg-[#0B1220] border border-white/10 flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#123024] to-[#1D4A36] border border-[#59D98E]/30 flex items-center justify-center text-sm">
+                      🌾
+                    </div>
+                    <div>
+                      <div className="text-[8px] font-mono text-[#94A3B8] uppercase">YOUR FIELD</div>
+                      <div className="text-[11px] font-semibold text-[#F8FAFC]">Rajshahi Field</div>
+                      <div className="text-[9px] text-[#59D98E] flex items-center gap-1">
+                        <span className="w-1 h-1 rounded-full bg-[#59D98E]" />
+                        <span>Rice • Growing</span>
+                      </div>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-3.5 h-3.5 text-[#94A3B8]" />
+                </div>
+
+                {/* Today Weather Card */}
+                <div className="mt-2.5 p-2.5 rounded-xl bg-white/5 border border-white/5 flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-[#36BFFA]/10 border border-[#36BFFA]/20 flex items-center justify-center text-sm">
+                    ☀️
+                  </div>
                   <div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-md bg-[#59D98E]/20 flex items-center justify-center">
-                          <span className="text-[#59D98E] text-xs">🌱</span>
-                        </div>
-                        <span className="font-space font-bold text-sm text-[#F8FAFC]">AgriLume</span>
-                      </div>
-                      <div className="w-7 h-7 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
-                        <Bell className="w-3.5 h-3.5 text-[#94A3B8]" />
-                      </div>
-                    </div>
-
-                    {/* Greeting */}
-                    <div className="mt-4">
-                      <div className="text-sm font-space font-semibold text-[#F8FAFC]">
-                        Good morning, Farmer
-                      </div>
-                      <div className="text-[11px] text-[#94A3B8]">
-                        Healthier fields. Brighter tomorrows.
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Your Fields Card */}
-                  <div className="p-3 rounded-2xl bg-[#0B1220] border border-white/10 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#123024] to-[#1D4A36] border border-[#59D98E]/30 flex items-center justify-center text-base">
-                        🌾
-                      </div>
-                      <div>
-                        <div className="text-[9px] font-mono text-[#94A3B8] uppercase">YOUR FIELDS</div>
-                        <div className="text-xs font-semibold text-[#F8FAFC]">Rajshahi Field</div>
-                        <div className="text-[10px] text-[#59D98E] flex items-center gap-1">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#59D98E]" />
-                          <span>Rice • Growing</span>
-                        </div>
-                      </div>
-                    </div>
-                    <ChevronRight className="w-4 h-4 text-[#94A3B8]" />
-                  </div>
-
-                  {/* 4 Quick Tiles Grid */}
-                  <div className="grid grid-cols-2 gap-2.5">
-                    <div className="p-2.5 rounded-xl bg-white/5 border border-white/5 flex flex-col justify-between">
-                      <CloudSun className="w-4 h-4 text-[#36BFFA]" />
-                      <div className="mt-2 text-xs font-semibold text-[#F8FAFC]">Weather</div>
-                      <div className="text-[9px] text-[#94A3B8]">Upcoming conditions</div>
-                    </div>
-
-                    <div className="p-2.5 rounded-xl bg-white/5 border border-white/5 flex flex-col justify-between">
-                      <Camera className="w-4 h-4 text-[#59D98E]" />
-                      <div className="mt-2 text-xs font-semibold text-[#F8FAFC]">Scan Crop</div>
-                      <div className="text-[9px] text-[#94A3B8]">Instant insights</div>
-                    </div>
-
-                    <div className="p-2.5 rounded-xl bg-white/5 border border-white/5 flex flex-col justify-between">
-                      <Layers className="w-4 h-4 text-[#36BFFA]" />
-                      <div className="mt-2 text-xs font-semibold text-[#F8FAFC]">My Fields</div>
-                      <div className="text-[9px] text-[#94A3B8]">Your farmland</div>
-                    </div>
-
-                    <div className="p-2.5 rounded-xl bg-white/5 border border-white/5 flex flex-col justify-between">
-                      <Lightbulb className="w-4 h-4 text-[#D7A86E]" />
-                      <div className="mt-2 text-xs font-semibold text-[#F8FAFC]">Advice</div>
-                      <div className="text-[9px] text-[#94A3B8]">Practical guidance</div>
-                    </div>
-                  </div>
-
-                  {/* Bottom Navigation */}
-                  <div className="pt-2 border-t border-white/10 flex items-center justify-around text-[9px] font-mono text-[#94A3B8]">
-                    <div className="flex flex-col items-center gap-1 text-[#59D98E]">
-                      <Home className="w-3.5 h-3.5" />
-                      <span>Home</span>
-                    </div>
-                    <div className="flex flex-col items-center gap-1">
-                      <Layers className="w-3.5 h-3.5" />
-                      <span>Fields</span>
-                    </div>
-                    <div className="flex flex-col items-center gap-1">
-                      <Camera className="w-3.5 h-3.5" />
-                      <span>Scan</span>
-                    </div>
-                    <div className="flex flex-col items-center gap-1">
-                      <Lightbulb className="w-3.5 h-3.5" />
-                      <span>Advice</span>
-                    </div>
-                    <div className="flex flex-col items-center gap-1">
-                      <SlidersHorizontal className="w-3.5 h-3.5" />
-                      <span>More</span>
-                    </div>
+                    <div className="text-[11px] font-semibold text-[#F8FAFC]">Today</div>
+                    <div className="text-[9px] text-[#94A3B8]">Clear with light clouds</div>
                   </div>
                 </div>
-              </motion.div>
-            ) : (
-              /* Visual 2: 3D Orbital Field Canvas */
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.35 }}
-                className="w-full flex items-center justify-center"
-              >
-                <OrbitalFieldCanvas />
-              </motion.div>
-            )}
+
+                {/* Quick Action Grid */}
+                <div className="mt-auto grid grid-cols-2 gap-2">
+                  <div className="p-2 rounded-lg bg-white/5 border border-white/5">
+                    <Camera className="w-3.5 h-3.5 text-[#59D98E]" />
+                    <div className="mt-1.5 text-[10px] font-semibold text-[#F8FAFC]">Scan Crop</div>
+                    <div className="text-[8px] text-[#94A3B8]">Check crop health</div>
+                  </div>
+                  <div className="p-2 rounded-lg bg-white/5 border border-white/5">
+                    <Layers className="w-3.5 h-3.5 text-[#36BFFA]" />
+                    <div className="mt-1.5 text-[10px] font-semibold text-[#F8FAFC]">My Fields</div>
+                    <div className="text-[8px] text-[#94A3B8]">View and manage</div>
+                  </div>
+                </div>
+
+                {/* Advisory Card */}
+                <div className="mt-2 p-2.5 rounded-xl bg-[#0B1220] border border-[#D7A86E]/20">
+                  <div className="flex items-center gap-1.5">
+                    <Lightbulb className="w-3 h-3 text-[#D7A86E]" />
+                    <span className="text-[10px] font-semibold text-[#F8FAFC]">Advisory</span>
+                  </div>
+                  <div className="text-[8px] text-[#94A3B8] mt-0.5">Personalized recommendations</div>
+                  <ChevronRight className="w-3 h-3 text-[#94A3B8] ml-auto -mt-3" />
+                </div>
+
+                {/* Bottom Navigation */}
+                <div className="mt-2 pt-2 border-t border-white/10 flex items-center justify-around text-[8px] font-mono text-[#94A3B8]">
+                  <div className="flex flex-col items-center gap-0.5 text-[#59D98E]">
+                    <Home className="w-3 h-3" />
+                    <span>Home</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-0.5">
+                    <Layers className="w-3 h-3" />
+                    <span>Fields</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-0.5">
+                    <Camera className="w-3 h-3" />
+                    <span>Scan</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-0.5">
+                    <Lightbulb className="w-3 h-3" />
+                    <span>Advice</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-0.5">
+                    <SlidersHorizontal className="w-3 h-3" />
+                    <span>More</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -348,7 +301,7 @@ export function HeroSection() {
           aria-label="Scroll down to explore"
         >
           <span className="uppercase text-[10px]">Explore Decision Context</span>
-          <ChevronDown className="w-4 h-4 text-[#59D98E] animate-bounce" />
+          <ArrowDown className="w-4 h-4 text-[#59D98E] animate-bounce" />
         </Link>
       </div>
     </section>
