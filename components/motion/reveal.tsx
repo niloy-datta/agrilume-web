@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion, type HTMLMotionProps } from "framer-motion";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 interface RevealProps extends HTMLMotionProps<"div"> {
   children: React.ReactNode;
@@ -19,20 +19,26 @@ export function Reveal({
   className = "",
   ...props
 }: RevealProps) {
+  const [mounted, setMounted] = useState(false);
   const shouldReduceMotion = useReducedMotion();
 
-  if (shouldReduceMotion) {
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted || shouldReduceMotion) {
     return <div className={className}>{children}</div>;
   }
 
   return (
     <motion.div
       initial={{ opacity: 0, y: yOffset }}
-      animate={{ opacity: 1, y: 0 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "0px" }}
       transition={{
         duration,
         delay,
-        ease: [0.16, 1, 0.3, 1], // cinematic smooth deceleration
+        ease: [0.16, 1, 0.3, 1],
       }}
       className={className}
       {...props}
@@ -56,16 +62,22 @@ export function StaggerContainer({
   className = "",
   ...props
 }: StaggerContainerProps) {
+  const [mounted, setMounted] = useState(false);
   const shouldReduceMotion = useReducedMotion();
 
-  if (shouldReduceMotion) {
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted || shouldReduceMotion) {
     return <div className={className}>{children}</div>;
   }
 
   return (
     <motion.div
       initial="hidden"
-      animate="visible"
+      whileInView="visible"
+      viewport={{ once: true, margin: "0px" }}
       variants={{
         hidden: {},
         visible: {
@@ -97,9 +109,14 @@ export function StaggerItem({
   duration = 0.85,
   ...props
 }: StaggerItemProps) {
+  const [mounted, setMounted] = useState(false);
   const shouldReduceMotion = useReducedMotion();
 
-  if (shouldReduceMotion) {
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted || shouldReduceMotion) {
     return <div className={className}>{children}</div>;
   }
 

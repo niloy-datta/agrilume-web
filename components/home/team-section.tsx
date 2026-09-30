@@ -7,32 +7,52 @@ import { Reveal } from "../motion/reveal";
 export function TeamSection() {
   const members = [
     {
-      name: "Niloy Chandra Datta",
-      role: "Founder & Developer",
+      name: "Niloy Bhattacharjee",
+      role: "Lead Full-Stack Engineer",
       tag: "Lead Architect",
-      initials: "ND",
+      initials: "NB",
       accent: "#59D98E",
+      image: "/images/team/niloy-bhattacharjee.jpg",
     },
     {
-      name: "Team Member",
-      role: "AI/ML & Satellite Data",
-      tag: "Earth Observation",
-      initials: "ML",
+      name: "Niloy Chandra Datta",
+      role: "AI/ML & Backend Engineer",
+      tag: "AI Systems Architect",
+      initials: "ND",
       accent: "#36BFFA",
+      image: "/images/team/niloy-datta.jpg",
     },
     {
-      name: "Team Member",
-      role: "Mobile App Development",
-      tag: "React Native / UI",
-      initials: "MD",
-      accent: "#D7A86E",
+      name: "Amlan Sarker Turna",
+      role: "Earth Observation & Satellite Data",
+      tag: "Remote Sensing",
+      initials: "AT",
+      accent: "#59D98E",
+      image: "/images/team/amlan-turna.jpg",
     },
     {
-      name: "Team Member",
+      name: "Debarati Chakraborty",
       role: "Science & Research",
       tag: "Agronomic Modeling",
-      initials: "SR",
+      initials: "DC",
+      accent: "#D7A86E",
+      image: "/images/team/debarati-chakraborty.jpg",
+    },
+    {
+      name: "Monisha Das",
+      role: "GIS & Environmental Intelligence",
+      tag: "AI/ML Engineer",
+      initials: "MD",
+      accent: "#36BFFA",
+      image: "/images/team/monisha-das.jpg",
+    },
+    {
+      name: "Arpita Bhattacharjee",
+      role: "Data Analysis & UX/UI",
+      tag: "UX/UI Designer",
+      initials: "AB",
       accent: "#59D98E",
+      image: "/images/team/arpita-bhattacharjee.jpg",
     },
   ];
 
@@ -52,7 +72,7 @@ export function TeamSection() {
           <span>Built by AgriLume</span>
         </div>
 
-        {/* Section Header (Left-aligned matching blueprint) */}
+        {/* Section Header */}
         <div className="max-w-3xl mb-14">
           <Reveal delay={0.1} yOffset={16}>
             <h2
@@ -70,25 +90,37 @@ export function TeamSection() {
           </Reveal>
         </div>
 
-        {/* 4 Team Circular Avatar Cards (Matching 1:1 blueprint visual) */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8">
+        {/* 6-Column Responsive Team Cards Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-5">
           {members.map((m, idx) => (
-            <Reveal key={m.name + idx} delay={0.1 * idx} yOffset={18}>
-              <div className="flex flex-col items-center text-center p-5 rounded-2xl bg-[#0B1220]/60 border border-white/10 hover:border-white/25 transition-all">
-                {/* Circular Profile Avatar Ring */}
+            <Reveal key={m.name + idx} delay={0.06 * idx} yOffset={16}>
+              <div className="flex flex-col items-center text-center p-5 rounded-2xl bg-[#0B1220]/60 border border-white/10 hover:border-white/25 transition-all duration-300 group hover:-translate-y-1 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+                {/* Circular Profile Avatar Ring with Real Photo */}
                 <div
-                  className="w-20 h-20 sm:w-24 sm:h-24 rounded-full p-1 bg-gradient-to-tr mb-4 shadow-lg flex items-center justify-center"
+                  className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full p-1 bg-gradient-to-tr mb-4 shadow-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-105"
                   style={{
-                    background: `linear-gradient(135deg, ${m.accent}, rgba(255,255,255,0.1))`,
+                    background: `linear-gradient(135deg, ${m.accent}, rgba(255,255,255,0.15))`,
                   }}
                 >
-                  <div className="w-full h-full rounded-full bg-[#0B1528] flex items-center justify-center font-space font-bold text-lg text-white border border-white/10">
-                    {m.initials}
+                  <div className="relative w-full h-full rounded-full overflow-hidden bg-[#0B1528] border border-white/15">
+                    {m.image ? (
+                      <Image
+                        src={m.image}
+                        alt={m.name}
+                        fill
+                        sizes="(max-width: 640px) 80px, 96px"
+                        className="object-cover object-top"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center font-space font-bold text-lg text-white">
+                        {m.initials}
+                      </div>
+                    )}
                   </div>
                 </div>
 
-                <div className="text-sm font-bold text-white tracking-tight">{m.name}</div>
-                <div className="text-xs text-[#94A3B8] mt-1">{m.role}</div>
+                <div className="text-sm font-bold text-white tracking-tight leading-snug">{m.name}</div>
+                <div className="text-xs text-[#94A3B8] mt-1 line-clamp-1">{m.role}</div>
                 <div className="mt-2 text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[#CBD5E1]">
                   {m.tag}
                 </div>

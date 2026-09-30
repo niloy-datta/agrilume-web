@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Download, ArrowRight, QrCode, Smartphone, Feather, MapPin, Globe2, RefreshCw } from "lucide-react";
 import { DOWNLOAD_CONTENT } from "@/lib/constants";
@@ -74,8 +75,22 @@ export function DownloadSection() {
             </Reveal>
           </div>
 
-          {/* RIGHT: QR Code Card (Matching 1:1 blueprint visual) */}
-          <div className="lg:col-span-4 flex justify-start lg:justify-end">
+          {/* RIGHT: Phone Preview & QR Code Card */}
+          <div className="lg:col-span-5 flex flex-col sm:flex-row items-center justify-center lg:justify-end gap-6">
+            {/* App Preview Mockup Peek */}
+            <Reveal delay={0.2} yOffset={20}>
+              <div className="relative w-[130px] sm:w-[150px] aspect-[576/1024] rounded-[28px] overflow-hidden border-2 border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.8),0_0_30px_rgba(89,217,142,0.15)] -rotate-3 hover:rotate-0 transition-transform duration-300 hidden sm:block">
+                <Image
+                  src="/images/app/app-home-dashboard.png"
+                  alt="AgriLume App Interface"
+                  fill
+                  sizes="150px"
+                  className="object-cover object-center"
+                />
+              </div>
+            </Reveal>
+
+            {/* QR Card */}
             <Reveal delay={0.25} yOffset={20}>
               <div className="flex items-center gap-4 p-4 rounded-2xl bg-[#0B1220]/80 backdrop-blur-md border border-white/15 shadow-[0_15px_40px_rgba(0,0,0,0.6)]">
                 {/* QR Box */}
@@ -89,7 +104,7 @@ export function DownloadSection() {
                     Scan to Download
                   </span>
                   <span className="text-xs font-bold text-white mt-0.5">Android APK</span>
-                  <span className="text-[11px] text-[#94A3B8] mt-1 font-mono">Latest version</span>
+                  <span className="text-[11px] text-[#94A3B8] mt-1 font-mono">Latest release</span>
                 </div>
               </div>
             </Reveal>
