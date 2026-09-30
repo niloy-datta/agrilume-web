@@ -1,162 +1,193 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import {
   Home,
   Layers,
   Camera,
-  Lightbulb,
   CloudSun,
-  Bell,
+  Lightbulb,
+  CheckCircle2,
   ChevronRight,
-  Map,
-  BarChart3,
-  SlidersHorizontal,
+  Sparkles,
 } from "lucide-react";
 import { Reveal } from "../motion/reveal";
 
-/* Mini phone component for the app showcase fan */
-function MiniPhone({ title, children, className = "", rotation = 0, zIndex = 1 }: {
-  title: string;
-  children: React.ReactNode;
-  className?: string;
-  rotation?: number;
-  zIndex?: number;
-}) {
-  return (
-    <div
-      className={`absolute w-[160px] sm:w-[180px] h-[320px] sm:h-[360px] rounded-[28px] p-2 bg-gradient-to-b from-[#1E293B] via-[#0F172A] to-[#0B1220] border-[2px] border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.8)] select-none ${className}`}
-      style={{ transform: `rotate(${rotation}deg)`, zIndex }}
-    >
-      <div className="absolute top-2 inset-x-0 mx-auto w-12 h-2.5 rounded-full bg-black z-30" />
-      <div className="w-full h-full rounded-[22px] bg-[#050A12] overflow-hidden border border-white/10 p-2 pt-5 flex flex-col">
-        <div className="text-[8px] font-mono text-[#36BFFA] uppercase tracking-wider mb-1 font-bold">{title}</div>
-        {children}
-      </div>
-    </div>
-  );
-}
-
 export function AppShowcaseSection() {
+  const sidebarButtons = [
+    { icon: <Home className="w-4 h-4 text-[#36BFFA]" />, label: "Home", sub: "Quick overview", active: true },
+    { icon: <Layers className="w-4 h-4 text-[#59D98E]" />, label: "My Fields", sub: "Your farmland" },
+    { icon: <Camera className="w-4 h-4 text-[#36BFFA]" />, label: "Scan Crop", sub: "Instant insights" },
+    { icon: <CloudSun className="w-4 h-4 text-[#D7A86E]" />, label: "Weather", sub: "Upcoming conditions" },
+    { icon: <Lightbulb className="w-4 h-4 text-[#59D98E]" />, label: "Advisory", sub: "Practical guidance" },
+  ];
+
   return (
     <section
       id="app"
-      className="relative w-full py-24 sm:py-32 lg:py-36 bg-gradient-to-b from-[#050A12] via-[#0B1220] to-[#050A12] border-t border-white/5 overflow-hidden"
+      className="relative w-full py-24 sm:py-32 lg:py-36 bg-[#050A12] border-t border-white/5 overflow-hidden"
       aria-labelledby="app-showcase-title"
     >
-      {/* Background glows */}
-      <div className="absolute top-1/3 right-1/4 w-[600px] h-[600px] bg-[#36BFFA]/4 rounded-full blur-[190px] pointer-events-none" />
-      <div className="absolute bottom-1/4 left-1/3 w-[500px] h-[500px] bg-[#59D98E]/3 rounded-full blur-[160px] pointer-events-none" />
+      {/* Background radial glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-[#36BFFA]/4 rounded-full blur-[200px] pointer-events-none" />
 
       <div className="max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
         
-        {/* Section Index Marker */}
-        <div className="flex items-center gap-2 mb-6 text-xs font-mono text-[#94A3B8]/60">
-          <span className="text-[#59D98E]">05</span>
-          <span>App Showcase</span>
+        {/* Section 05 Index Marker */}
+        <div className="flex items-center gap-2 mb-6 text-xs font-mono text-[#94A3B8]/70">
+          <span className="text-[#36BFFA] font-bold">05</span>
+          <span className="text-white/80 font-medium">App Showcase</span>
           <span>•</span>
           <span>Complex intelligence. Simple experience.</span>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          
-          {/* LEFT: Text Content */}
-          <div className="lg:col-span-5 flex flex-col">
-            <Reveal delay={0.1} yOffset={16}>
-              <h2
-                id="app-showcase-title"
-                className="font-space font-bold tracking-tight text-3xl sm:text-4xl lg:text-[44px] text-[#F8FAFC] leading-[1.08]"
-              >
-                THE INTELLIGENCE STAYS COMPLEX.{" "}
-                <span className="text-[#59D98E]">THE EXPERIENCE STAYS SIMPLE.</span>
-              </h2>
-            </Reveal>
+        {/* Section Header */}
+        <div className="max-w-3xl mb-16">
+          <Reveal delay={0.1} yOffset={16}>
+            <h2
+              id="app-showcase-title"
+              className="font-space font-extrabold tracking-tight text-3xl sm:text-4xl lg:text-[46px] text-[#F8FAFC] leading-[1.08]"
+            >
+              THE INTELLIGENCE STAYS COMPLEX. <br />
+              <span className="text-[#59D98E]">THE EXPERIENCE STAYS SIMPLE.</span>
+            </h2>
+          </Reveal>
 
-            <Reveal delay={0.2} yOffset={18}>
-              <p className="mt-5 text-base sm:text-lg text-[#94A3B8] font-light leading-relaxed">
-                A clean and intuitive mobile app designed for farmers, backed by Earth and climate intelligence.
-              </p>
-            </Reveal>
+          <Reveal delay={0.2} yOffset={14}>
+            <p className="mt-4 text-base sm:text-lg text-[#94A3B8] font-normal leading-relaxed">
+              A clean and intuitive mobile app designed for farmers, backed by Earth and climate intelligence.
+            </p>
+          </Reveal>
+        </div>
+
+        {/* Main Grid: Left Sidebar Buttons + Right Phone Mockup Deck */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+          
+          {/* LEFT: 5 Interactive/Feature Buttons */}
+          <div className="lg:col-span-4 flex flex-col gap-3.5">
+            {sidebarButtons.map((btn, idx) => (
+              <Reveal key={btn.label} delay={0.1 * idx} yOffset={12}>
+                <div
+                  className={`flex items-center gap-4 px-4 py-3.5 rounded-xl border transition-all ${
+                    btn.active
+                      ? "bg-[#0B1528] border-[#36BFFA]/40 shadow-[0_0_20px_rgba(54,191,250,0.15)]"
+                      : "bg-[#0B1220]/60 border-white/5 hover:border-white/15"
+                  }`}
+                >
+                  <div className="w-9 h-9 rounded-lg bg-[#050A12] border border-white/10 flex items-center justify-center">
+                    {btn.icon}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-semibold text-[#F8FAFC]">{btn.label}</div>
+                    <div className="text-xs text-[#94A3B8] truncate">{btn.sub}</div>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-white/30" />
+                </div>
+              </Reveal>
+            ))}
           </div>
 
-          {/* RIGHT: Multi-Phone Fan Display — matching blueprint */}
-          <div className="lg:col-span-7 flex items-center justify-center w-full">
-            <div className="relative w-full h-[420px] sm:h-[480px]">
-              
-              {/* Phone 1: Home Screen (leftmost, rotated left) */}
-              <MiniPhone title="HOME" rotation={-12} zIndex={1} className="left-[2%] sm:left-[5%] top-[10%]">
-                <div className="flex items-center gap-1 mb-2">
-                  <div className="w-4 h-4 rounded bg-[#59D98E]/20 flex items-center justify-center text-[6px]">🌱</div>
-                  <span className="text-[7px] font-bold text-[#F8FAFC]">AgriLume</span>
+          {/* RIGHT: 3-Phone Angled Deck Mockup (Matching 1:1 blueprint visual) */}
+          <div className="lg:col-span-8 relative flex items-center justify-center min-h-[480px] sm:min-h-[560px]">
+            
+            {/* Left Phone (Angled) */}
+            <div className="absolute left-[5%] sm:left-[12%] top-6 w-[200px] sm:w-[240px] h-[400px] sm:h-[480px] rounded-[36px] p-2.5 bg-gradient-to-b from-[#1E293B] to-[#0A101D] border-2 border-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.8)] -rotate-6 z-10 hidden sm:block opacity-75 blur-[0.4px]">
+              <div className="w-full h-full rounded-[28px] bg-[#050A12] overflow-hidden p-3.5 flex flex-col justify-between text-xs">
+                <div>
+                  <div className="text-[10px] font-mono text-[#36BFFA] uppercase">Scan Crop</div>
+                  <div className="mt-2 text-sm font-bold text-white">Leaf Health Diagnostic</div>
+                  <div className="mt-3 w-full h-32 rounded-xl bg-[#0B1622] border border-white/5 flex items-center justify-center text-3xl">
+                    🌿
+                  </div>
                 </div>
-                <div className="p-1.5 rounded-lg bg-[#0B1220] border border-white/10 mb-1.5">
-                  <div className="text-[7px] font-mono text-[#59D98E]">Good morning</div>
-                  <div className="text-[8px] text-[#F8FAFC] font-semibold">Farmer</div>
+                <div className="p-2.5 rounded-lg bg-[#59D98E]/10 border border-[#59D98E]/20 text-[11px] text-[#59D98E]">
+                  ✓ Normal chlorophyll index
                 </div>
-                <div className="grid grid-cols-2 gap-1">
-                  {[{ icon: <CloudSun className="w-2.5 h-2.5 text-[#36BFFA]" />, label: "Weather" },
-                    { icon: <Camera className="w-2.5 h-2.5 text-[#59D98E]" />, label: "Scan" },
-                    { icon: <Layers className="w-2.5 h-2.5 text-[#36BFFA]" />, label: "Fields" },
-                    { icon: <Lightbulb className="w-2.5 h-2.5 text-[#D7A86E]" />, label: "Advice" },
-                  ].map((item) => (
-                    <div key={item.label} className="p-1.5 rounded bg-white/5 border border-white/5">
-                      {item.icon}
-                      <div className="text-[6px] text-[#F8FAFC] mt-0.5">{item.label}</div>
+              </div>
+            </div>
+
+            {/* Right Phone (Angled) */}
+            <div className="absolute right-[5%] sm:right-[12%] top-6 w-[200px] sm:w-[240px] h-[400px] sm:h-[480px] rounded-[36px] p-2.5 bg-gradient-to-b from-[#1E293B] to-[#0A101D] border-2 border-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.8)] rotate-6 z-10 hidden sm:block opacity-75 blur-[0.4px]">
+              <div className="w-full h-full rounded-[28px] bg-[#050A12] overflow-hidden p-3.5 flex flex-col justify-between text-xs">
+                <div>
+                  <div className="text-[10px] font-mono text-[#D7A86E] uppercase">Weather Outlook</div>
+                  <div className="mt-2 text-sm font-bold text-white">Rajshahi Basin</div>
+                  <div className="mt-3 text-2xl font-bold text-white">31°C</div>
+                  <div className="text-[11px] text-[#94A3B8]">Clear sky • 42% Soil Humidity</div>
+                </div>
+                <div className="p-2.5 rounded-lg bg-[#36BFFA]/10 border border-[#36BFFA]/20 text-[11px] text-[#36BFFA]">
+                  3-Day window favorable
+                </div>
+              </div>
+            </div>
+
+            {/* Center Phone (Hero Phone in focus) */}
+            <div className="relative w-[240px] sm:w-[280px] h-[480px] sm:h-[540px] rounded-[42px] p-3 bg-gradient-to-b from-[#334155] via-[#1E293B] to-[#0B1220] border-2 border-[#59D98E]/40 shadow-[0_30px_90px_rgba(0,0,0,0.9),0_0_35px_rgba(89,217,142,0.25)] z-20">
+              {/* Dynamic Island Notch */}
+              <div className="absolute top-4 inset-x-0 mx-auto w-24 h-4 rounded-full bg-black z-30 flex items-center justify-center">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#111] mr-3" />
+                <div className="w-1.5 h-1.5 rounded-full bg-[#36BFFA]/50" />
+              </div>
+
+              {/* Phone Screen UI */}
+              <div className="w-full h-full rounded-[32px] bg-[#050A12] overflow-hidden flex flex-col justify-between pt-7 pb-4 px-4 border border-white/10">
+                {/* App Topbar */}
+                <div className="flex items-center justify-between text-xs pb-3 border-b border-white/5">
+                  <div className="flex items-center gap-1.5 font-space font-bold text-sm text-white">
+                    <span className="text-[#59D98E]">Agri</span>Lume
+                  </div>
+                  <span className="w-2 h-2 rounded-full bg-[#59D98E]" />
+                </div>
+
+                {/* Welcome Card with Rice Terrace Graphic */}
+                <div className="relative my-3 p-3.5 rounded-2xl bg-gradient-to-br from-[#0B1824] to-[#050A12] border border-white/10 overflow-hidden">
+                  <div className="relative z-10">
+                    <div className="text-[11px] text-[#94A3B8]">Good morning,</div>
+                    <div className="text-sm font-bold text-white mt-0.5">Let’s care for your fields together.</div>
+                  </div>
+                  <div className="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-[#59D98E]/10 blur-xl pointer-events-none" />
+                </div>
+
+                {/* My Fields Card (Rajshahi Field) */}
+                <div className="flex-1 flex flex-col justify-center">
+                  <div className="text-[11px] font-mono text-[#94A3B8] mb-1.5">My Fields</div>
+                  <div className="p-3 rounded-xl bg-[#0B1220] border border-[#59D98E]/30 flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-9 h-9 rounded-lg bg-[#0F201B] border border-[#59D98E]/40 flex items-center justify-center text-sm">
+                        🌾
+                      </div>
+                      <div>
+                        <div className="text-xs font-bold text-white">Rajshahi Field</div>
+                        <div className="text-[10px] text-[#94A3B8]">Rice • Growing</div>
+                      </div>
                     </div>
-                  ))}
-                </div>
-              </MiniPhone>
-
-              {/* Phone 2: My Fields (slight left rotate) */}
-              <MiniPhone title="MY FIELDS" rotation={-5} zIndex={2} className="left-[18%] sm:left-[22%] top-[4%]">
-                <div className="p-1.5 rounded-lg bg-[#0B1220] border border-white/10 mb-1.5">
-                  <div className="text-[7px] font-bold text-[#F8FAFC]">Rajshahi Field</div>
-                  <div className="text-[6px] text-[#59D98E]">Rice • Growing</div>
-                </div>
-                <div className="flex-1 rounded-lg bg-gradient-to-b from-[#123024] to-[#0B1220] border border-[#59D98E]/20 flex items-center justify-center">
-                  <Map className="w-8 h-8 text-[#59D98E]/30" />
-                </div>
-              </MiniPhone>
-
-              {/* Phone 3: Scan Crop (center, no rotation — hero phone) */}
-              <MiniPhone title="SCAN CROP" rotation={0} zIndex={4} className="left-1/2 -translate-x-1/2 top-0">
-                <div className="flex-1 rounded-lg bg-gradient-to-b from-[#0B1220] to-[#050A12] border border-[#59D98E]/20 flex flex-col items-center justify-center gap-2 p-2">
-                  <Camera className="w-8 h-8 text-[#59D98E]/60" />
-                  <div className="text-[7px] text-center text-[#94A3B8]">Point camera at crop</div>
-                  <div className="w-full p-1.5 rounded bg-[#59D98E]/10 border border-[#59D98E]/20">
-                    <div className="text-[7px] font-mono text-[#59D98E] text-center">SCANNING...</div>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#59D98E]/15 text-[#59D98E] font-semibold">
+                      Optimal
+                    </span>
                   </div>
                 </div>
-              </MiniPhone>
 
-              {/* Phone 4: Diagnosis Results (slight right rotate) */}
-              <MiniPhone title="DIAGNOSIS RESULTS" rotation={5} zIndex={3} className="right-[18%] sm:right-[22%] top-[4%]">
-                <div className="p-1.5 rounded-lg bg-[#59D98E]/10 border border-[#59D98E]/20 mb-1.5">
-                  <div className="text-[7px] font-bold text-[#59D98E]">✓ Healthy Crop</div>
-                  <div className="text-[6px] text-[#94A3B8]">No disease detected</div>
-                </div>
-                <div className="space-y-1">
-                  <div className="p-1 rounded bg-white/5 text-[6px] text-[#94A3B8]">Nitrogen: Normal</div>
-                  <div className="p-1 rounded bg-white/5 text-[6px] text-[#94A3B8]">Moisture: Adequate</div>
-                  <div className="p-1 rounded bg-white/5 text-[6px] text-[#94A3B8]">Growth: On track</div>
-                </div>
-              </MiniPhone>
-
-              {/* Phone 5: Advisory (rightmost, rotated right) */}
-              <MiniPhone title="ADVISORY" rotation={12} zIndex={1} className="right-[2%] sm:right-[5%] top-[10%]">
-                <div className="p-1.5 rounded-lg bg-[#D7A86E]/10 border border-[#D7A86E]/20 mb-1.5">
-                  <div className="text-[7px] font-bold text-[#D7A86E]">⏳ Wait 48hrs</div>
-                  <div className="text-[6px] text-[#94A3B8]">Rain expected</div>
-                </div>
-                <div className="p-1.5 rounded-lg bg-[#0B1220] border border-white/10">
-                  <div className="text-[6px] text-[#94A3B8]">
-                    Evidence: High precipitation probability provides natural germination moisture.
+                {/* Bottom Navigation */}
+                <div className="pt-2 border-t border-white/5 flex items-center justify-around text-[10px] text-[#94A3B8]">
+                  <div className="flex flex-col items-center text-[#59D98E]">
+                    <Home className="w-4 h-4" />
+                    <span className="mt-0.5 font-bold">Home</span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <Layers className="w-4 h-4" />
+                    <span className="mt-0.5">Fields</span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <Camera className="w-4 h-4" />
+                    <span className="mt-0.5">Scan</span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <Lightbulb className="w-4 h-4" />
+                    <span className="mt-0.5">Advice</span>
                   </div>
                 </div>
-                <div className="mt-auto p-1 rounded bg-[#59D98E]/10 text-[6px] font-mono text-[#59D98E] text-center">
-                  CONFIDENCE: HIGH
-                </div>
-              </MiniPhone>
+              </div>
             </div>
           </div>
         </div>

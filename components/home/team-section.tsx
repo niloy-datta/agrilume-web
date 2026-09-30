@@ -1,38 +1,38 @@
 "use client";
 
 import React from "react";
-import { Users } from "lucide-react";
-import { Reveal, StaggerContainer, StaggerItem } from "../motion/reveal";
+import Image from "next/image";
+import { Reveal } from "../motion/reveal";
 
 export function TeamSection() {
   const members = [
     {
       name: "Niloy Chandra Datta",
       role: "Founder & Developer",
-      subtitle: "AI/ML & Satellite Data",
-      avatar: "👨‍💻",
-      color: "#59D98E",
+      tag: "Lead Architect",
+      initials: "ND",
+      accent: "#59D98E",
     },
     {
       name: "Team Member",
       role: "AI/ML & Satellite Data",
-      subtitle: "",
-      avatar: "🛰️",
-      color: "#36BFFA",
+      tag: "Earth Observation",
+      initials: "ML",
+      accent: "#36BFFA",
     },
     {
       name: "Team Member",
       role: "Mobile App Development",
-      subtitle: "",
-      avatar: "📱",
-      color: "#D7A86E",
+      tag: "React Native / UI",
+      initials: "MD",
+      accent: "#D7A86E",
     },
     {
       name: "Team Member",
       role: "Science & Research",
-      subtitle: "",
-      avatar: "🔬",
-      color: "#36BFFA",
+      tag: "Agronomic Modeling",
+      initials: "SR",
+      accent: "#59D98E",
     },
   ];
 
@@ -44,62 +44,58 @@ export function TeamSection() {
     >
       <div className="max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
         
-        {/* Section Index Marker */}
-        <div className="flex items-center gap-2 mb-6 text-xs font-mono text-[#94A3B8]/60">
-          <span className="text-[#59D98E]">09</span>
-          <span>Team</span>
+        {/* Section 09 Index Marker */}
+        <div className="flex items-center gap-2 mb-6 text-xs font-mono text-[#94A3B8]/70">
+          <span className="text-[#59D98E] font-bold">09</span>
+          <span className="text-white/80 font-medium">Team</span>
           <span>•</span>
           <span>Built by AgriLume</span>
         </div>
 
-        {/* Header — left aligned matching blueprint */}
-        <div className="max-w-2xl mb-12">
+        {/* Section Header (Left-aligned matching blueprint) */}
+        <div className="max-w-3xl mb-14">
           <Reveal delay={0.1} yOffset={16}>
             <h2
               id="team-title"
-              className="font-space font-bold tracking-tight text-2xl sm:text-3xl lg:text-4xl text-[#F8FAFC]"
+              className="font-space font-extrabold tracking-tight text-3xl sm:text-4xl lg:text-5xl text-[#F8FAFC]"
             >
-              BUILT BY THE <span className="text-[#59D98E]">AGRILUME</span> TEAM
+              BUILT BY A <span className="text-[#59D98E]">PASSIONATE TEAM</span>
             </h2>
           </Reveal>
 
           <Reveal delay={0.2} yOffset={14}>
-            <p className="mt-3 text-xs sm:text-sm text-[#94A3B8] font-light leading-relaxed">
+            <p className="mt-3 text-sm text-[#94A3B8] font-normal leading-relaxed">
               A group of students, engineers and problem solvers building agricultural intelligence for a more resilient future.
             </p>
           </Reveal>
         </div>
 
-        {/* Team Member Cards — horizontal row */}
-        <StaggerContainer
-          staggerDelay={0.08}
-          delayChildren={0.2}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
-        >
-          {members.map((member) => (
-            <StaggerItem
-              key={member.name + member.role}
-              yOffset={16}
-              className="p-5 rounded-2xl bg-[#0B1220]/70 border border-white/5 hover:border-[#59D98E]/30 transition-all duration-300 flex flex-col items-center text-center"
-            >
-              <div
-                className="w-16 h-16 rounded-full border-2 flex items-center justify-center text-2xl mb-3 shadow-lg"
-                style={{
-                  borderColor: `${member.color}40`,
-                  background: `linear-gradient(135deg, ${member.color}15, transparent)`,
-                }}
-              >
-                {member.avatar}
+        {/* 4 Team Circular Avatar Cards (Matching 1:1 blueprint visual) */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8">
+          {members.map((m, idx) => (
+            <Reveal key={m.name + idx} delay={0.1 * idx} yOffset={18}>
+              <div className="flex flex-col items-center text-center p-5 rounded-2xl bg-[#0B1220]/60 border border-white/10 hover:border-white/25 transition-all">
+                {/* Circular Profile Avatar Ring */}
+                <div
+                  className="w-20 h-20 sm:w-24 sm:h-24 rounded-full p-1 bg-gradient-to-tr mb-4 shadow-lg flex items-center justify-center"
+                  style={{
+                    background: `linear-gradient(135deg, ${m.accent}, rgba(255,255,255,0.1))`,
+                  }}
+                >
+                  <div className="w-full h-full rounded-full bg-[#0B1528] flex items-center justify-center font-space font-bold text-lg text-white border border-white/10">
+                    {m.initials}
+                  </div>
+                </div>
+
+                <div className="text-sm font-bold text-white tracking-tight">{m.name}</div>
+                <div className="text-xs text-[#94A3B8] mt-1">{m.role}</div>
+                <div className="mt-2 text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[#CBD5E1]">
+                  {m.tag}
+                </div>
               </div>
-              <div className="text-sm font-space font-semibold text-[#F8FAFC]">
-                {member.name}
-              </div>
-              <div className="text-[11px] font-mono mt-1" style={{ color: member.color }}>
-                {member.role}
-              </div>
-            </StaggerItem>
+            </Reveal>
           ))}
-        </StaggerContainer>
+        </div>
       </div>
     </section>
   );

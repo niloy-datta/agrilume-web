@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useCallback } from "react";
 import Image from "next/image";
-import { Eye, Layers, ArrowLeftRight } from "lucide-react";
+import { Eye, Layers, ArrowLeftRight, CheckCircle2 } from "lucide-react";
 import { FIELD_COMPARISON_CONTENT } from "@/lib/constants";
 import { Reveal } from "../motion/reveal";
 
@@ -21,157 +21,141 @@ export function FieldComparisonSection() {
     [isDragging]
   );
 
-  const handlePointerDown = () => setIsDragging(true);
-  const handlePointerUp = () => setIsDragging(false);
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    const step = e.shiftKey ? 10 : 5;
-    if (e.key === "ArrowLeft") {
-      e.preventDefault();
-      setSliderPos((prev) => Math.max(5, prev - step));
-    } else if (e.key === "ArrowRight") {
-      e.preventDefault();
-      setSliderPos((prev) => Math.min(95, prev + step));
-    }
-  };
-
   return (
     <section
       id="science"
-      className="relative w-full py-24 sm:py-32 lg:py-36 bg-[#050A12] border-t border-[#36BFFA]/10 overflow-hidden select-none"
+      className="relative w-full py-24 sm:py-32 bg-[#050A12] border-t border-[#36BFFA]/10 overflow-hidden select-none"
       aria-labelledby="comparison-heading"
     >
-      {/* Background glows */}
-      <div className="absolute top-1/4 right-0 w-[600px] h-[600px] bg-[#36BFFA]/4 rounded-full blur-[170px] pointer-events-none" />
-      <div className="absolute bottom-1/4 left-0 w-[600px] h-[600px] bg-[#59D98E]/4 rounded-full blur-[170px] pointer-events-none" />
-
       <div className="max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
         
-        {/* Section Index Marker */}
-        <div className="flex items-center gap-2 mb-6 text-xs font-mono text-[#94A3B8]/60">
-          <span className="text-[#59D98E]">03</span>
-          <span>Compare View</span>
+        {/* Section 03 Index Marker */}
+        <div className="flex items-center gap-2 mb-6 text-xs font-mono text-[#94A3B8]/70">
+          <span className="text-[#59D98E] font-bold">03</span>
+          <span className="text-white/80 font-medium">Same Field More Context</span>
           <span>•</span>
-          <span>Same field, more context</span>
+          <span>One field. Two perspectives.</span>
         </div>
 
         {/* Section Header — Centered */}
-        <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+        <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-14">
           <Reveal delay={0.1} yOffset={16}>
             <h2
               id="comparison-heading"
-              className="font-space font-bold tracking-tight text-3xl sm:text-4xl lg:text-5xl xl:text-[56px] text-[#F8FAFC] leading-[1.08]"
+              className="font-space font-extrabold tracking-tight text-3xl sm:text-4xl lg:text-5xl text-[#F8FAFC]"
             >
               SAME FIELD. <span className="text-[#59D98E]">MORE CONTEXT.</span>
             </h2>
           </Reveal>
-          <Reveal delay={0.2} yOffset={18}>
-            <p className="mt-4 text-base sm:text-lg text-[#94A3B8] font-light leading-relaxed">
-              {FIELD_COMPARISON_CONTENT.supporting}
+          <Reveal delay={0.2} yOffset={14}>
+            <p className="mt-4 text-base text-[#94A3B8] font-normal leading-relaxed">
+              AgriLume combines what farmers already know with <span className="text-[#59D98E]">environmental evidence</span> that can be difficult to see from the ground alone.
             </p>
           </Reveal>
         </div>
 
-        {/* Interactive Split Comparison — Blueprint accurate */}
-        <Reveal delay={0.3} yOffset={20}>
+        {/* Split Screen Comparison Container */}
+        <div className="relative max-w-5xl mx-auto rounded-3xl overflow-hidden border border-white/15 bg-[#0B1220] shadow-[0_20px_60px_rgba(0,0,0,0.8)]">
+          
           <div
             ref={containerRef}
-            className="relative w-full h-[350px] sm:h-[450px] lg:h-[520px] rounded-2xl overflow-hidden border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.6)] cursor-col-resize"
+            onPointerDown={() => setIsDragging(true)}
+            onPointerUp={() => setIsDragging(false)}
             onPointerMove={handlePointerMove}
-            onPointerUp={handlePointerUp}
-            onPointerLeave={handlePointerUp}
-            role="slider"
-            aria-label="Comparison slider"
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={sliderPos}
-            tabIndex={0}
-            onKeyDown={handleKeyDown}
+            className="relative w-full aspect-[16/10] sm:aspect-[16/9] cursor-ew-resize overflow-hidden"
           >
-            {/* Full width: AgriLume satellite overlay view (RIGHT / base) */}
-            <Image
-              src="/images/agrilume-satellite-overlay.jpg"
-              alt="AgriLume satellite intelligence overlay of rice field"
-              fill
-              className="object-cover"
-            />
+            {/* UNDER LAYER: What AgriLume Sees (Full width under) */}
+            <div className="absolute inset-0">
+              <Image
+                src="/images/agrilume-satellite-overlay.jpg"
+                alt="AgriLume satellite false color spectral overlay of agricultural field"
+                fill
+                className="object-cover"
+                priority
+              />
+              <div className="absolute inset-0 bg-[#050A12]/30" />
 
-            {/* Clipped left: Farmer's natural view */}
+              {/* Top Right Label: WHAT AGRILUME SEES */}
+              <div className="absolute top-4 right-4 z-10 px-4 py-2 rounded-full bg-[#050A12]/85 backdrop-blur-md border border-[#59D98E]/50 flex items-center gap-2 text-xs font-mono text-[#59D98E] font-bold shadow-lg">
+                <Layers className="w-4 h-4" />
+                <span>WHAT AGRILUME SEES</span>
+              </div>
+
+              {/* Scientific Annotation Badges (Right side) */}
+              <div className="absolute top-[22%] right-[12%] px-3 py-1.5 rounded-lg bg-[#050A12]/90 backdrop-blur-md border border-[#36BFFA]/40 text-[10px] font-mono shadow-md">
+                <span className="text-[#36BFFA] font-bold block">Rainfall context</span>
+                <span className="text-[#94A3B8]">Regional patterns</span>
+              </div>
+
+              <div className="absolute top-[35%] right-[25%] px-3 py-1.5 rounded-lg bg-[#050A12]/90 backdrop-blur-md border border-[#D7A86E]/40 text-[10px] font-mono shadow-md">
+                <span className="text-[#D7A86E] font-bold block">Temperature trend</span>
+                <span className="text-[#94A3B8]">Climate context</span>
+              </div>
+
+              <div className="absolute top-[52%] right-[8%] px-3 py-1.5 rounded-lg bg-[#050A12]/90 backdrop-blur-md border border-[#59D98E]/40 text-[10px] font-mono shadow-md">
+                <span className="text-[#59D98E] font-bold block">Seasonal pattern</span>
+                <span className="text-[#94A3B8]">Crop calendar context</span>
+              </div>
+
+              <div className="absolute bottom-[24%] right-[22%] px-3 py-1.5 rounded-lg bg-[#050A12]/90 backdrop-blur-md border border-[#36BFFA]/40 text-[10px] font-mono shadow-md">
+                <span className="text-[#36BFFA] font-bold block">Field history</span>
+                <span className="text-[#94A3B8]">Past conditions</span>
+              </div>
+
+              <div className="absolute bottom-[8%] right-[6%] px-3 py-1.5 rounded-lg bg-[#050A12]/90 backdrop-blur-md border border-white/20 text-[10px] font-mono shadow-md">
+                <span className="text-white font-bold block">Limitations</span>
+                <span className="text-[#94A3B8]">Uncertainty and assumptions</span>
+              </div>
+            </div>
+
+            {/* TOP LAYER: What The Farmer Sees (Clipped by slider position) */}
             <div
               className="absolute inset-0 overflow-hidden"
               style={{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)` }}
             >
               <Image
                 src="/images/farmer-field-sunset.jpg"
-                alt="Farmer's natural view of rice field"
+                alt="Natural ground eye-level perspective of green rice crop"
                 fill
                 className="object-cover"
+                priority
               />
-            </div>
+              <div className="absolute inset-0 bg-[#050A12]/20" />
 
-            {/* Left Label: WHAT THE FARMER SEES */}
-            <div className="absolute top-4 sm:top-6 left-4 sm:left-6 z-20">
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#050A12]/85 backdrop-blur-md border border-white/15">
-                <Eye className="w-3.5 h-3.5 text-[#D7A86E]" />
-                <span className="text-[10px] sm:text-xs font-mono font-bold text-[#F8FAFC] uppercase tracking-wider">
-                  WHAT THE FARMER SEES
-                </span>
+              {/* Top Left Label: WHAT THE FARMER SEES */}
+              <div className="absolute top-4 left-4 z-10 px-4 py-2 rounded-full bg-[#050A12]/85 backdrop-blur-md border border-[#36BFFA]/50 flex items-center gap-2 text-xs font-mono text-[#36BFFA] font-bold shadow-lg">
+                <Eye className="w-4 h-4" />
+                <span>WHAT THE FARMER SEES</span>
+              </div>
+
+              {/* Farmer Observation Badges (Left side) */}
+              <div className="absolute top-[28%] left-[16%] px-3 py-1.5 rounded-lg bg-[#050A12]/90 backdrop-blur-md border border-white/20 text-[10px] font-mono shadow-md">
+                <span className="text-white font-bold block">Sky</span>
+                <span className="text-[#94A3B8]">Weather conditions</span>
+              </div>
+
+              <div className="absolute top-[48%] left-[10%] px-3 py-1.5 rounded-lg bg-[#050A12]/90 backdrop-blur-md border border-white/20 text-[10px] font-mono shadow-md">
+                <span className="text-white font-bold block">Field condition</span>
+                <span className="text-[#94A3B8]">What I can see</span>
+              </div>
+
+              <div className="absolute bottom-[16%] left-[22%] px-3 py-1.5 rounded-lg bg-[#050A12]/90 backdrop-blur-md border border-white/20 text-[10px] font-mono shadow-md">
+                <span className="text-[#59D98E] font-bold block">Visible crop signals</span>
+                <span className="text-[#94A3B8]">Plant health and growth</span>
               </div>
             </div>
 
-            {/* Right Label: WHAT AGRILUME SEES */}
-            <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-20">
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#050A12]/85 backdrop-blur-md border border-[#59D98E]/30">
-                <Layers className="w-3.5 h-3.5 text-[#59D98E]" />
-                <span className="text-[10px] sm:text-xs font-mono font-bold text-[#F8FAFC] uppercase tracking-wider">
-                  WHAT AGRILUME SEES
-                </span>
-              </div>
-            </div>
-
-            {/* Farmer view tags (left side) */}
-            <div className="absolute bottom-6 left-4 sm:left-6 z-20 flex flex-wrap gap-1.5" style={{ maxWidth: `${sliderPos - 5}%` }}>
-              {["Sky", "Field condition", "Visible crop signals"].map((tag) => (
-                <span key={tag} className="px-2 py-1 rounded bg-[#050A12]/80 backdrop-blur-sm border border-white/15 text-[9px] font-mono text-[#F8FAFC]/90">
-                  {tag}
-                </span>
-              ))}
-            </div>
-
-            {/* AgriLume view tags (right side) */}
-            <div className="absolute bottom-6 right-4 sm:right-6 z-20 flex flex-wrap gap-1.5 justify-end" style={{ maxWidth: `${95 - sliderPos}%` }}>
-              {["Rainfall context", "Temperature trend", "Seasonal pattern", "Field history", "Evidence source", "Limitations"].map((tag) => (
-                <span key={tag} className="px-2 py-1 rounded bg-[#050A12]/80 backdrop-blur-sm border border-[#59D98E]/25 text-[9px] font-mono text-[#59D98E]">
-                  {tag}
-                </span>
-              ))}
-            </div>
-
-            {/* Slider Divider Line */}
+            {/* Slider Divider Line & Draggable Handle */}
             <div
-              className="absolute top-0 bottom-0 w-0.5 bg-white/80 z-30 pointer-events-none"
+              className="absolute top-0 bottom-0 w-0.5 bg-white z-30 pointer-events-none"
               style={{ left: `${sliderPos}%` }}
-            />
-
-            {/* Slider Handle */}
-            <div
-              className="absolute top-1/2 -translate-y-1/2 z-40 cursor-col-resize"
-              style={{ left: `${sliderPos}%`, transform: `translateX(-50%) translateY(-50%)` }}
-              onPointerDown={handlePointerDown}
             >
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#050A12]/90 border-2 border-white/60 flex items-center justify-center shadow-[0_4px_20px_rgba(0,0,0,0.8)] backdrop-blur-md hover:border-[#59D98E] transition-colors">
-                <ArrowLeftRight className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-              </div>
-            </div>
-
-            {/* DRAG TO REVEAL instruction */}
-            <div className="absolute bottom-1/2 left-1/2 -translate-x-1/2 translate-y-8 z-20 pointer-events-none">
-              <div className="px-3 py-1 rounded-full bg-[#050A12]/80 backdrop-blur-sm border border-white/10 text-[9px] font-mono text-[#94A3B8] uppercase tracking-wider animate-pulse">
-                Drag to reveal
+              <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-9 h-9 rounded-full bg-[#050A12] border-2 border-white shadow-[0_0_16px_rgba(255,255,255,0.7)] flex items-center justify-center pointer-events-auto">
+                <ArrowLeftRight className="w-4 h-4 text-white" />
               </div>
             </div>
           </div>
-        </Reveal>
+        </div>
       </div>
     </section>
   );
