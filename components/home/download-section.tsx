@@ -3,17 +3,17 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Download, ArrowRight, QrCode, Smartphone, Feather, MapPin, Globe2, RefreshCw } from "lucide-react";
+import { Download, ArrowRight, QrCode, Smartphone, Feather, MapPin, Globe2, RefreshCw, Mic } from "lucide-react";
 import { DOWNLOAD_CONTENT } from "@/lib/constants";
 import { APP_DOWNLOAD_CONFIG } from "@/lib/downloads";
 import { Reveal } from "../motion/reveal";
 
 export function DownloadSection() {
   const specs = [
-    { icon: <Feather className="w-4 h-4 text-[#36BFFA]" />, label: "Lightweight", desc: "Works on common devices" },
-    { icon: <MapPin className="w-4 h-4 text-[#59D98E]" />, label: "Field-ready", desc: "Designed for real use" },
-    { icon: <Globe2 className="w-4 h-4 text-[#D7A86E]" />, label: "Multi-language", desc: "Supports local languages" },
-    { icon: <RefreshCw className="w-4 h-4 text-[#36BFFA]" />, label: "Regular updates", desc: "Improving with feedback" },
+    { icon: <Mic className="w-4 h-4 text-[#36BFFA]" />, label: "Voice-First & Audio", desc: "Speak & listen • No reading needed" },
+    { icon: <Globe2 className="w-4 h-4 text-[#59D98E]" />, label: "100+ World Languages", desc: "Local dialects & native speech" },
+    { icon: <Feather className="w-4 h-4 text-[#D7A86E]" />, label: "Lightweight & Low RAM", desc: "Runs on budget Android phones" },
+    { icon: <MapPin className="w-4 h-4 text-[#59D98E]" />, label: "Zero-Literacy Design", desc: "Built for grassroots farmers" },
   ];
 
   return (

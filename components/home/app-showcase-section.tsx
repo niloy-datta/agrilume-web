@@ -17,6 +17,9 @@ import {
   Layers,
   ArrowRight,
   Zap,
+  Mic,
+  Volume2,
+  Globe2,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Reveal } from "../motion/reveal";
@@ -126,6 +129,14 @@ const APP_SCREENS: AppScreen[] = [
     description: "Every advice card is backed by International Rice Research Institute (IRRI) crop pathology standards — preventing toxic over-fertilization and prescribing timed fungicide cycles.",
     callouts: [
       {
+        title: "🔊 “শুনুন” ভয়েস রিড-আউট",
+        desc: "পড়তে না পারা কৃষকদের মুখে বাংলায় চিকিৎসা পড়ে শোনায়",
+        badge: "অডিও অ্যাসিস্ট্যান্ট",
+        side: "right",
+        topOffset: "12%",
+        accent: "#59D98E",
+      },
+      {
         title: "IRRI Research Backed",
         desc: "Certified agronomic scientific solutions",
         badge: "🏛️ IRRI Verified",
@@ -138,7 +149,7 @@ const APP_SCREENS: AppScreen[] = [
         desc: "অতিরিক্ত নাইট্রোজেন সার আপাতত বন্ধ রাখুন",
         badge: "🛑 Step 1 Action",
         side: "right",
-        topOffset: "38%",
+        topOffset: "40%",
         accent: "#EF4444",
       },
     ],
@@ -316,6 +327,47 @@ export function AppShowcaseSection() {
             <p className="mt-4 text-base sm:text-lg text-[#CBD5E1] font-normal leading-relaxed max-w-2xl">
               From satellite multispectral NDVI to in-field camera diagnostics and IRRI recovery schedules — built to give farmers immediate certainty.
             </p>
+          </Reveal>
+        </div>
+
+        {/* VOICE-FIRST & GLOBAL LANGUAGE ACCESSIBILITY HIGHLIGHT BANNER */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+          <Reveal delay={0.25} yOffset={14}>
+            <div className="flex items-start gap-4 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#0B1E2E]/80 to-[#071322]/80 backdrop-blur-md border border-[#36BFFA]/30 shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+              <div className="w-12 h-12 rounded-xl bg-[#36BFFA]/15 border border-[#36BFFA]/40 flex items-center justify-center shrink-0">
+                <Mic className="w-6 h-6 text-[#36BFFA] animate-pulse" />
+              </div>
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-sm font-bold text-white tracking-tight">ভয়েস কন্ট্রোল ও অডিও প্লেব্যাক (Voice-First)</span>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#36BFFA]/20 border border-[#36BFFA]/40 text-[#36BFFA] font-bold">
+                    জিরো-লিটারেসি ব্যারিয়ার
+                  </span>
+                </div>
+                <p className="text-xs text-[#CBD5E1] mt-1.5 leading-relaxed font-light">
+                  পড়তে না পারা প্রান্তিক কৃষকদের জন্য প্রতিটি পেজে <strong className="text-[#59D98E]">“🔊 শুনুন / Listen”</strong> অডিও বাটন ও ভয়েস কন্ট্রোল যুক্ত। মুখে বাংলায় প্রশ্ন করলে অ্যাপ কথ্য আঞ্চলিক ভাষায় সরাসরি উত্তর ও চিকিৎসা বলে দেয়।
+                </p>
+              </div>
+            </div>
+          </Reveal>
+
+          <Reveal delay={0.3} yOffset={14}>
+            <div className="flex items-start gap-4 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#0B2018]/80 to-[#061410]/80 backdrop-blur-md border border-[#59D98E]/30 shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+              <div className="w-12 h-12 rounded-xl bg-[#59D98E]/15 border border-[#59D98E]/40 flex items-center justify-center shrink-0">
+                <Globe2 className="w-6 h-6 text-[#59D98E]" />
+              </div>
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-sm font-bold text-white tracking-tight">বিশ্বের ১০০+ ভাষা ও আঞ্চলিক উপভাষা (Global & Dialect)</span>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#59D98E]/20 border border-[#59D98E]/40 text-[#59D98E] font-bold">
+                    100+ Languages
+                  </span>
+                </div>
+                <p className="text-xs text-[#CBD5E1] mt-1.5 leading-relaxed font-light">
+                  কিশোরগঞ্জ, ময়মনসিংহ, সিলেট বা চট্টগ্রামের গ্রামীণ উপভাষা থেকে শুরু করে ইংরেজি, হিন্দি, স্প্যানিশসহ বিশ্বের প্রধান সকল ভাষায় স্বয়ংক্রিয় রিয়েল-টাইম অনুবাদ ও কথ্য স্পিচ ইঞ্জিন।
+                </p>
+              </div>
+            </div>
           </Reveal>
         </div>
 

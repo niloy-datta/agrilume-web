@@ -49,8 +49,8 @@ export function HowItWorksSection() {
     {
       num: "04",
       title: "Act",
-      subtitle: "Practical guidance in the AgriLume app for field use.",
-      badge: "Field Impact",
+      subtitle: "Voice-first guidance in 100+ languages & local dialects — no reading required.",
+      badge: "Voice & Field Action",
       badgeColor: "#59D98E",
       graphic: (
         <div className="relative w-20 h-20 rounded-2xl bg-gradient-to-br from-[#0B2018] to-[#050A12] border border-[#59D98E]/50 flex items-center justify-center shadow-[0_0_25px_rgba(89,217,142,0.35)]">
