@@ -1,0 +1,9 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    {
+      "source": "/agrilume-farming-game.html",
+      "destination": "/agrilume-farming-game"
+    }
+  ]
+}
