@@ -1,7 +1,11 @@
 "use client";
 
 import { motion, useReducedMotion, type HTMLMotionProps } from "framer-motion";
-import React, { useEffect, useState } from "react";
+import React, { useSyncExternalStore } from "react";
+
+// true on the client after hydration, false while server-rendering/hydrating (no setState-in-effect needed)
+const subscribeNoop = () => () => {};
+const useMounted = () => useSyncExternalStore(subscribeNoop, () => true, () => false);
 
 interface RevealProps extends HTMLMotionProps<"div"> {
   children: React.ReactNode;
@@ -19,12 +23,9 @@ export function Reveal({
   className = "",
   ...props
 }: RevealProps) {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useMounted();
   const shouldReduceMotion = useReducedMotion();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   if (!mounted || shouldReduceMotion) {
     return <div className={className}>{children}</div>;
@@ -62,12 +63,9 @@ export function StaggerContainer({
   className = "",
   ...props
 }: StaggerContainerProps) {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useMounted();
   const shouldReduceMotion = useReducedMotion();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   if (!mounted || shouldReduceMotion) {
     return <div className={className}>{children}</div>;
@@ -109,12 +107,9 @@ export function StaggerItem({
   duration = 0.85,
   ...props
 }: StaggerItemProps) {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useMounted();
   const shouldReduceMotion = useReducedMotion();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   if (!mounted || shouldReduceMotion) {
     return <div className={className}>{children}</div>;

@@ -9,10 +9,10 @@
   --color-warm-earth: #d7a86e;
   --color-primary-text: #f8fafc;
   --color-muted-text: #94a3b8;
-  --color-warning: #f5c451;
+  --color-warning: #ffb8a0;
 
-  --font-space: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-space: var(--font-space-grotesk), var(--font-bengali), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), var(--font-bengali), ui-sans-serif, system-ui, sans-serif;
 }
 
 :root {
@@ -23,7 +23,7 @@
 body {
   background-color: #050a12;
   color: #f8fafc;
-  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-inter), var(--font-bengali), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -31,11 +31,11 @@ body {
 
 /* Custom Editorial Typography Classes */
 .font-space {
-  font-family: var(--font-space-grotesk), sans-serif;
+  font-family: var(--font-space-grotesk), var(--font-bengali), sans-serif;
 }
 
 .font-body {
-  font-family: var(--font-inter), sans-serif;
+  font-family: var(--font-inter), var(--font-bengali), sans-serif;
 }
 
 /* Subtle background telemetry grid */

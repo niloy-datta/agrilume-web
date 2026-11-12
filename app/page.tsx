@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Navbar } from "@/components/layout/navbar";
 import { HeroSection } from "@/components/home/hero-section";
+import { TimeTravelSection } from "@/components/home/time-travel-section";
 import { ScrollTransitionSection } from "@/components/home/scroll-transition-section";
 import { FarmerProblemSection } from "@/components/home/farmer-problem-section";
 import { FieldComparisonSection } from "@/components/home/field-comparison-section";
@@ -21,6 +22,9 @@ export default function Home() {
       <main className="flex-1 w-full flex flex-col">
         {/* 01: Full-Screen Cinematic Hero */}
         <HeroSection />
+
+        {/* 01b: AgriLume Time Travel — 3D / VR simulator teaser */}
+        <TimeTravelSection />
 
         {/* Scroll Transition into Human Problem */}
         <ScrollTransitionSection />
@@ -79,11 +83,16 @@ export default function Home() {
             </div>
 
             {/* Nav Links */}
-            <div className="flex items-center gap-6 sm:gap-8 text-xs font-medium text-[#94A3B8]">
+            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 sm:gap-x-8 text-xs font-medium text-[#94A3B8]">
               <Link href="#mission" className="hover:text-white transition-colors">Mission</Link>
               <Link href="#how-it-works" className="hover:text-white transition-colors">How It Works</Link>
               <Link href="#science" className="hover:text-white transition-colors">Science</Link>
               <Link href="#app" className="hover:text-white transition-colors">App</Link>
+              <Link href="/time-travel" className="hover:text-white transition-colors">Time Travel</Link>
+              <Link href="/agrilume-farming-game.html" className="hover:text-white transition-colors">Agrilume Farming Game</Link>
+              <Link href="/nasa-data" className="hover:text-white transition-colors">NASA data</Link>
+              <Link href="/bangladesh-agriculture" className="hover:text-white transition-colors">Gov resources</Link>
+              <Link href="/recycling" className="hover:text-white transition-colors">Recycling</Link>
             </div>
 
             {/* Social Icons */}

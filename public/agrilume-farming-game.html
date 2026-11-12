@@ -1,0 +1,1914 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agrilume Farming Game</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js for 3D Agricultural Simulation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter & Hind Siliguri for crisp Bangla typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Hind Siliguri', 'Inter', sans-serif;
+            overflow: hidden;
+            user-select: none;
+            background-color: #0f172a;
+        }
+        .font-inter { font-family: 'Inter', sans-serif; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.4); }
+        ::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.5); border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(16, 185, 129, 0.8); }
+
+        /* Glassmorphism Panels */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.84);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.72);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Tool Button Glow */
+        .tool-btn {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .tool-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px -4px rgba(16, 185, 129, 0.35);
+        }
+        .tool-btn.active {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            border-color: #6ee7b7;
+            color: #ffffff;
+            box-shadow: 0 0 18px rgba(16, 185, 129, 0.5);
+        }
+
+        /* Pulse animation for voice mic */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.85); opacity: 0.8; }
+            70% { transform: scale(1.3); opacity: 0; }
+            100% { transform: scale(1.3); opacity: 0; }
+        }
+        .mic-listening::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 9999px;
+            border: 2px solid #ef4444;
+            animation: pulse-ring 1.5s infinite;
+        }
+    </style>
+</head>
+<body class="text-slate-100 h-screen w-screen relative overflow-hidden">
+
+    <!-- 3D WebGL Canvas Container -->
+    <div id="canvas-container" class="absolute inset-0 w-full h-full z-0"></div>
+
+    <!-- Lightweight 2D Data/Fallback View (For Low-End Devices / QA Reproducibility) -->
+    <div id="fallback-2d-view" class="hidden absolute inset-0 z-10 bg-slate-900 overflow-y-auto pt-20 pb-28 px-4 md:px-8">
+        <div class="max-w-5xl mx-auto space-y-6">
+            <div class="bg-emerald-950/70 border border-emerald-500/30 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                    <span class="px-2.5 py-1 bg-emerald-500/20 text-emerald-300 text-xs font-semibold rounded-full border border-emerald-500/30">2D Low-Bandwidth & Accessibility Mode</span>
+                    <h2 class="text-xl font-bold text-white mt-2" data-bn="২ডি তথ্য ও বিকল্প কৃষি সিমুলেশন ভিউ" data-en="2D Data & Fallback Agricultural Simulation View">২ডি তথ্য ও বিকল্প কৃষি সিমুলেশন ভিউ</h2>
+                    <p class="text-sm text-slate-300" data-bn="দুর্বল ইন্টারনেট বা সাধারণ ডিভাইসের জন্য ৩ডি গ্রাফিক্স ছাড়াই সম্পূর্ণ বৈজ্ঞানিক বিশ্লেষণ ও চাষাবাদ সিমুলেশন।" data-en="Full scientific analysis and farming simulation without 3D WebGL overhead for low-end devices.">দুর্বল ইন্টারনেট বা সাধারণ ডিভাইসের জন্য ৩ডি গ্রাফিক্স ছাড়াই সম্পূর্ণ বৈজ্ঞানিক বিশ্লেষণ ও চাষাবাদ সিমুলেশন।</p>
+                </div>
+                <button onclick="toggle2DMode()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-semibold text-sm shadow-lg transition flex items-center gap-2 shrink-0">
+                    <i class="fa-solid fa-cube"></i> <span data-bn="৩ডি ভিউতে ফিরুন" data-en="Switch to 3D VR View">৩ডি ভিউতে ফিরুন</span>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="fallback-2d-cards">
+                <!-- Populated dynamically by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Onboarding Modal (Rahim's Journey & Role Setup) -->
+    <div id="onboarding-modal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-panel max-w-2xl w-full rounded-3xl p-6 md:p-8 shadow-2xl border border-emerald-500/30 relative overflow-hidden">
+            <div class="absolute -top-24 -right-24 w-48 h-48 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-white text-xl shadow-lg">
+                        <i class="fa-solid fa-seedling"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-inter uppercase tracking-wider text-emerald-400 font-semibold">NASA Earthdata + BD Agritech</span>
+                        <h1 class="text-lg font-bold text-white leading-tight">Agrilume Farming Game</h1>
+                    </div>
+                </div>
+                <button onclick="toggleLanguage()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-xs font-semibold text-emerald-300 transition">
+                    <i class="fa-solid fa-language mr-1"></i> <span id="onboard-lang-btn">English</span>
+                </button>
+            </div>
+
+            <div class="my-5">
+                <h2 class="text-2xl md:text-3xl font-bold text-white mb-2" data-bn="এগ্রিলিউম ফার্মিং গেমে স্বাগতম" data-en="Welcome to Agrilume Farming Game">এগ্রিলিউম ফার্মিং গেমে স্বাগতম</h2>
+                <p class="text-emerald-300 font-medium text-base md:text-lg mb-3" data-bn="আপনার জমি, আপনার ফসল, আপনার ভবিষ্যৎ।" data-en="Explore your land. Simulate your crops. Prepare for the future.">আপনার জমি, আপনার ফসল, আপনার ভবিষ্যৎ।</p>
+                <p class="text-slate-300 text-sm leading-relaxed" data-bn="NASA স্যাটেলাইট ডেটা (GPM, SMAP, GLDAS, Landsat) এবং বাংলাদেশের BARC, SRDI ও BRRI-এর বৈজ্ঞানিক তথ্যের সমন্বয়ে ২০২৬ থেকে ২০৫৬ সাল পর্যন্ত আপনার জমির ফসল, মাটির স্বাস্থ্য, সার-সেচ ও জলবায়ু ঝুঁকি পরীক্ষা করুন।" data-en="Combine NASA satellite datasets (GPM, SMAP, GLDAS, Landsat) with Bangladesh's BARC, SRDI & BRRI scientific models to test crops, soil health, fertilizer, irrigation, and climate risks from 2026 to 2056.">
+                    NASA স্যাটেলাইট ডেটা (GPM, SMAP, GLDAS, Landsat) এবং বাংলাদেশের BARC, SRDI ও BRRI-এর বৈজ্ঞানিক তথ্যের সমন্বয়ে ২০২৬ থেকে ২০৫৬ সাল পর্যন্ত আপনার জমির ফসল, মাটির স্বাস্থ্য, সার-সেচ ও জলবায়ু ঝুঁকি পরীক্ষা করুন।
+                </p>
+            </div>
+
+            <!-- Quick Farmer Profile Preset (Rahim's Sunamganj Journey) -->
+            <div class="glass-card rounded-2xl p-4 mb-6 space-y-3">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-amber-300"><i class="fa-solid fa-user-check mr-1.5"></i><span data-bn="কৃষক প্রোফাইল ও জমি নির্বাচন" data-en="Farmer Profile & Farm Setup">কৃষক প্রোফাইল ও জমি নির্বাচন</span></span>
+                    <span class="text-[11px] text-slate-400" data-bn="উদাহরণ: রহিমের সুনামগঞ্জ হাওর জমি" data-en="Preset: Rahim's Sunamganj Farm">উদাহরণ: রহিমের সুনামগঞ্জ হাওর জমি</span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1" data-bn="কৃষকের নাম" data-en="Farmer Name">কৃষকের নাম</label>
+                        <input id="farmer-name-input" type="text" value="রহিম মিয়া (Rahim)" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1" data-bn="জেলা" data-en="District">জেলা</label>
+                        <select id="onboard-region-select" onchange="syncRegionFromOnboard(this.value)" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500">
+                            <option value="sunamganj">সুনামগঞ্জ (Sunamganj)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1" data-bn="জমির আয়তন (একর)" data-en="Farm Area (Acres)">জমির আয়তন (একর)</label>
+                        <input id="onboard-area-input" type="number" step="0.1" min="0.1" max="50" value="2.0" onchange="syncAreaFromOnboard(this.value)" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scientific Integrity Notice -->
+            <div class="bg-amber-950/50 border border-amber-500/30 rounded-xl p-3 mb-6 flex items-start gap-3">
+                <i class="fa-solid fa-triangle-exclamation text-amber-400 mt-0.5"></i>
+                <p class="text-xs text-amber-200/90 leading-relaxed" data-bn="জলবায়ু দৃশ্য: সিমুলেশন। ফলন, সার ও আয়-ব্যয় গেমের উদাহরণ; বাস্তব সার-পরামর্শের জন্য SRDI-তে মাটি পরীক্ষা করুন।" data-en="Climate scenes are simulations. Yields, fertilizer and finances are game examples; consult SRDI soil testing for real fertilizer recommendations.">
+                    জলবায়ু দৃশ্য: সিমুলেশন। ফলন, সার ও আয়-ব্যয় গেমের উদাহরণ; বাস্তব সার-পরামর্শের জন্য SRDI-তে মাটি পরীক্ষা করুন।
+                </p>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <button onclick="openProvenanceModal()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium border border-slate-600 transition flex items-center gap-2">
+                    <i class="fa-solid fa-satellite text-sky-400"></i> <span data-bn="NASA ডেটা ও উৎস দেখুন" data-en="Inspect NASA Data & Sources">NASA ডেটা ও উৎস দেখুন</span>
+                </button>
+                <button onclick="startSimulation()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-sm md:text-base shadow-lg shadow-emerald-900/50 transition flex items-center gap-2">
+                    <i class="fa-solid fa-play"></i> <span data-bn="ভার্চুয়াল চাষাবাদ শুরু করুন" data-en="Start Virtual Farming">ভার্চুয়াল চাষাবাদ শুরু করুন</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOP NAVIGATION & HUD BAR -->
+    <header class="fixed top-0 left-0 right-0 z-30 p-3 pointer-events-none">
+        <div class="max-w-[1600px] mx-auto flex flex-wrap items-center justify-between gap-2">
+            <!-- Brand & Farmer Info -->
+            <div class="glass-panel rounded-2xl px-3.5 py-2 flex items-center gap-3 pointer-events-auto shadow-lg">
+                <div class="w-9 h-9 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-bold shadow-inner">
+                    <i class="fa-solid fa-wheat-awn"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="font-bold text-sm md:text-base text-white leading-none">এগ্রিলিউম ফার্মিং গেম</h1>
+                        <span class="px-1.5 py-0.5 text-[10px] font-inter font-semibold bg-sky-500/20 text-sky-300 border border-sky-500/30 rounded">NASA DATA</span>
+                    </div>
+                    <p class="text-[11px] text-slate-300 mt-0.5" id="hud-farmer-summary">রহিম মিয়া • সুনামগঞ্জ (২.০ একর)</p>
+                </div>
+            </div>
+
+            <!-- Region & Crop Quick Selectors -->
+            <div class="glass-panel rounded-2xl px-3 py-1.5 flex flex-wrap items-center gap-2 pointer-events-auto shadow-lg">
+                <div class="flex items-center gap-1.5">
+                    <i class="fa-solid fa-location-dot text-emerald-400 text-xs"></i>
+                    <select id="region-select" aria-label="Bangladesh district" onchange="changeRegion(this.value)" class="bg-slate-800/90 border border-slate-600/80 rounded-lg px-2.5 py-1 text-xs font-medium text-white focus:outline-none focus:border-emerald-400">
+                        <option value="sunamganj">সুনামগঞ্জ (Sunamganj)</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center gap-1.5">
+                    <i class="fa-solid fa-seedling text-amber-400 text-xs"></i>
+                    <select id="crop-select" onchange="changeCrop(this.value)" class="bg-slate-800/90 border border-slate-600/80 rounded-lg px-2.5 py-1 text-xs font-medium text-white focus:outline-none focus:border-emerald-400">
+                        <option value="aman_brri49">রোপা আমন - ব্রি ধান৪৯ (Aman BRRI dhan49)</option>
+                        <option value="boro_brri29">বোরো ধান - ব্রি ধান২৯ (Boro BRRI dhan29)</option>
+                        <option value="saline_brri67">লবণসহিষ্ণু ধান - ব্রি ধান৬৭ (Salt-Tolerant BRRI dhan67)</option>
+                        <option value="wheat_bari33">গম - বারি গম ৩৩ (Wheat BARI Gom 33)</option>
+                        <option value="potato_diamant">আলু - ডায়মন্ড (Potato Diamant)</option>
+                        <option value="aus_boro">আউশ ধান (Aus rice)</option>
+                        <option value="maize_bari">ভুট্টা (Maize)</option>
+                    </select>
+                </div>
+
+                <!-- 3D Soil Cross-Section Toggle -->
+                <button id="soil-cutaway-btn" onclick="toggleSoilCrossSection()" class="px-2.5 py-1 rounded-lg bg-amber-600/20 hover:bg-amber-600/40 border border-amber-500/40 text-amber-200 text-xs font-semibold transition flex items-center gap-1.5" title="Inspect 3D Soil Layers & Roots">
+                    <i class="fa-solid fa-layer-group"></i> <span data-bn="মাটির স্তর (3D)" data-en="Soil Layers (3D)">মাটির স্তর (3D)</span>
+                </button>
+            </div>
+
+            <!-- Action Controls: NASA Data, 2D Fallback, Language -->
+            <div class="glass-panel rounded-2xl px-2.5 py-1.5 flex items-center gap-1.5 pointer-events-auto shadow-lg">
+                <button onclick="openSignControl()" class="px-2.5 py-1.5 rounded-xl bg-violet-600/25 hover:bg-violet-600/40 border border-violet-500/40 text-violet-200 text-xs font-semibold transition flex items-center gap-1.5" aria-label="Open camera hand controls" title="Camera hand controls · not BdSL translation">
+                    <span aria-hidden="true">✋</span><span class="hidden sm:inline" data-bn="হাতের ভঙ্গি" data-en="Hand controls">হাতের ভঙ্গি</span>
+                </button>
+                <button onclick="openProvenanceModal()" class="px-2.5 py-1.5 rounded-xl bg-sky-600/25 hover:bg-sky-600/40 border border-sky-500/40 text-sky-200 text-xs font-semibold transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-satellite-dish"></i> <span class="hidden sm:inline" data-bn="NASA ডেটা" data-en="NASA Data">NASA ডেটা</span>
+                </button>
+                <button onclick="toggle2DMode()" id="toggle-2d-btn" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-200 text-xs font-semibold transition flex items-center gap-1.5" title="Toggle 2D Fallback View">
+                    <i class="fa-solid fa-table-columns"></i> <span class="hidden md:inline">2D/3D</span>
+                </button>
+                <button onclick="toggleLanguage()" class="px-2.5 py-1.5 rounded-xl bg-emerald-600/25 hover:bg-emerald-600/40 border border-emerald-500/40 text-emerald-200 text-xs font-semibold transition">
+                    <span id="top-lang-btn">EN</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- LEFT FLOATING PANEL: 30-YEAR TIMELINE, NASA METRICS & DISASTER SIMULATOR -->
+    <aside class="fixed top-20 left-3 z-20 w-72 sm:w-80 max-h-[calc(100vh-175px)] overflow-y-auto glass-panel rounded-2xl p-3.5 shadow-2xl space-y-3.5 pointer-events-auto">
+        <!-- 30-Year Future Timeline (2026 - 2056) -->
+        <div class="glass-card rounded-xl p-3">
+            <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-bold text-emerald-300 flex items-center gap-1.5">
+                    <i class="fa-solid fa-calendar-days"></i> <span data-bn="৩০ বছরের জলবায়ু সময়রেখা" data-en="30-Year Climate Timeline">৩০ বছরের জলবায়ু সময়রেখা</span>
+                </span>
+                <span id="year-badge" class="px-2 py-0.5 rounded-md bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 font-inter font-bold text-xs">2026 (Baseline)</span>
+            </div>
+            <input id="year-slider" type="range" min="0" max="5" step="1" value="0" oninput="updateYearStep(this.value)" class="w-full accent-emerald-500 cursor-pointer h-1.5 bg-slate-700 rounded-lg">
+            <div class="flex justify-between text-[10px] font-inter text-slate-400 mt-1">
+                <span>2026</span><span>2029</span><span>2035</span><span>2040</span><span>2050</span><span>2056</span>
+            </div>
+
+            <!-- SSP Scenario Selector -->
+            <div class="mt-2.5">
+                <label class="block text-[11px] text-slate-300 mb-1" data-bn="জলবায়ু পরিস্থিতি (IPCC SSP Scenario):" data-en="Climate Scenario (IPCC SSP):">জলবায়ু পরিস্থিতি (IPCC SSP Scenario):</label>
+                <select id="ssp-select" onchange="recalculateSimulation()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-400">
+                    <option value="ssp126">SSP1-2.6: নিম্ন নির্গমন (Low Emissions)</option>
+                    <option value="ssp245" selected>SSP2-4.5: মাঝারি নির্গমন (Intermediate)</option>
+                    <option value="ssp585">SSP5-8.5: উচ্চ নির্গমন (High Emissions)</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- NASA Satellite Live/Projected Telemetry Card -->
+        <div class="glass-card rounded-xl p-3 space-y-2">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-sky-300 flex items-center gap-1.5">
+                    <i class="fa-solid fa-satellite"></i> <span data-bn="NASA আর্থ ডেটা সূচক" data-en="NASA Earthdata Metrics">NASA আর্থ ডেটা সূচক</span>
+                </span>
+                <span id="data-category-tag" class="text-[10px] px-1.5 py-0.5 rounded bg-sky-900/70 text-sky-300 border border-sky-500/30">Baseline Obs</span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 text-xs">
+                <div class="bg-slate-900/80 p-2 rounded-lg border border-slate-800">
+                    <div class="text-[10px] text-slate-400" data-bn="তাপমাত্রা (GLDAS)" data-en="Temp (GLDAS)">তাপমাত্রা (GLDAS)</div>
+                    <div id="metric-temp" class="font-inter font-bold text-amber-300 text-sm mt-0.5">29.4 °C</div>
+                </div>
+                <div class="bg-slate-900/80 p-2 rounded-lg border border-slate-800">
+                    <div class="text-[10px] text-slate-400" data-bn="বৃষ্টিপাত (GPM)" data-en="Rainfall (GPM)">বৃষ্টিপাত (GPM)</div>
+                    <div id="metric-rain" class="font-inter font-bold text-sky-300 text-sm mt-0.5">2,450 mm</div>
+                </div>
+                <div class="bg-slate-900/80 p-2 rounded-lg border border-slate-800">
+                    <div class="text-[10px] text-slate-400" data-bn="মাটির আর্দ্রতা (SMAP)" data-en="Soil Moisture (SMAP)">মাটির আর্দ্রতা (SMAP)</div>
+                    <div id="metric-moisture" class="font-inter font-bold text-emerald-300 text-sm mt-0.5">34% (0.25°)</div>
+                </div>
+                <div class="bg-slate-900/80 p-2 rounded-lg border border-slate-800">
+                    <div class="text-[10px] text-slate-400" data-bn="লবণাক্ততা / NDVI" data-en="Salinity / NDVI">লবণাক্ততা / NDVI</div>
+                    <div id="metric-salinity" class="font-inter font-bold text-rose-300 text-sm mt-0.5">1.2 dS/m</div>
+                </div>
+            </div>
+            <p class="text-[10px] text-slate-400 leading-tight" id="spatial-resolution-note">
+                * SMAP রেজল্যুশন ০.২৫° (~২৭ কিমি); খামার পর্যায়ের সঠিক তথ্যের জন্য SRDI মাটি পরীক্ষা প্রয়োজন।
+            </p>
+        </div>
+
+        <!-- Natural Disaster & Climate Stress Simulator -->
+        <div class="glass-card rounded-xl p-3 space-y-2">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-rose-300 flex items-center gap-1.5">
+                    <i class="fa-solid fa-cloud-showers-heavy"></i> <span data-bn="দুর্যোগ ও চাপ সিমুলেশন" data-en="Disaster Stress Simulator">দুর্যোগ ও চাপ সিমুলেশন</span>
+                </span>
+                <span class="text-[10px] text-slate-400" data-bn="শিক্ষামূলক মডেল" data-en="Educational Sim">শিক্ষামূলক মডেল</span>
+            </div>
+            <div class="grid grid-cols-2 gap-1.5">
+                <button onclick="setDisasterScenario('normal')" id="dis-normal" class="dis-btn px-2 py-1.5 rounded-lg text-xs font-medium bg-emerald-600/30 border border-emerald-500/50 text-emerald-200 transition">
+                    <i class="fa-solid fa-sun mr-1"></i><span data-bn="স্বাভাবিক" data-en="Normal">স্বাভাবিক</span>
+                </button>
+                <button onclick="setDisasterScenario('flood')" id="dis-flood" class="dis-btn px-2 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-sky-900/50 border border-slate-700 text-slate-200 transition">
+                    <i class="fa-solid fa-water mr-1 text-sky-400"></i><span data-bn="আকস্মিক বন্যা" data-en="Flash Flood">আকস্মিক বন্যা</span>
+                </button>
+                <button onclick="setDisasterScenario('drought')" id="dis-drought" class="dis-btn px-2 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-amber-900/50 border border-slate-700 text-slate-200 transition">
+                    <i class="fa-solid fa-fire-flame-curved mr-1 text-amber-400"></i><span data-bn="তীব্র খরা" data-en="Drought">তীব্র খরা</span>
+                </button>
+                <button onclick="setDisasterScenario('salinity')" id="dis-salinity" class="dis-btn px-2 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-rose-900/50 border border-slate-700 text-slate-200 transition">
+                    <i class="fa-solid fa-droplet-slash mr-1 text-rose-400"></i><span data-bn="লবণাক্ততা" data-en="Salinity">লবণাক্ততা</span>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- RIGHT FLOATING PANEL: AGRONOMIC CALCULATORS, AI ADVISOR & VOICE ASSISTANT -->
+    <aside class="fixed top-20 right-3 z-20 w-80 sm:w-96 max-h-[calc(100vh-175px)] overflow-y-auto glass-panel rounded-2xl p-3.5 shadow-2xl space-y-3 pointer-events-auto">
+        <!-- Tabs for Right Panel -->
+        <div class="grid grid-cols-3 gap-1 bg-slate-900/90 p-1 rounded-xl border border-slate-800 text-xs font-semibold">
+            <button onclick="switchRightTab('ai')" id="tab-ai" class="py-1.5 rounded-lg bg-emerald-600 text-white transition">
+                <i class="fa-solid fa-robot mr-1"></i><span data-bn="AI উপদেষ্টা" data-en="AI Advisor">AI উপদেষ্টা</span>
+            </button>
+            <button onclick="switchRightTab('calc')" id="tab-calc" class="py-1.5 rounded-lg text-slate-300 hover:text-white transition">
+                <i class="fa-solid fa-calculator mr-1"></i><span data-bn="সার ও সেচ" data-en="Fertilizer">সার ও সেচ</span>
+            </button>
+            <button onclick="switchRightTab('econ')" id="tab-econ" class="py-1.5 rounded-lg text-slate-300 hover:text-white transition">
+                <i class="fa-solid fa-coins mr-1"></i><span data-bn="আয়-ব্যয়" data-en="Economics">আয়-ব্যয়</span>
+            </button>
+        </div>
+
+        <!-- TAB 1: AI AGRICULTURAL ADVISOR & BANGLA VOICE COMMANDS -->
+        <div id="panel-ai" class="space-y-3">
+            <!-- Crop Suitability & Yield Forecast Box -->
+            <div class="glass-card rounded-xl p-3">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="text-xs font-bold text-emerald-300" data-bn="ফসল উপযোগিতা ও সম্ভাব্য ফলন" data-en="Crop Suitability & Yield Range">ফসল উপযোগিতা ও সম্ভাব্য ফলন</span>
+                    <span id="suitability-badge" class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">উপযোগী (High)</span>
+                </div>
+                <div class="flex items-baseline justify-between mt-2">
+                    <div>
+                        <div class="text-[11px] text-slate-400" data-bn="সম্ভাব্য ফলন (হেক্টর প্রতি)" data-en="Expected Yield Range">সম্ভাব্য ফলন (হেক্টর প্রতি)</div>
+                        <div id="yield-range-text" class="text-lg font-inter font-bold text-white">4.8 – 5.4 <span class="text-xs font-normal text-slate-300">tons/ha</span></div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-[11px] text-slate-400" data-bn="বৃদ্ধির ধাপ" data-en="Growth Stage">বৃদ্ধির ধাপ</div>
+                        <div id="growth-stage-label" class="text-xs font-bold text-amber-300">চারা রোপণ (Seedling)</div>
+                    </div>
+                </div>
+                <!-- Progress bar for crop growth -->
+                <div class="w-full bg-slate-800 h-2 rounded-full mt-2 overflow-hidden">
+                    <div id="growth-progress-bar" class="bg-gradient-to-r from-emerald-500 to-lime-400 h-full transition-all duration-500" style="width: 25%"></div>
+                </div>
+            </div>
+
+            <!-- AI Explanation Box -->
+            <div class="glass-card rounded-xl p-3 space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+                        <i class="fa-solid fa-comment-medical"></i> <span data-bn="বৈজ্ঞানিক পরামর্শ ও কারণ" data-en="Agronomic Reasoning">বৈজ্ঞানিক পরামর্শ ও কারণ</span>
+                    </span>
+                    <button onclick="speakCurrentAdvice()" class="text-xs text-emerald-300 hover:text-emerald-200 flex items-center gap-1" title="Listen in Bangla/English">
+                        <i class="fa-solid fa-volume-high"></i> <span data-bn="শুনুন" data-en="Listen">শুনুন</span>
+                    </button>
+                </div>
+                <p id="ai-advice-text" class="text-xs text-slate-200 leading-relaxed bg-slate-900/70 p-2.5 rounded-lg border border-slate-800">
+                    সুনামগঞ্জ হাওর অঞ্চলে ২০২৬ সালের ভিত্তি বছরে রোপা আমন (ব্রি ধান৪৯) চাষের জন্য অনুকূল আর্দ্রতা রয়েছে। তবে আগাম পাহাড়ি ঢল ও বন্যার ঝুঁকি এড়াতে সঠিক সময়ে চারা রোপণ এবং নিষ্কাশন নালা পরিষ্কার রাখা জরুরি।
+                </p>
+            </div>
+
+            <!-- Bangla & English Voice Command Console -->
+            <div class="glass-card rounded-xl p-3 space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-sky-300"><i class="fa-solid fa-microphone-lines mr-1"></i><span data-bn="বাংলা ভয়েস কমান্ড" data-en="Bangla Voice Assistant">বাংলা ভয়েস কমান্ড</span></span>
+                    <button id="voice-mic-btn" onclick="startVoiceRecognition()" class="relative px-2.5 py-1 rounded-full bg-rose-600 hover:bg-rose-500 text-white text-[11px] font-semibold flex items-center gap-1.5 transition">
+                        <i class="fa-solid fa-microphone"></i> <span id="mic-status-text" data-bn="কথা বলুন" data-en="Speak">কথা বলুন</span>
+                    </button>
+                </div>
+                <div class="flex flex-wrap gap-1.5">
+                    <button onclick="runPresetCommand('2029')" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[11px] text-slate-200 transition">"২০২৯ সালের ফসল দেখাও"</button>
+                    <button onclick="runPresetCommand('soil')" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[11px] text-slate-200 transition">"মাটির অবস্থা দেখাও"</button>
+                    <button onclick="runPresetCommand('flood')" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[11px] text-slate-200 transition">"বন্যার ঝুঁকি দেখাও"</button>
+                    <button onclick="runPresetCommand('fertilizer')" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[11px] text-slate-200 transition">"কতটুকু সার লাগবে?"</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: BARC FERTILIZER & IRRIGATION CALCULATOR -->
+        <div id="panel-calc" class="hidden space-y-3">
+            <div class="glass-card rounded-xl p-3 space-y-2.5">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-emerald-300" data-bn="গেমের সার ও সেচ হিসাব" data-en="Game fertilizer & irrigation estimates">গেমের সার ও সেচ হিসাব</span>
+                    <span class="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[10px] border border-amber-500/30" data-bn="সাময়িক হিসাব" data-en="Provisional">সাময়িক হিসাব</span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <div>
+                        <label class="text-[11px] text-slate-400" data-bn="জমির পরিমাণ" data-en="Farm Area">জমির পরিমাণ</label>
+                        <input id="calc-area" type="number" step="0.1" min="0.1" value="2.0" oninput="updateCalculators()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-white font-inter mt-0.5">
+                    </div>
+                    <div>
+                        <label class="text-[11px] text-slate-400" data-bn="একক (Unit)" data-en="Unit">একক (Unit)</label>
+                        <select id="calc-unit" onchange="updateCalculators()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-white mt-0.5">
+                            <option value="acre">একর (Acres)</option>
+                            <option value="hectare">হেক্টর (Hectares)</option>
+                            <option value="bigha">বিঘা (Bigha - 33 Dec)</option>
+                            <option value="decimal">শতাংশ (Decimals)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Fertilizer Breakdown Table -->
+                <div class="bg-slate-900/90 rounded-lg p-2.5 border border-slate-800 space-y-1.5 text-xs">
+                    <div class="flex justify-between text-slate-400 text-[11px] border-b border-slate-800 pb-1">
+                        <span data-bn="সারের নাম (BARC গাইড)" data-en="Fertilizer Product">সারের নাম (BARC গাইড)</span>
+                        <span data-bn="প্রয়োজনীয় মাত্রা (কেজি)" data-en="Required (kg)">প্রয়োজনীয় মাত্রা (কেজি)</span>
+                    </div>
+                    <div class="flex justify-between"><span class="text-slate-200">ইউরিয়া (Urea - 46% N)</span><span id="fert-urea" class="font-inter font-bold text-emerald-300">145 kg</span></div>
+                    <div class="flex justify-between"><span class="text-slate-200">টিএসপি (TSP - 20% P)</span><span id="fert-tsp" class="font-inter font-bold text-sky-300">68 kg</span></div>
+                    <div class="flex justify-between"><span class="text-slate-200">এমওপি (MoP - 50% K)</span><span id="fert-mop" class="font-inter font-bold text-amber-300">82 kg</span></div>
+                    <div class="flex justify-between"><span class="text-slate-200">জিপসাম ও জিংক (Gypsum/Zn)</span><span id="fert-gypsum" class="font-inter font-bold text-purple-300">45 kg</span></div>
+                </div>
+
+                <!-- Irrigation Requirement -->
+                <div class="bg-sky-950/50 border border-sky-500/30 rounded-lg p-2.5 text-xs">
+                    <div class="flex items-center justify-between font-semibold text-sky-300 mb-1">
+                        <span><i class="fa-solid fa-faucet-drip mr-1"></i><span data-bn="সেচ চাহিদা (FAO-56 / GLDAS)" data-en="Irrigation Demand">সেচ চাহিদা (FAO-56 / GLDAS)</span></span>
+                        <span id="irrigation-mm" class="font-inter">320 mm</span>
+                    </div>
+                    <p id="irrigation-advice" class="text-[11px] text-slate-300">ফুল আসা ও দানা গঠনের সময় জমিতে ২-৩ সেমি পানি ধরে রাখুন। AWD (পর্যায়ক্রমে ভেজানো ও শুকানো) পদ্ধতিতে ২৫% পানি সাশ্রয় সম্ভব।</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: FARM ECONOMICS & STRATEGY COMPARISON -->
+        <div id="panel-econ" class="hidden space-y-3">
+            <div class="glass-card rounded-xl p-3 space-y-2.5 text-xs">
+                <div class="flex items-center justify-between">
+                    <span class="font-bold text-amber-300" data-bn="কৌশল তুলনা ও সম্ভাব্য আয়-ব্যয়" data-en="Strategy Comparison (BDT ৳)">কৌশল তুলনা ও সম্ভাব্য আয়-ব্যয়</span>
+                    <span class="text-[10px] text-slate-400">2026 Market Est.</span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="bg-slate-900/90 p-2.5 rounded-lg border border-slate-800">
+                        <div class="text-[11px] font-bold text-slate-300 mb-1" data-bn="কৌশল A: প্রচলিত চাষ" data-en="Strategy A: Conventional">কৌশল A: প্রচলিত চাষ</div>
+                        <div class="text-[11px] text-slate-400">খরচ: <span id="econ-cost-a" class="text-white font-inter">৳42,000</span></div>
+                        <div class="text-[11px] text-slate-400">সম্ভাব্য আয়: <span id="econ-rev-a" class="text-white font-inter">৳68,000</span></div>
+                        <div class="text-xs font-bold text-amber-300 mt-1 pt-1 border-t border-slate-800">নিট লাভ: <span id="econ-net-a" class="font-inter">৳26,000</span></div>
+                    </div>
+                    <div class="bg-emerald-950/60 p-2.5 rounded-lg border border-emerald-500/40">
+                        <div class="text-[11px] font-bold text-emerald-300 mb-1" data-bn="কৌশল B: জলবায়ু-সহনশীল" data-en="Strategy B: Climate-Smart">কৌশল B: জলবায়ু-সহনশীল</div>
+                        <div class="text-[11px] text-slate-300">খরচ: <span id="econ-cost-b" class="text-white font-inter">৳44,500</span></div>
+                        <div class="text-[11px] text-slate-300">সম্ভাব্য আয়: <span id="econ-rev-b" class="text-white font-inter">৳81,500</span></div>
+                        <div class="text-xs font-bold text-emerald-300 mt-1 pt-1 border-t border-emerald-800/60">নিট লাভ: <span id="econ-net-b" class="font-inter">৳37,000</span></div>
+                    </div>
+                </div>
+                <p class="text-[10px] text-slate-400 leading-tight" data-bn="* জলবায়ু-সহনশীল জাত ও সুষম সার ব্যবস্থাপনায় খরা/লবণাক্ততায় ফসলের ক্ষতি ৩৫% পর্যন্ত কমতে পারে। এটি আর্থিক নিশ্চয়তা নয়, একটি অর্থনৈতিক অনুমান।" data-en="* Climate-adapted varieties and balanced fertilization reduce hazard yield loss by up to 35%. Projections are estimates, not guaranteed profit.">
+                    * জলবায়ু-সহনশীল জাত ও সুষম সার ব্যবস্থাপনায় খরা/লবণাক্ততায় ফসলের ক্ষতি ৩৫% পর্যন্ত কমতে পারে। এটি আর্থিক নিশ্চয়তা নয়, একটি অর্থনৈতিক অনুমান।
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    <!-- BOTTOM INTERACTIVE FARMING TOOLBAR (3D Actions) -->
+    <footer class="fixed bottom-3 left-0 right-0 z-30 px-3 pointer-events-none">
+        <div class="max-w-3xl mx-auto glass-panel rounded-2xl p-2 shadow-2xl pointer-events-auto">
+            <div class="mb-2 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-amber-400/20 bg-slate-950/60 px-3 py-2 text-xs">
+                <div class="flex items-center gap-3 text-slate-200">
+                    <span><span data-bn="লেভেল" data-en="Level">লেভেল</span> <b id="game-level" class="text-emerald-300">1</b>/6</span>
+                    <span id="level-progress-text" class="text-slate-400">জমি তৈরি</span>
+                    <span class="text-amber-300">🪙 <b id="coin-count">0</b></span>
+                    <span class="text-yellow-300">⭐ <b id="star-count">0</b></span>
+                </div>
+                <button id="new-season-btn" onclick="startNewSeason()" class="hidden rounded-lg border border-emerald-400/40 bg-emerald-500/20 px-2.5 py-1 text-[11px] font-semibold text-emerald-200 hover:bg-emerald-500/30" data-bn="নতুন মৌসুম" data-en="New season">নতুন মৌসুম</button>
+            </div>
+            <div class="flex items-center justify-between gap-1.5 overflow-x-auto">
+                <button onclick="executeFarmAction('prepare')" id="tool-prepare" class="tool-btn flex-1 min-w-[76px] py-2 px-2 rounded-xl bg-slate-800/90 border border-slate-700 text-slate-200 flex flex-col items-center gap-1">
+                    <i class="fa-solid fa-tractor text-amber-400 text-base"></i>
+                    <span class="text-[11px] font-semibold whitespace-nowrap" data-bn="১. জমি তৈরি" data-en="1. Till Land">১. জমি তৈরি</span><span class="level-check text-[10px] text-slate-500" aria-hidden="true">🔒</span>
+                </button>
+                <button onclick="executeFarmAction('plant')" id="tool-plant" class="tool-btn active flex-1 min-w-[76px] py-2 px-2 rounded-xl bg-slate-800/90 border border-slate-700 text-slate-200 flex flex-col items-center gap-1">
+                    <i class="fa-solid fa-seedling text-emerald-300 text-base"></i>
+                    <span class="text-[11px] font-semibold whitespace-nowrap" data-bn="২. চারা রোপণ" data-en="2. Plant Crop">২. চারা রোপণ</span><span class="level-check text-[10px] text-slate-500" aria-hidden="true">🔒</span>
+                </button>
+                <button onclick="executeFarmAction('irrigate')" id="tool-irrigate" class="tool-btn flex-1 min-w-[76px] py-2 px-2 rounded-xl bg-slate-800/90 border border-slate-700 text-slate-200 flex flex-col items-center gap-1">
+                    <i class="fa-solid fa-droplet text-sky-400 text-base"></i>
+                    <span class="text-[11px] font-semibold whitespace-nowrap" data-bn="৩. সেচ দিন" data-en="3. Irrigate">৩. সেচ দিন</span><span class="level-check text-[10px] text-slate-500" aria-hidden="true">🔒</span>
+                </button>
+                <button onclick="executeFarmAction('fertilize')" id="tool-fertilize" class="tool-btn flex-1 min-w-[76px] py-2 px-2 rounded-xl bg-slate-800/90 border border-slate-700 text-slate-200 flex flex-col items-center gap-1">
+                    <i class="fa-solid fa-flask text-purple-400 text-base"></i>
+                    <span class="text-[11px] font-semibold whitespace-nowrap" data-bn="৪. সার প্রয়োগ" data-en="4. Fertilize">৪. সার প্রয়োগ</span><span class="level-check text-[10px] text-slate-500" aria-hidden="true">🔒</span>
+                </button>
+                <button onclick="executeFarmAction('grow')" id="tool-grow" class="tool-btn flex-1 min-w-[76px] py-2 px-2 rounded-xl bg-slate-800/90 border border-slate-700 text-slate-200 flex flex-col items-center gap-1">
+                    <i class="fa-solid fa-forward-fast text-lime-400 text-base"></i>
+                    <span class="text-[11px] font-semibold whitespace-nowrap" data-bn="৫. ফসল বৃদ্ধি" data-en="5. Grow Cycle">৫. ফসল বৃদ্ধি</span><span class="level-check text-[10px] text-slate-500" aria-hidden="true">🔒</span>
+                </button>
+                <button onclick="executeFarmAction('harvest')" id="tool-harvest" class="tool-btn flex-1 min-w-[76px] py-2 px-2 rounded-xl bg-slate-800/90 border border-slate-700 text-slate-200 flex flex-col items-center gap-1">
+                    <i class="fa-solid fa-wheat-awn text-yellow-400 text-base"></i>
+                    <span class="text-[11px] font-semibold whitespace-nowrap" data-bn="৬. ফসল সংগ্রহ" data-en="6. Harvest">৬. ফসল সংগ্রহ</span><span class="level-check text-[10px] text-slate-500" aria-hidden="true">🔒</span>
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- TOAST / MESSAGE NOTIFICATION BOX (Never using alert()) -->
+    <div id="toast-box" class="fixed top-20 left-1/2 -translate-x-1/2 z-40 pointer-events-none transition-all duration-300 opacity-0 -translate-y-3">
+        <div class="glass-panel px-4 py-2.5 rounded-full border border-emerald-500/40 shadow-xl flex items-center gap-2.5 text-xs md:text-sm font-medium text-white">
+            <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400"></i>
+            <span id="toast-message">Action completed</span>
+        </div>
+    </div>
+
+    <div id="sign-control-modal" class="hidden fixed inset-0 z-[60] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="sign-control-title">
+        <div class="glass-panel max-w-xl w-full rounded-3xl p-5 md:p-7 border border-violet-400/30 shadow-2xl space-y-4">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <h2 id="sign-control-title" class="text-xl font-bold text-white" data-bn="ক্যামেরা হাতের ভঙ্গি নিয়ন্ত্রণ" data-en="Camera hand-pose controls">ক্যামেরা হাতের ভঙ্গি নিয়ন্ত্রণ</h2>
+                    <p class="mt-1 text-xs text-slate-300" data-bn="ক্যামেরা চালু করলে ভিডিও শুধু আপনার ডিভাইসেই প্রক্রিয়াকরণ হবে। বন্ধ করলে ক্যামেরা থেমে যাবে।" data-en="Camera frames are processed on this device only. Stop or close this panel to turn the camera off.">ক্যামেরা চালু করলে ভিডিও শুধু আপনার ডিভাইসেই প্রক্রিয়াকরণ হবে। বন্ধ করলে ক্যামেরা থেমে যাবে।</p>
+                </div>
+                <button onclick="closeSignControl()" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200" aria-label="Close hand controls">✕</button>
+            </div>
+            <p class="rounded-xl border border-amber-400/30 bg-amber-950/40 p-3 text-xs leading-relaxed text-amber-100" data-bn="স্বচ্ছতা: এটি সাধারণ হাতের ভঙ্গি-ভিত্তিক গেম নিয়ন্ত্রণ, বাংলা সাইন ল্যাঙ্গুয়েজ (BdSL) শনাক্ত বা অনুবাদ করে না। সঠিক BdSL-এর জন্য Deaf signers-এর যাচাইকৃত ভিডিও ও মূল্যায়িত মডেল দরকার।" data-en="Honest scope: these are simple hand-pose game controls, not Bangla Sign Language (BdSL) recognition or translation. Authentic BdSL needs Deaf-signer-verified examples and a validated model.">
+                স্বচ্ছতা: এটি সাধারণ হাতের ভঙ্গি-ভিত্তিক গেম নিয়ন্ত্রণ, বাংলা সাইন ল্যাঙ্গুয়েজ (BdSL) শনাক্ত বা অনুবাদ করে না। সঠিক BdSL-এর জন্য Deaf signers-এর যাচাইকৃত ভিডিও ও মূল্যায়িত মডেল দরকার।
+            </p>
+            <video id="sign-preview" class="hidden w-full max-h-56 rounded-xl bg-black object-cover" muted playsinline aria-label="Local camera preview"></video>
+            <div id="sign-status" class="text-sm text-slate-200" role="status" aria-live="polite">ক্যামেরা বন্ধ</div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs text-slate-200">
+                <span>✊ ০ · জমি তৈরি</span><span>☝️ ১ · রোপণ</span><span>✌️ ২ · সেচ</span>
+                <span>🤟 ৩ · সার</span><span>🖖 ৪ · বৃদ্ধি</span><span>🖐️ ৫ · কর্তন</span>
+            </div>
+            <p class="text-[11px] text-slate-400" data-bn="একটি ভঙ্গি প্রায় ১ সেকেন্ড ধরে রাখুন। প্রতিবার চালুর পরে হাত সরিয়ে আবার ভঙ্গি করুন।" data-en="Hold a pose for about 1 second. Move your hand out of frame before triggering the next action.">একটি ভঙ্গি প্রায় ১ সেকেন্ড ধরে রাখুন। প্রতিবার চালুর পরে হাত সরিয়ে আবার ভঙ্গি করুন।</p>
+            <div class="flex justify-end gap-2">
+                <button id="sign-start-btn" onclick="startSignControl()" class="rounded-xl bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-500" data-bn="ক্যামেরা চালু" data-en="Start camera">ক্যামেরা চালু</button>
+                <button id="sign-stop-btn" onclick="stopSignControl()" class="hidden rounded-xl bg-slate-700 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-600" data-bn="ক্যামেরা বন্ধ" data-en="Stop camera">ক্যামেরা বন্ধ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NASA DATA & SCIENTIFIC PROVENANCE MODAL -->
+    <div id="provenance-modal" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-panel max-w-4xl w-full max-h-[88vh] rounded-3xl p-6 overflow-y-auto border border-sky-500/30 shadow-2xl space-y-5">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div>
+                    <span class="text-xs font-inter uppercase tracking-wider text-sky-400 font-bold">Data Registry & Scientific Provenance</span>
+                    <h2 class="text-xl font-bold text-white" data-bn="NASA স্যাটেলাইট ডেটাসেট ও বাংলাদেশের কৃষি তথ্যসূত্র" data-en="NASA Satellite Datasets & Bangladesh Agricultural Data Sources">NASA স্যাটেলাইট ডেটাসেট ও বাংলাদেশের কৃষি তথ্যসূত্র</h2>
+                </div>
+                <button onclick="closeProvenanceModal()" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                <!-- NASA GPM -->
+                <div class="glass-card p-4 rounded-2xl space-y-1.5 border-l-4 border-sky-500">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-sm text-sky-300">1. NASA GPM (IMERG V07)</h3>
+                        <span class="px-2 py-0.5 bg-sky-950 text-sky-300 rounded font-inter">0.1° × 0.1° (~11 km)</span>
+                    </div>
+                    <p class="text-slate-300" data-bn="ব্যবহার: ঐতিহাসিক বৃষ্টিপাত, বর্ষা মৌসুমের পরিবর্তন ও আকস্মিক বন্যার ঝুঁকি বিশ্লেষণ।" data-en="Usage: Historical precipitation, monsoon shift, and flash-flood susceptibility analysis.">ব্যবহার: ঐতিহাসিক বৃষ্টিপাত, বর্ষা মৌসুমের পরিবর্তন ও আকস্মিক বন্যার ঝুঁকি বিশ্লেষণ।</p>
+                    <p class="text-slate-400 text-[11px]" data-bn="সীমাবদ্ধতা: আঞ্চলিক বৃষ্টিপাত পরিমাপে নির্ভুল, তবে একক ক্ষুদ্র জমির তাৎক্ষণিক জলাবদ্ধতা মাপতে স্থানীয় পর্যবেক্ষণ প্রয়োজন।" data-en="Limitation: Accurate for regional rainfall, but local field waterlogging requires ground verification.">সীমাবদ্ধতা: আঞ্চলিক বৃষ্টিপাত পরিমাপে নির্ভুল, তবে একক ক্ষুদ্র জমির তাৎক্ষণিক জলাবদ্ধতা মাপতে স্থানীয় পর্যবেক্ষণ প্রয়োজন।</p>
+                </div>
+
+                <!-- NASA-USDA SMAP -->
+                <div class="glass-card p-4 rounded-2xl space-y-1.5 border-l-4 border-emerald-500">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-sm text-emerald-300">2. NASA-USDA Enhanced SMAP</h3>
+                        <span class="px-2 py-0.5 bg-emerald-950 text-emerald-300 rounded font-inter">0.25° × 0.25° (~27 km)</span>
+                    </div>
+                    <p class="text-slate-300" data-bn="ব্যবহার: ভূপৃষ্ঠ ও শিকড় অঞ্চলের (Root-zone) মাটির আর্দ্রতা ও কৃষি খরার পূর্বাভাস।" data-en="Usage: Surface & root-zone soil moisture anomalies and agricultural drought monitoring.">ব্যবহার: ভূপৃষ্ঠ ও শিকড় অঞ্চলের (Root-zone) মাটির আর্দ্রতা ও কৃষি খরার পূর্বাভাস।</p>
+                    <p class="text-slate-400 text-[11px]" data-bn="সীমাবদ্ধতা: ০.২৫° গ্রিড একটি বড় এলাকা নির্দেশ করে; এটি সরাসরি মাটির NPK বা pH পরিমাপ করে না।" data-en="Limitation: 0.25° grid covers large areas; does not directly measure farm-level NPK or pH.">সীমাবদ্ধতা: ০.২৫° গ্রিড একটি বড় এলাকা নির্দেশ করে; এটি সরাসরি মাটির NPK বা pH পরিমাপ করে না।</p>
+                </div>
+
+                <!-- NASA GLDAS / FLDAS -->
+                <div class="glass-card p-4 rounded-2xl space-y-1.5 border-l-4 border-amber-500">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-sm text-amber-300">3. NASA GLDAS / FLDAS</h3>
+                        <span class="px-2 py-0.5 bg-amber-950 text-amber-300 rounded font-inter">0.1° / 0.25° Monthly/3-Hr</span>
+                    </div>
+                    <p class="text-slate-300" data-bn="ব্যবহার: ভূপৃষ্ঠের তাপমাত্রা, বাষ্পীভবন (Evapotranspiration) এবং সেচ চাহিদা নির্ণয়।" data-en="Usage: Land surface temperature, evapotranspiration, and crop water demand modeling.">ব্যবহার: ভূপৃষ্ঠের তাপমাত্রা, বাষ্পীভবন (Evapotranspiration) এবং সেচ চাহিদা নির্ণয়।</p>
+                    <p class="text-slate-400 text-[11px]" data-bn="সীমাবদ্ধতা: ভবিষ্যতের বছরগুলোর (২০২৯-২০৫৬) জন্য IPCC CMIP6 জলবায়ু প্রক্ষেপণ মডেলের সাথে সমন্বিত।" data-en="Limitation: Coupled with IPCC CMIP6 regional downscaled projections for 2029–2056.">সীমাবদ্ধতা: ভবিষ্যতের বছরগুলোর (২০২৯-২০৫৬) জন্য IPCC CMIP6 জলবায়ু প্রক্ষেপণ মডেলের সাথে সমন্বিত।</p>
+                </div>
+
+                <!-- NASA Landsat & MODIS + BD Sources -->
+                <div class="glass-card p-4 rounded-2xl space-y-1.5 border-l-4 border-purple-500">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-sm text-purple-300">4. Landsat 8/9, MODIS & BD Agencies</h3>
+                        <span class="px-2 py-0.5 bg-purple-950 text-purple-300 rounded font-inter">30m – 250m + Local</span>
+                    </div>
+                    <p class="text-slate-300" data-bn="উৎস: NASA Landsat (NDVI সবুজায়ন), BARC (সার সুপারিশ গাইড), SRDI (মৃত্তিকা ও লবণাক্ততা), BRRI (ধানের জাত), BMD ও BAMIS।" data-en="Sources: NASA Landsat (NDVI), BARC (Fertilizer Guide), SRDI (Soil & Salinity), BRRI (Rice Varieties), BMD & BAMIS.">উৎস: NASA Landsat (NDVI সবুজায়ন), BARC (সার সুপারিশ গাইড), SRDI (মৃত্তিকা ও লবণাক্ততা), BRRI (ধানের জাত), BMD ও BAMIS।</p>
+                    <p class="text-slate-400 text-[11px]" data-bn="বৈজ্ঞানিক নীতি: অনুমানকে কখনোই নিশ্চিত ভবিষ্যদ্বাণী হিসেবে দেখানো হয় না।" data-en="Scientific Principle: Model projections are never presented as guaranteed future weather dates.">বৈজ্ঞানিক নীতি: অনুমানকে কখনোই নিশ্চিত ভবিষ্যদ্বাণী হিসেবে দেখানো হয় না।</p>
+                </div>
+            </div>
+
+            <div class="flex justify-end">
+                <button onclick="closeProvenanceModal()" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm transition">
+                    <span data-bn="বুঝেছি, সিমুলেশনে ফিরুন" data-en="Understood, Back to Simulator">বুঝেছি, সিমুলেশনে ফিরুন</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * Agrilume Farming Game
+         * Complete 3D Agricultural & Climate Simulation Engine
+         * Integrating NASA Earthdata metadata & Bangladesh BARC/SRDI/BRRI agronomic models.
+         */
+
+        // ==================== 1. SCIENTIFIC & AGRONOMIC KNOWLEDGE BASE ====================
+        const YEARS = [2026, 2029, 2035, 2040, 2050, 2056];
+
+        const REGIONS = {
+            sunamganj: {
+                nameBn: "সুনামগঞ্জ হাওর",
+                nameEn: "Sunamganj Haor Basin",
+                aez: "AEZ-21 (Sylhet Basin)",
+                baseTemp: 28.8,
+                baseRain: 3450,
+                baseMoisture: 44,
+                baseSalinity: 0.4,
+                soilTypeBn: "এঁটেল দোআঁশ (Silty Clay Loam)",
+                soilTypeEn: "Silty Clay Loam",
+                soilPh: "5.2 – 5.8 (সামান্য অম্লীয়)",
+                primaryHazard: "flood",
+                groundColor: 0x3b2f26,
+                waterTableY: -0.35,
+                hillHeight: 0.6
+            },
+            khulna: {
+                nameBn: "খুলনা উপকূল",
+                nameEn: "Khulna Coastal Zone",
+                aez: "AEZ-13 (Ganges Tidal Floodplain)",
+                baseTemp: 30.2,
+                baseRain: 1850,
+                baseMoisture: 36,
+                baseSalinity: 6.8,
+                soilTypeBn: "লবণাক্ত এঁটেল (Saline Clay)",
+                soilTypeEn: "Saline Clay",
+                soilPh: "7.4 – 8.1 (ক্ষারীয়/লবণাক্ত)",
+                primaryHazard: "salinity",
+                groundColor: 0x574c41,
+                waterTableY: -0.25,
+                hillHeight: 0.2
+            },
+            rajshahi: {
+                nameBn: "রাজশাহী বরেন্দ্র",
+                nameEn: "Rajshahi Barind Tract",
+                aez: "AEZ-26 (High Barind Tract)",
+                baseTemp: 31.4,
+                baseRain: 1420,
+                baseMoisture: 21,
+                baseSalinity: 0.6,
+                soilTypeBn: "কঠিন এঁটেল (Terrace Clay)",
+                soilTypeEn: "Terrace Clay",
+                soilPh: "5.5 – 6.4",
+                primaryHazard: "drought",
+                groundColor: 0x7c583a,
+                waterTableY: -1.1,
+                hillHeight: 0.9
+            },
+            chattogram: {
+                nameBn: "চট্টগ্রাম পাহাড়ি অঞ্চল",
+                nameEn: "Chattogram Hill Tracts",
+                aez: "AEZ-29 (Northern & Eastern Hills)",
+                baseTemp: 29.1,
+                baseRain: 2890,
+                baseMoisture: 32,
+                baseSalinity: 0.3,
+                soilTypeBn: "বাদামি পাহাড়ি দোআঁশ (Brown Hill Loam)",
+                soilTypeEn: "Brown Hill Loam",
+                soilPh: "4.8 – 5.6 (অম্লীয়)",
+                primaryHazard: "normal",
+                groundColor: 0x4d3b2b,
+                waterTableY: -0.8,
+                hillHeight: 2.8
+            },
+            floodplain: {
+                nameBn: "নদীবিধৌত প্লাবনভূমি",
+                nameEn: "River Floodplain",
+                aez: "Indicative floodplain context",
+                baseTemp: 29.4,
+                baseRain: 2250,
+                baseMoisture: 39,
+                baseSalinity: 0.8,
+                soilTypeBn: "পলিমাটি (Alluvial soil)",
+                soilTypeEn: "Alluvial soil",
+                soilPh: "Indicative context",
+                primaryHazard: "flood",
+                groundColor: 0x5b4632,
+                waterTableY: -0.5,
+                hillHeight: 0.25
+            },
+            char: {
+                nameBn: "চর ও নদীতীর",
+                nameEn: "River Char",
+                aez: "Indicative char context",
+                baseTemp: 30.0,
+                baseRain: 1950,
+                baseMoisture: 27,
+                baseSalinity: 0.5,
+                soilTypeBn: "বেলে পলিমাটি (Sandy alluvium)",
+                soilTypeEn: "Sandy alluvium",
+                soilPh: "Indicative context",
+                primaryHazard: "drought",
+                groundColor: 0x795b3b,
+                waterTableY: -0.9,
+                hillHeight: 0.15
+            }
+        };
+
+        const REGION_FOR_DISTRICT = { haor: 'sunamganj', coastal: 'khulna', barind: 'rajshahi', hill: 'chattogram', floodplain: 'floodplain', char: 'char' };
+        let GAME_DISTRICTS = [];
+        let GAME_DIVISIONS = [];
+        const GAME_PROGRESS_KEY = 'agrilume-farming-game-progress-v1';
+        function readGameProgress() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(GAME_PROGRESS_KEY) || 'null');
+                if (!saved || saved.version !== 1) return null;
+                const completed = Array.isArray(saved.completedLevels) ? saved.completedLevels.filter(id => ['prepare', 'plant', 'irrigate', 'fertilize', 'grow', 'harvest'].includes(id)) : [];
+                return {
+                    coins: Number.isSafeInteger(saved.coins) && saved.coins >= 0 ? saved.coins : 0,
+                    stars: Number.isSafeInteger(saved.stars) && saved.stars >= 0 ? saved.stars : 0,
+                    level: Number.isInteger(saved.level) && saved.level >= 1 && saved.level <= 6 ? saved.level : 1,
+                    completedLevels: [...new Set(completed)],
+                    growthStage: Number.isInteger(saved.growthStage) && saved.growthStage >= 0 && saved.growthStage <= 4 ? saved.growthStage : 0,
+                    tilled: saved.tilled === true,
+                    planted: saved.planted === true,
+                    irrigated: saved.irrigated === true,
+                    fertilized: saved.fertilized === true
+                };
+            } catch (error) {
+                console.error('Could not read saved farming-game progress.', error);
+                return null;
+            }
+        }
+        const savedGameProgress = readGameProgress();
+
+        function makeGameCrop(options) {
+            return {
+                nameBn: options.nameBn,
+                nameEn: options.nameEn,
+                baseYield: options.baseYield,
+                maxSalinity: options.maxSalinity ?? 3,
+                droughtTolerance: options.droughtTolerance ?? 0.5,
+                floodTolerance: options.floodTolerance ?? 0.25,
+                waterNeedMm: options.waterNeedMm,
+                npkPerHa: options.npkPerHa ?? { urea: 140, tsp: 75, mop: 80, gypsum: 35 },
+                cropColor: options.cropColor,
+                ripeColor: options.ripeColor,
+                pricePerTon: options.pricePerTon,
+                costPerHa: options.costPerHa
+            };
+        }
+
+        const MAJOR_CROP_CATALOG = {
+            jute_tossa: makeGameCrop({ nameBn: 'পাট', nameEn: 'Jute', baseYield: [2.0, 3.0], maxSalinity: 3, droughtTolerance: 0.55, floodTolerance: 0.6, waterNeedMm: 450, npkPerHa: { urea: 120, tsp: 60, mop: 60, gypsum: 25 }, cropColor: 0x228b22, ripeColor: 0xb58b3e, pricePerTon: 35000, costPerHa: 55000 }),
+            mustard: makeGameCrop({ nameBn: 'সরিষা', nameEn: 'Mustard', baseYield: [1.0, 1.7], maxSalinity: 2.5, droughtTolerance: 0.7, floodTolerance: 0.2, waterNeedMm: 160, npkPerHa: { urea: 120, tsp: 60, mop: 55, gypsum: 20 }, cropColor: 0x84cc16, ripeColor: 0xfacc15, pricePerTon: 65000, costPerHa: 32000 }),
+            lentil: makeGameCrop({ nameBn: 'মসুর ডাল', nameEn: 'Lentil', baseYield: [0.8, 1.3], maxSalinity: 2.5, droughtTolerance: 0.75, floodTolerance: 0.2, waterNeedMm: 170, npkPerHa: { urea: 25, tsp: 75, mop: 35, gypsum: 20 }, cropColor: 0x65a30d, ripeColor: 0x92400e, pricePerTon: 130000, costPerHa: 35000 }),
+            mungbean: makeGameCrop({ nameBn: 'মুগ ডাল', nameEn: 'Mung bean', baseYield: [0.8, 1.4], maxSalinity: 2, droughtTolerance: 0.7, floodTolerance: 0.2, waterNeedMm: 190, npkPerHa: { urea: 20, tsp: 60, mop: 40, gypsum: 25 }, cropColor: 0x16a34a, ripeColor: 0x854d0e, pricePerTon: 100000, costPerHa: 38000 }),
+            sesame: makeGameCrop({ nameBn: 'তিল', nameEn: 'Sesame', baseYield: [0.6, 1.2], maxSalinity: 3, droughtTolerance: 0.75, floodTolerance: 0.15, waterNeedMm: 180, npkPerHa: { urea: 50, tsp: 45, mop: 40, gypsum: 20 }, cropColor: 0x4d7c0f, ripeColor: 0xca8a04, pricePerTon: 110000, costPerHa: 30000 }),
+            onion: makeGameCrop({ nameBn: 'পেঁয়াজ', nameEn: 'Onion', baseYield: [10, 18], maxSalinity: 2.2, droughtTolerance: 0.4, floodTolerance: 0.1, waterNeedMm: 360, npkPerHa: { urea: 180, tsp: 110, mop: 150, gypsum: 35 }, cropColor: 0x9333ea, ripeColor: 0xc084fc, pricePerTon: 26000, costPerHa: 180000 }),
+            tomato: makeGameCrop({ nameBn: 'টমেটো', nameEn: 'Tomato', baseYield: [18, 35], maxSalinity: 2.5, droughtTolerance: 0.4, floodTolerance: 0.1, waterNeedMm: 400, npkPerHa: { urea: 160, tsp: 110, mop: 130, gypsum: 30 }, cropColor: 0x16a34a, ripeColor: 0xef4444, pricePerTon: 30000, costPerHa: 160000 }),
+            chili: makeGameCrop({ nameBn: 'মরিচ', nameEn: 'Chili', baseYield: [8, 15], maxSalinity: 2.5, droughtTolerance: 0.5, floodTolerance: 0.15, waterNeedMm: 350, npkPerHa: { urea: 140, tsp: 80, mop: 100, gypsum: 30 }, cropColor: 0x15803d, ripeColor: 0xdc2626, pricePerTon: 95000, costPerHa: 180000 }),
+            brinjal: makeGameCrop({ nameBn: 'বেগুন', nameEn: 'Eggplant', baseYield: [18, 32], maxSalinity: 2.5, droughtTolerance: 0.45, floodTolerance: 0.15, waterNeedMm: 390, npkPerHa: { urea: 150, tsp: 100, mop: 120, gypsum: 30 }, cropColor: 0x16a34a, ripeColor: 0x7e22ce, pricePerTon: 28000, costPerHa: 150000 }),
+            sugarcane: makeGameCrop({ nameBn: 'আখ', nameEn: 'Sugarcane', baseYield: [55, 80], maxSalinity: 4, droughtTolerance: 0.55, floodTolerance: 0.4, waterNeedMm: 800, npkPerHa: { urea: 180, tsp: 80, mop: 120, gypsum: 35 }, cropColor: 0x166534, ripeColor: 0xa3e635, pricePerTon: 4500, costPerHa: 150000 }),
+            tea: makeGameCrop({ nameBn: 'চা', nameEn: 'Tea', baseYield: [1.5, 2.5], maxSalinity: 2, droughtTolerance: 0.4, floodTolerance: 0.15, waterNeedMm: 750, npkPerHa: { urea: 200, tsp: 60, mop: 120, gypsum: 40 }, cropColor: 0x047857, ripeColor: 0x14532d, pricePerTon: 160000, costPerHa: 180000 }),
+            banana: makeGameCrop({ nameBn: 'কলা', nameEn: 'Banana', baseYield: [25, 45], maxSalinity: 2, droughtTolerance: 0.5, floodTolerance: 0.3, waterNeedMm: 650, npkPerHa: { urea: 220, tsp: 80, mop: 300, gypsum: 50 }, cropColor: 0x15803d, ripeColor: 0xfacc15, pricePerTon: 35000, costPerHa: 260000 }),
+            mango: makeGameCrop({ nameBn: 'আম', nameEn: 'Mango', baseYield: [6, 15], maxSalinity: 2, droughtTolerance: 0.8, floodTolerance: 0.2, waterNeedMm: 500, npkPerHa: { urea: 150, tsp: 60, mop: 250, gypsum: 30 }, cropColor: 0x15803d, ripeColor: 0xf97316, pricePerTon: 80000, costPerHa: 300000 })
+        };
+
+        const CROPS = {
+            aman_brri49: {
+                nameBn: "রোপা আমন (ব্রি ধান৪৯)",
+                nameEn: "Aman Rice (BRRI dhan49)",
+                baseYield: [4.8, 5.4],
+                maxSalinity: 3.0,
+                droughtTolerance: 0.5,
+                floodTolerance: 0.7,
+                waterNeedMm: 320,
+                npkPerHa: { urea: 180, tsp: 85, mop: 100, gypsum: 55 },
+                cropColor: 0x22c55e,
+                ripeColor: 0xeab308,
+                pricePerTon: 31000,
+                costPerHa: 52000
+            },
+            boro_brri29: {
+                nameBn: "বোরো ধান (ব্রি ধান২৯)",
+                nameEn: "Boro Rice (BRRI dhan29)",
+                baseYield: [6.2, 7.0],
+                maxSalinity: 2.5,
+                droughtTolerance: 0.3,
+                floodTolerance: 0.3,
+                waterNeedMm: 780,
+                npkPerHa: { urea: 260, tsp: 110, mop: 130, gypsum: 75 },
+                cropColor: 0x16a34a,
+                ripeColor: 0xfacc15,
+                pricePerTon: 30000,
+                costPerHa: 68000
+            },
+            saline_brri67: {
+                nameBn: "লবণসহিষ্ণু ধান (ব্রি ধান৬৭)",
+                nameEn: "Salt-Tolerant Rice (BRRI dhan67)",
+                baseYield: [5.0, 5.8],
+                maxSalinity: 8.5,
+                droughtTolerance: 0.65,
+                floodTolerance: 0.6,
+                waterNeedMm: 450,
+                npkPerHa: { urea: 210, tsp: 95, mop: 115, gypsum: 85 },
+                cropColor: 0x10b981,
+                ripeColor: 0xf59e0b,
+                pricePerTon: 32500,
+                costPerHa: 56000
+            },
+            wheat_bari33: {
+                nameBn: "গম (বারি গম ৩৩ - তাপসহিষ্ণু)",
+                nameEn: "Wheat (BARI Gom 33)",
+                baseYield: [3.8, 4.5],
+                maxSalinity: 4.0,
+                droughtTolerance: 0.8,
+                floodTolerance: 0.15,
+                waterNeedMm: 240,
+                npkPerHa: { urea: 190, tsp: 120, mop: 90, gypsum: 60 },
+                cropColor: 0x84cc16,
+                ripeColor: 0xd97706,
+                pricePerTon: 38000,
+                costPerHa: 48000
+            },
+            potato_diamant: {
+                nameBn: "আলু (ডায়মন্ড জাত)",
+                nameEn: "Potato (Diamant)",
+                baseYield: [22.0, 26.5],
+                maxSalinity: 2.2,
+                droughtTolerance: 0.45,
+                floodTolerance: 0.1,
+                waterNeedMm: 290,
+                npkPerHa: { urea: 240, tsp: 160, mop: 220, gypsum: 90 },
+                cropColor: 0x15803d,
+                ripeColor: 0x65a30d,
+                pricePerTon: 16500,
+                costPerHa: 135000
+            },
+            aus_boro: {
+                nameBn: "আউশ ধান",
+                nameEn: "Aus Rice",
+                baseYield: [3.4, 4.1],
+                maxSalinity: 3.0,
+                droughtTolerance: 0.45,
+                floodTolerance: 0.35,
+                waterNeedMm: 300,
+                npkPerHa: { urea: 160, tsp: 75, mop: 70, gypsum: 35 },
+                cropColor: 0x4ade80,
+                ripeColor: 0xeab308,
+                pricePerTon: 30000,
+                costPerHa: 50000
+            },
+            maize_bari: {
+                nameBn: "ভুট্টা",
+                nameEn: "Maize",
+                baseYield: [7.0, 9.0],
+                maxSalinity: 1.7,
+                droughtTolerance: 0.6,
+                floodTolerance: 0.25,
+                waterNeedMm: 500,
+                npkPerHa: { urea: 250, tsp: 100, mop: 100, gypsum: 40 },
+                cropColor: 0x65a30d,
+                ripeColor: 0xfacc15,
+                pricePerTon: 28000,
+                costPerHa: 72000
+            },
+            ...MAJOR_CROP_CATALOG
+        };
+
+        // ==================== 2. APPLICATION STATE ====================
+        const state = {
+            lang: 'bn',
+            farmerName: 'রহিম মিয়া (Rahim)',
+            region: 'sunamganj',
+            districtId: 'sunamganj',
+            crop: 'aman_brri49',
+            yearIdx: 0,
+            ssp: 'ssp245',
+            disaster: 'normal',
+            areaAcres: 2.0,
+            growthStage: savedGameProgress?.growthStage ?? 0, // 0: Prepared, 1: Seedling, 2: Vegetative, 3: Flowering, 4: Mature/Ripe
+            soilCrossSection: false,
+            is2DMode: false,
+            tilled: savedGameProgress?.tilled ?? false,
+            planted: savedGameProgress?.planted ?? false,
+            irrigated: savedGameProgress?.irrigated ?? false,
+            fertilized: savedGameProgress?.fertilized ?? false,
+            level: savedGameProgress?.level ?? 1,
+            coins: savedGameProgress?.coins ?? 0,
+            stars: savedGameProgress?.stars ?? 0,
+            completedLevels: savedGameProgress?.completedLevels ?? []
+        };
+
+        const GAME_LEVELS = [
+            { action: 'prepare', nameBn: 'জমি তৈরি', nameEn: 'Prepare land' },
+            { action: 'plant', nameBn: 'চারা রোপণ', nameEn: 'Plant crop' },
+            { action: 'irrigate', nameBn: 'সেচ দিন', nameEn: 'Irrigate' },
+            { action: 'fertilize', nameBn: 'সার প্রয়োগ', nameEn: 'Fertilize' },
+            { action: 'grow', nameBn: 'ফসল বৃদ্ধি', nameEn: 'Grow crop' },
+            { action: 'harvest', nameBn: 'ফসল সংগ্রহ', nameEn: 'Harvest' }
+        ];
+
+        function saveGameProgress() {
+            try {
+                localStorage.setItem(GAME_PROGRESS_KEY, JSON.stringify({
+                    version: 1,
+                    coins: state.coins,
+                    stars: state.stars,
+                    level: state.level,
+                    completedLevels: state.completedLevels,
+                    growthStage: state.growthStage,
+                    tilled: state.tilled,
+                    planted: state.planted,
+                    irrigated: state.irrigated,
+                    fertilized: state.fertilized
+                }));
+            } catch (error) {
+                console.error('Could not save farming-game progress.', error);
+                showToast(state.lang === 'bn' ? 'অগ্রগতি সংরক্ষণ করা যায়নি; ব্রাউজারের স্টোরেজ পরীক্ষা করুন।' : 'Progress could not be saved; check browser storage.');
+            }
+        }
+
+        function updateGameProgress() {
+            document.getElementById('game-level').textContent = state.level;
+            document.getElementById('coin-count').textContent = state.coins.toLocaleString();
+            document.getElementById('star-count').textContent = state.stars.toLocaleString();
+            const current = GAME_LEVELS[state.level - 1];
+            const stageProgress = state.level === 5 ? ` · ${Math.max(0, state.growthStage - 1)}/3` : '';
+            document.getElementById('level-progress-text').textContent = `${state.lang === 'bn' ? current.nameBn : current.nameEn}${stageProgress}`;
+            document.querySelectorAll('.tool-btn').forEach((button, index) => {
+                const done = state.completedLevels.includes(GAME_LEVELS[index].action);
+                button.disabled = index !== state.level - 1 || state.level === 6 && done;
+                button.classList.toggle('opacity-50', button.disabled);
+                button.classList.toggle('cursor-not-allowed', button.disabled);
+                button.classList.toggle('active', index === state.level - 1 && !done);
+                const check = button.querySelector('.level-check');
+                if (check) check.textContent = done ? '⭐' : index === state.level - 1 ? '▶' : '🔒';
+            });
+            document.getElementById('new-season-btn').classList.toggle('hidden', state.level !== 6 || !state.completedLevels.includes('harvest'));
+        }
+
+        function populateCropOptions() {
+            const select = document.getElementById('crop-select');
+            select.replaceChildren();
+            Object.entries(CROPS).forEach(([id, crop]) => {
+                const option = document.createElement('option');
+                option.value = id;
+                option.textContent = `${crop.nameBn} (${crop.nameEn})`;
+                select.appendChild(option);
+            });
+            select.value = state.crop;
+        }
+
+        function completeGameLevel(action) {
+            if (state.completedLevels.includes(action)) return;
+            state.completedLevels.push(action);
+            state.coins += 20;
+            state.stars += 1;
+            if (state.level < 6) state.level += 1;
+            saveGameProgress();
+            updateGameProgress();
+            const message = state.lang === 'bn'
+                ? `লেভেল ${state.level === 6 && action === 'harvest' ? 6 : state.level - 1} সম্পন্ন! +২০ কয়েন, +১ ⭐`
+                : `Level ${state.level === 6 && action === 'harvest' ? 6 : state.level - 1} complete! +20 coins, +1 ⭐`;
+            showToast(message);
+        }
+
+        function startNewSeason() {
+            if (state.level !== 6 || !state.completedLevels.includes('harvest')) return;
+            state.level = 1;
+            state.completedLevels = [];
+            state.growthStage = 0;
+            state.tilled = false;
+            state.planted = false;
+            state.irrigated = false;
+            state.fertilized = false;
+            generateCrops();
+            recalculateSimulation();
+            saveGameProgress();
+            updateGameProgress();
+            showToast(state.lang === 'bn' ? 'নতুন মৌসুম শুরু! লেভেল ১ থেকে চাষ করুন।' : 'New season started! Begin at Level 1.');
+        }
+
+        async function loadDistrictCatalog() {
+            const response = await fetch(new URL('api/farming-game/catalog.json', window.location.href));
+            if (!response.ok) throw new Error(`District catalog request failed (${response.status})`);
+            const catalog = await response.json();
+            if (!Array.isArray(catalog.districts) || catalog.districts.length !== 64 || !Array.isArray(catalog.divisions)) {
+                throw new Error('District catalog did not contain the expected Bangladesh location list.');
+            }
+            GAME_DISTRICTS = catalog.districts;
+            GAME_DIVISIONS = catalog.divisions;
+            ['onboard-region-select', 'region-select'].forEach(id => {
+                const select = document.getElementById(id);
+                const selectedId = id === 'onboard-region-select' ? state.districtId : state.districtId;
+                select.replaceChildren();
+                GAME_DIVISIONS.forEach(division => {
+                    const group = document.createElement('optgroup');
+                    group.label = state.lang === 'bn' ? division.name.bn : division.name.en;
+                    GAME_DISTRICTS.filter(district => district.division === division.id).forEach(district => {
+                        const option = document.createElement('option');
+                        option.value = district.id;
+                        option.textContent = `${district.nameBn} (${district.nameEn})`;
+                        option.selected = district.id === selectedId;
+                        group.appendChild(option);
+                    });
+                    select.appendChild(group);
+                });
+            });
+            state.region = REGION_FOR_DISTRICT[GAME_DISTRICTS.find(district => district.id === state.districtId)?.region] || 'sunamganj';
+        }
+
+        // ==================== 3. THREE.JS 3D SCENE SETUP ====================
+        let scene, camera, renderer, fieldGroup, cropMeshes = [], waterMesh, soilCutawayGroup, rainParticles, sunLight, ambientLight;
+        let isDragging = false, prevMouse = { x: 0, y: 0 };
+        let camTheta = 0.65, camPhi = 0.92, camRadius = 19;
+
+        function initThreeJS() {
+            const container = document.getElementById('canvas-container');
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0f172a);
+            scene.fog = new THREE.FogExp2(0x1e293b, 0.018);
+
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 200);
+            updateCameraPosition();
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            container.appendChild(renderer.domElement);
+
+            // Lighting
+            ambientLight = new THREE.AmbientLight(0xdbeafe, 0.65);
+            scene.add(ambientLight);
+
+            sunLight = new THREE.DirectionalLight(0xfef3c7, 1.25);
+            sunLight.position.set(14, 22, 12);
+            sunLight.castShadow = true;
+            sunLight.shadow.mapSize.width = 1024;
+            sunLight.shadow.mapSize.height = 1024;
+            scene.add(sunLight);
+
+            fieldGroup = new THREE.Group();
+            scene.add(fieldGroup);
+
+            buildEnvironment();
+            setupOrbitControls(renderer.domElement);
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        function buildEnvironment() {
+            // Clear existing
+            while (fieldGroup.children.length > 0) {
+                fieldGroup.remove(fieldGroup.children[0]);
+            }
+            cropMeshes = [];
+
+            const reg = REGIONS[state.region];
+
+            // 1. Main Agricultural Soil Block (with 3D depth for Cross-Section inspection)
+            const soilGeo = new THREE.BoxGeometry(14, 2.4, 14);
+            const soilMat = new THREE.MeshStandardMaterial({
+                color: state.disaster === 'drought' ? 0x926c44 : reg.groundColor,
+                roughness: 0.9,
+                metalness: 0.05
+            });
+            const soilMesh = new THREE.Mesh(soilGeo, soilMat);
+            soilMesh.position.y = -1.2;
+            soilMesh.receiveShadow = true;
+            fieldGroup.add(soilMesh);
+
+            // 2. Soil Cross-Section Sub-layers (Visible when Soil Layers 3D is toggled)
+            soilCutawayGroup = new THREE.Group();
+            const subLayerGeo = new THREE.BoxGeometry(14.08, 0.85, 14.08);
+            const subLayerMat = new THREE.MeshStandardMaterial({ color: 0x5c4033, roughness: 0.95 });
+            const subLayer = new THREE.Mesh(subLayerGeo, subLayerMat);
+            subLayer.position.y = -1.25;
+            soilCutawayGroup.add(subLayer);
+
+            const deepLayerGeo = new THREE.BoxGeometry(14.12, 0.75, 14.12);
+            const deepLayerMat = new THREE.MeshStandardMaterial({ color: 0x2d3748, roughness: 0.95 });
+            const deepLayer = new THREE.Mesh(deepLayerGeo, deepLayerMat);
+            deepLayer.position.y = -2.02;
+            soilCutawayGroup.add(deepLayer);
+
+            // Root visualization rods on edges
+            const rootMat = new THREE.MeshBasicMaterial({ color: 0xfde68a });
+            for (let i = -5; i <= 5; i += 2) {
+                const root = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.01, 1.1, 6), rootMat);
+                root.position.set(i, -0.55, 7.05);
+                soilCutawayGroup.add(root);
+            }
+            soilCutawayGroup.visible = state.soilCrossSection;
+            fieldGroup.add(soilCutawayGroup);
+
+            // 3. Raised Mud Bunds (Ail - আইল) around Bangladeshi field
+            const bundMat = new THREE.MeshStandardMaterial({ color: 0x4a3b2c, roughness: 0.95 });
+            const bundN = new THREE.Mesh(new THREE.BoxGeometry(14.6, 0.35, 0.5), bundMat);
+            bundN.position.set(0, 0.15, -7.1);
+            const bundS = bundN.clone(); bundS.position.set(0, 0.15, 7.1);
+            const bundE = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.35, 14.6), bundMat);
+            bundE.position.set(7.1, 0.15, 0);
+            const bundW = bundE.clone(); bundW.position.set(-7.1, 0.15, 0);
+            fieldGroup.add(bundN, bundS, bundE, bundW);
+
+            // 4. Surrounding Rural Bangladesh Landscape (Distant Hills / Floodplain / Trees)
+            const outerGround = new THREE.Mesh(
+                new THREE.PlaneGeometry(90, 90),
+                new THREE.MeshStandardMaterial({ color: 0x1e3a29, roughness: 1 })
+            );
+            outerGround.rotation.x = -Math.PI / 2;
+            outerGround.position.y = -2.38;
+            fieldGroup.add(outerGround);
+
+            // Regional Horizon Hills (Higher in Chattogram, gentle in Sunamganj)
+            const hillMat = new THREE.MeshStandardMaterial({ color: 0x166534, roughness: 0.9 });
+            for (let i = 0; i < 8; i++) {
+                const angle = (i / 8) * Math.PI * 2;
+                const dist = 24 + (i % 3) * 5;
+                const h = reg.hillHeight * (0.8 + (i % 3) * 0.4);
+                const hill = new THREE.Mesh(new THREE.ConeGeometry(7, h * 3, 7), hillMat);
+                hill.position.set(Math.cos(angle) * dist, -2.38 + h * 1.2, Math.sin(angle) * dist);
+                fieldGroup.add(hill);
+            }
+
+            // Simple Stylized Village Trees (Palm/Mango style)
+            for (let t = 0; t < 10; t++) {
+                const angle = (t / 10) * Math.PI * 2 + 0.3;
+                const r = 11.5 + (t % 2) * 3.5;
+                const treeGroup = new THREE.Group();
+                const trunk = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.14, 0.22, 2.2, 6),
+                    new THREE.MeshStandardMaterial({ color: 0x5c4033 })
+                );
+                trunk.position.y = 1.1;
+                const canopy = new THREE.Mesh(
+                    new THREE.DodecahedronGeometry(1.1, 1),
+                    new THREE.MeshStandardMaterial({ color: 0x15803d })
+                );
+                canopy.position.y = 2.5;
+                treeGroup.add(trunk, canopy);
+                treeGroup.position.set(Math.cos(angle) * r, -2.38, Math.sin(angle) * r);
+                fieldGroup.add(treeGroup);
+            }
+
+            // 5. Dynamic Water Surface (For Irrigation, Haor Flood, or Salinity Intrusion)
+            const waterGeo = new THREE.PlaneGeometry(13.8, 13.8);
+            const waterMat = new THREE.MeshStandardMaterial({
+                color: state.disaster === 'salinity' ? 0x2dd4bf : 0x0284c7,
+                transparent: true,
+                opacity: 0.72,
+                roughness: 0.15,
+                metalness: 0.2
+            });
+            waterMesh = new THREE.Mesh(waterGeo, waterMat);
+            waterMesh.rotation.x = -Math.PI / 2;
+            waterMesh.position.y = getTargetWaterY();
+            fieldGroup.add(waterMesh);
+
+            // 6. Generate 3D Crop Plants Grid
+            generateCrops();
+
+            // 7. Rain Particle System (Active during Flood or Monsoon)
+            const rainCount = 450;
+            const rainGeo = new THREE.BufferGeometry();
+            const rainPositions = new Float32Array(rainCount * 3);
+            for (let i = 0; i < rainCount * 3; i += 3) {
+                rainPositions[i] = (Math.random() - 0.5) * 18;
+                rainPositions[i + 1] = Math.random() * 14;
+                rainPositions[i + 2] = (Math.random() - 0.5) * 18;
+            }
+            rainGeo.setAttribute('position', new THREE.BufferAttribute(rainPositions, 3));
+            const rainMat = new THREE.PointsMaterial({ color: 0x7dd3fc, size: 0.12, transparent: true, opacity: 0.75 });
+            rainParticles = new THREE.Points(rainGeo, rainMat);
+            rainParticles.visible = (state.disaster === 'flood');
+            fieldGroup.add(rainParticles);
+        }
+
+        function generateCrops() {
+            cropMeshes.forEach(m => fieldGroup.remove(m));
+            cropMeshes = [];
+
+            if (state.growthStage === 0) return; // Bare tilled land
+
+            const cropData = CROPS[state.crop];
+            const stageScale = [0.1, 0.35, 0.7, 0.95, 1.15][state.growthStage];
+
+            // Determine color based on stage & climate stress
+            let plantColor = new THREE.Color(state.growthStage === 4 ? cropData.ripeColor : cropData.cropColor);
+            if (state.disaster === 'drought') plantColor.lerp(new THREE.Color(0xb45309), 0.65);
+            if (state.disaster === 'salinity' && cropData.maxSalinity < 5.0) plantColor.lerp(new THREE.Color(0xd97706), 0.6);
+            if (state.disaster === 'flood' && cropData.floodTolerance < 0.5) plantColor.lerp(new THREE.Color(0x78350f), 0.55);
+
+            const stalkMat = new THREE.MeshStandardMaterial({ color: plantColor, roughness: 0.7 });
+            const stalkGeo = new THREE.ConeGeometry(0.14, 1.1, 5);
+            stalkGeo.translate(0, 0.55, 0);
+
+            for (let x = -5.8; x <= 5.8; x += 0.95) {
+                for (let z = -5.8; z <= 5.8; z += 0.95) {
+                    const cluster = new THREE.Group();
+                    // 3 tillers per hill (গুছি)
+                    for (let b = 0; b < 3; b++) {
+                        const blade = new THREE.Mesh(stalkGeo, stalkMat);
+                        blade.rotation.z = (b - 1) * 0.22;
+                        blade.rotation.x = ((b % 2) - 0.5) * 0.18;
+                        cluster.add(blade);
+                    }
+                    cluster.position.set(x + (Math.random() - 0.5) * 0.15, 0, z + (Math.random() - 0.5) * 0.15);
+                    cluster.scale.set(stageScale, stageScale * (0.9 + Math.random() * 0.25), stageScale);
+                    cluster.castShadow = true;
+                    fieldGroup.add(cluster);
+                    cropMeshes.push(cluster);
+                }
+            }
+        }
+
+        function getTargetWaterY() {
+            if (state.disaster === 'flood') return 0.55;
+            if (state.disaster === 'salinity') return 0.18;
+            if (state.disaster === 'drought') return -0.35;
+            if (state.irrigated) return 0.08;
+            return -0.18;
+        }
+
+        // ==================== 4. CAMERA ORBIT & TOUCH CONTROLS ====================
+        function updateCameraPosition() {
+            if (!camera) return;
+            camera.position.x = camRadius * Math.sin(camPhi) * Math.sin(camTheta);
+            camera.position.y = camRadius * Math.cos(camPhi);
+            camera.position.z = camRadius * Math.sin(camPhi) * Math.cos(camTheta);
+            camera.lookAt(0, 0.2, 0);
+        }
+
+        function setupOrbitControls(domEl) {
+            domEl.addEventListener('mousedown', e => { isDragging = true; prevMouse = { x: e.clientX, y: e.clientY }; });
+            window.addEventListener('mouseup', () => { isDragging = false; });
+            window.addEventListener('mousemove', e => {
+                if (!isDragging) return;
+                const dx = e.clientX - prevMouse.x;
+                const dy = e.clientY - prevMouse.y;
+                camTheta -= dx * 0.007;
+                camPhi = Math.max(0.35, Math.min(1.42, camPhi - dy * 0.007));
+                updateCameraPosition();
+                prevMouse = { x: e.clientX, y: e.clientY };
+            });
+
+            domEl.addEventListener('wheel', e => {
+                camRadius = Math.max(9, Math.min(32, camRadius + e.deltaY * 0.01));
+                updateCameraPosition();
+            }, { passive: true });
+
+            // Touch support for mobile farmers
+            domEl.addEventListener('touchstart', e => {
+                if (e.touches.length === 1) {
+                    isDragging = true;
+                    prevMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                }
+            }, { passive: true });
+            domEl.addEventListener('touchend', () => { isDragging = false; });
+            domEl.addEventListener('touchmove', e => {
+                if (!isDragging || e.touches.length !== 1) return;
+                const dx = e.touches[0].clientX - prevMouse.x;
+                const dy = e.touches[0].clientY - prevMouse.y;
+                camTheta -= dx * 0.008;
+                camPhi = Math.max(0.35, Math.min(1.42, camPhi - dy * 0.008));
+                updateCameraPosition();
+                prevMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            }, { passive: true });
+        }
+
+        function onWindowResize() {
+            if (!camera || !renderer) return;
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // ==================== 5. ANIMATION LOOP ====================
+        let clock = new THREE.Clock();
+        function animate() {
+            requestAnimationFrame(animate);
+            const t = clock.getElapsedTime();
+
+            // Gentle wind sway on crops
+            cropMeshes.forEach((c, idx) => {
+                c.rotation.z = Math.sin(t * 2.1 + idx * 0.3) * 0.045;
+            });
+
+            // Smooth water level transition
+            if (waterMesh) {
+                const targetY = getTargetWaterY();
+                waterMesh.position.y += (targetY - waterMesh.position.y) * 0.06;
+            }
+
+            // Animate rain if flood disaster active
+            if (rainParticles && rainParticles.visible) {
+                const pos = rainParticles.geometry.attributes.position.array;
+                for (let i = 1; i < pos.length; i += 3) {
+                    pos[i] -= 0.28;
+                    if (pos[i] < 0) pos[i] = 14;
+                }
+                rainParticles.geometry.attributes.position.needsUpdate = true;
+            }
+
+            if (renderer && scene && camera) {
+                renderer.render(scene, camera);
+            }
+        }
+
+        // ==================== 6. SCIENTIFIC SIMULATION & CALCULATORS ====================
+        function recalculateSimulation() {
+            const year = YEARS[state.yearIdx];
+            const reg = REGIONS[state.region];
+            const crop = CROPS[state.crop];
+            state.ssp = document.getElementById('ssp-select').value;
+
+            // Climate Delta Calculation based on IPCC SSP trajectories
+            const yearFactor = (year - 2026) / 30; // 0.0 to 1.0
+            const sspMultiplier = state.ssp === 'ssp126' ? 0.6 : (state.ssp === 'ssp245' ? 1.0 : 1.65);
+
+            let tempDelta = yearFactor * 1.8 * sspMultiplier;
+            let rainFactor = 1 + (yearFactor * 0.12 * sspMultiplier * (state.region === 'rajshahi' ? -1.4 : 1));
+            let salinityDelta = state.region === 'khulna' ? (yearFactor * 3.8 * sspMultiplier) : (yearFactor * 0.3);
+
+            // Apply disaster overrides
+            if (state.disaster === 'drought') { tempDelta += 2.4; rainFactor *= 0.55; }
+            if (state.disaster === 'flood') { rainFactor *= 1.45; }
+            if (state.disaster === 'salinity') { salinityDelta += 4.5; }
+
+            const simTemp = (reg.baseTemp + tempDelta).toFixed(1);
+            const simRain = Math.round(reg.baseRain * rainFactor);
+            const simMoisture = Math.min(95, Math.max(10, Math.round(reg.baseMoisture * rainFactor + (state.irrigated ? 12 : 0))));
+            const simSalinity = (reg.baseSalinity + salinityDelta).toFixed(1);
+
+            // Update Telemetry HUD
+            document.getElementById('year-badge').textContent = year === 2026 ? '2026 (Baseline)' : `${year} (${state.ssp.toUpperCase()})`;
+            document.getElementById('data-category-tag').textContent = year === 2026 ? 'Baseline Obs' : 'SSP Projection';
+            document.getElementById('metric-temp').textContent = `${simTemp} °C`;
+            document.getElementById('metric-rain').textContent = `${simRain.toLocaleString()} mm`;
+            document.getElementById('metric-moisture').textContent = `${simMoisture}% (0.25°)`;
+            document.getElementById('metric-salinity').textContent = `${simSalinity} dS/m`;
+
+            // Evaluate Agronomic Suitability & Yield Range
+            let stressPenalty = 0;
+            if (parseFloat(simSalinity) > crop.maxSalinity) {
+                stressPenalty += (parseFloat(simSalinity) - crop.maxSalinity) * 0.11;
+            }
+            if (state.disaster === 'drought') stressPenalty += (1 - crop.droughtTolerance) * 0.45;
+            if (state.disaster === 'flood') stressPenalty += (1 - crop.floodTolerance) * 0.48;
+            if (state.fertilized) stressPenalty -= 0.08;
+            if (state.irrigated) stressPenalty -= 0.06;
+
+            const yieldMultiplier = Math.max(0.25, Math.min(1.15, 1 - stressPenalty));
+            const minYield = (crop.baseYield[0] * yieldMultiplier).toFixed(1);
+            const maxYield = (crop.baseYield[1] * yieldMultiplier).toFixed(1);
+
+            document.getElementById('yield-range-text').innerHTML = `${minYield} – ${maxYield} <span class="text-xs font-normal text-slate-300">tons/ha</span>`;
+
+            const suitBadge = document.getElementById('suitability-badge');
+            if (yieldMultiplier >= 0.85) {
+                suitBadge.className = "px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40";
+                suitBadge.textContent = state.lang === 'bn' ? "অত্যন্ত উপযোগী (High)" : "High Suitability";
+            } else if (yieldMultiplier >= 0.6) {
+                suitBadge.className = "px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40";
+                suitBadge.textContent = state.lang === 'bn' ? "মাঝারি ঝুঁকি (Moderate)" : "Moderate Risk";
+            } else {
+                suitBadge.className = "px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40";
+                suitBadge.textContent = state.lang === 'bn' ? "উচ্চ ঝুঁকি (High Stress)" : "High Climate Stress";
+            }
+
+            // Update Growth Stage UI
+            const stageNamesBn = ["০. জমি প্রস্তুত", "১. চারা রোপণ (Seedling)", "২. কুশি ও বৃদ্ধি (Vegetative)", "৩. ফুল ও শীষ (Flowering)", "৪. পরিপক্ব ফসল (Mature)"];
+            const stageNamesEn = ["0. Land Tilled", "1. Seedling Stage", "2. Vegetative Stage", "3. Flowering Stage", "4. Mature / Harvest"];
+            document.getElementById('growth-stage-label').textContent = state.lang === 'bn' ? stageNamesBn[state.growthStage] : stageNamesEn[state.growthStage];
+            document.getElementById('growth-progress-bar').style.width = `${state.growthStage * 25}%`;
+
+            // Generate Explainable AI Advice
+            updateAIAdvice(year, reg, crop, simSalinity, yieldMultiplier);
+            updateCalculators(yieldMultiplier);
+            update2DFallbackCards(year, reg, crop, simTemp, simRain, simMoisture, simSalinity, minYield, maxYield);
+        }
+
+        function updateAIAdvice(year, reg, crop, simSalinity, yieldMultiplier) {
+            const box = document.getElementById('ai-advice-text');
+            if (state.lang === 'bn') {
+                if (parseFloat(simSalinity) > crop.maxSalinity) {
+                    box.textContent = `সতর্কতা (${year}): ${reg.nameBn} অঞ্চলে মাটির লবণাক্ততা ${simSalinity} dS/m হতে পারে, যা ${crop.nameBn}-এর সহনশীলতার (${crop.maxSalinity} dS/m) চেয়ে বেশি। লবণসহিষ্ণু জাত 'ব্রি ধান৬৭' নির্বাচন করুন এবং জিপসাম সার প্রয়োগ করুন।`;
+                } else if (state.disaster === 'flood') {
+                    box.textContent = `আকস্মিক বন্যা সিমুলেশন (${year}): NASA GPM বৃষ্টিপাত সূচক অনুযায়ী জলাবদ্ধতার ঝুঁকি বেড়েছে। জমির আইল উঁচু করুন এবং দ্রুত পানি নিষ্কাশনের ব্যবস্থা রাখুন।`;
+                } else if (state.disaster === 'drought') {
+                    box.textContent = `খরা সিমুলেশন (${year}): NASA SMAP মাটির আর্দ্রতা কমে গেছে। সম্পূরক সেচ দিন এবং মালচিং বা AWD পদ্ধতি অনুসরণ করুন।`;
+                } else {
+                    box.textContent = `${year} সালের জলবায়ু প্রক্ষেপণ অনুযায়ী ${reg.nameBn} (${reg.aez}) এলাকায় ${crop.nameBn} চাষের সম্ভাবনা ভালো। মাটির ধরন: ${reg.soilTypeBn}। সুষম সার ও সময়মতো সেচ দিলে কাঙ্ক্ষিত ফলন পাওয়া সম্ভব।`;
+                }
+            } else {
+                if (parseFloat(simSalinity) > crop.maxSalinity) {
+                    box.textContent = `Alert (${year}): Projected soil salinity in ${reg.nameEn} (${simSalinity} dS/m) exceeds ${crop.nameEn} tolerance (${crop.maxSalinity} dS/m). Switch to salt-tolerant BRRI dhan67 and apply gypsum.`;
+                } else if (state.disaster === 'flood') {
+                    box.textContent = `Flood Simulation (${year}): Elevated NASA GPM precipitation indicates waterlogging risk. Reinforce field bunds and clear drainage channels.`;
+                } else if (state.disaster === 'drought') {
+                    box.textContent = `Drought Simulation (${year}): NASA SMAP root-zone moisture is depleted. Apply supplemental irrigation using Alternate Wetting & Drying (AWD).`;
+                } else {
+                    box.textContent = `Under ${year} climate projections, ${crop.nameEn} shows favorable suitability in ${reg.nameEn} (${reg.aez}). Soil: ${reg.soilTypeEn}. Follow BARC balanced fertilizer guidelines.`;
+                }
+            }
+        }
+
+        function updateCalculators(yieldMultiplier = 1.0) {
+            const areaVal = parseFloat(document.getElementById('calc-area').value) || 2.0;
+            const unit = document.getElementById('calc-unit').value;
+            const crop = CROPS[state.crop];
+
+            // Convert area to Hectares (1 ha = 2.471 acres = 7.47 bigha = 247.1 decimals)
+            let hectares = areaVal;
+            if (unit === 'acre') hectares = areaVal / 2.471;
+            if (unit === 'bigha') hectares = areaVal / 7.47;
+            if (unit === 'decimal') hectares = areaVal / 247.1;
+
+            const urea = Math.round(crop.npkPerHa.urea * hectares);
+            const tsp = Math.round(crop.npkPerHa.tsp * hectares);
+            const mop = Math.round(crop.npkPerHa.mop * hectares);
+            const gypsum = Math.round(crop.npkPerHa.gypsum * hectares);
+
+            document.getElementById('fert-urea').textContent = `${urea} kg`;
+            document.getElementById('fert-tsp').textContent = `${tsp} kg`;
+            document.getElementById('fert-mop').textContent = `${mop} kg`;
+            document.getElementById('fert-gypsum').textContent = `${gypsum} kg`;
+
+            const waterMm = state.disaster === 'drought' ? Math.round(crop.waterNeedMm * 1.25) : crop.waterNeedMm;
+            document.getElementById('irrigation-mm').textContent = `${waterMm} mm`;
+
+            // Economics (BDT)
+            const avgYieldTons = ((crop.baseYield[0] + crop.baseYield[1]) / 2) * yieldMultiplier * hectares;
+            const costA = Math.round(crop.costPerHa * hectares);
+            const revA = Math.round(avgYieldTons * crop.pricePerTon * 0.92);
+            const netA = revA - costA;
+
+            const costB = Math.round(costA * 1.06);
+            const revB = Math.round(avgYieldTons * crop.pricePerTon * 1.12);
+            const netB = revB - costB;
+
+            document.getElementById('econ-cost-a').textContent = `৳${costA.toLocaleString()}`;
+            document.getElementById('econ-rev-a').textContent = `৳${revA.toLocaleString()}`;
+            document.getElementById('econ-net-a').textContent = `৳${netA.toLocaleString()}`;
+
+            document.getElementById('econ-cost-b').textContent = `৳${costB.toLocaleString()}`;
+            document.getElementById('econ-rev-b').textContent = `৳${revB.toLocaleString()}`;
+            document.getElementById('econ-net-b').textContent = `৳${netB.toLocaleString()}`;
+        }
+
+        // ==================== 7. INTERACTIVE CONTROLS & VOICE ASSISTANT ====================
+        function startSimulation() {
+            state.farmerName = document.getElementById('farmer-name-input').value || 'রহিম মিয়া';
+            state.districtId = document.getElementById('onboard-region-select').value;
+            const district = GAME_DISTRICTS.find(item => item.id === state.districtId);
+            if (district) state.region = REGION_FOR_DISTRICT[district.region] || 'sunamganj';
+            state.areaAcres = parseFloat(document.getElementById('onboard-area-input').value) || 2.0;
+
+            document.getElementById('region-select').value = state.districtId;
+            document.getElementById('calc-area').value = state.areaAcres;
+            document.getElementById('onboarding-modal').classList.add('hidden');
+
+            updateFarmerHud();
+            buildEnvironment();
+            generateCrops();
+            recalculateSimulation();
+            updateGameProgress();
+            showToast(state.lang === 'bn' ? 'ভার্চুয়াল খামার প্রস্তুত! নিচের টুলবার ব্যবহার করে চাষাবাদ করুন।' : 'Virtual farm ready! Use the bottom toolbar to farm.');
+        }
+
+        function updateFarmerHud() {
+            const reg = REGIONS[state.region];
+            const district = GAME_DISTRICTS.find(item => item.id === state.districtId);
+            const districtName = district ? (state.lang === 'bn' ? district.nameBn : district.nameEn) : (state.lang === 'bn' ? reg.nameBn : reg.nameEn);
+            document.getElementById('hud-farmer-summary').textContent = `${state.farmerName} • ${districtName} (${state.areaAcres} ac)`;
+        }
+
+        function syncRegionFromOnboard(val) {
+            state.districtId = val;
+            const district = GAME_DISTRICTS.find(item => item.id === val);
+            if (district) state.region = REGION_FOR_DISTRICT[district.region] || 'sunamganj';
+        }
+        function syncAreaFromOnboard(val) { state.areaAcres = parseFloat(val) || 2.0; }
+
+        function changeRegion(val) {
+            state.districtId = val;
+            const district = GAME_DISTRICTS.find(item => item.id === val);
+            if (!district) {
+                showToast(state.lang === 'bn' ? 'জেলা তালিকায় অবস্থানটি পাওয়া যায়নি।' : 'District not found in the location catalog.');
+                return;
+            }
+            state.region = REGION_FOR_DISTRICT[district.region] || 'sunamganj';
+            document.getElementById('onboard-region-select').value = val;
+            updateFarmerHud();
+            buildEnvironment();
+            recalculateSimulation();
+            showToast(state.lang === 'bn' ? `জেলা পরিবর্তিত: ${district.nameBn} · ${REGIONS[state.region].nameBn} ভিত্তিক শিক্ষামূলক পরিবেশ` : `District changed: ${district.nameEn} · indicative ${REGIONS[state.region].nameEn} context`);
+        }
+
+        function changeCrop(val) {
+            state.crop = val;
+            generateCrops();
+            recalculateSimulation();
+            showToast(state.lang === 'bn' ? `ফসল নির্বাচিত: ${CROPS[val].nameBn}` : `Crop selected: ${CROPS[val].nameEn}`);
+        }
+
+        function updateYearStep(idx) {
+            state.yearIdx = parseInt(idx);
+            recalculateSimulation();
+        }
+
+        function setDisasterScenario(type) {
+            state.disaster = type;
+            document.querySelectorAll('.dis-btn').forEach(b => {
+                b.className = "dis-btn px-2 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 transition";
+            });
+            const activeBtn = document.getElementById(`dis-${type}`);
+            if (activeBtn) {
+                activeBtn.className = "dis-btn px-2 py-1.5 rounded-lg text-xs font-medium bg-rose-600/30 border border-rose-500/60 text-rose-200 transition";
+            }
+            buildEnvironment();
+            recalculateSimulation();
+        }
+
+        function toggleSoilCrossSection() {
+            state.soilCrossSection = !state.soilCrossSection;
+            if (soilCutawayGroup) soilCutawayGroup.visible = state.soilCrossSection;
+            const btn = document.getElementById('soil-cutaway-btn');
+            btn.classList.toggle('bg-amber-600');
+            btn.classList.toggle('text-white');
+            showToast(state.soilCrossSection
+                ? (state.lang === 'bn' ? 'মাটির নিচের স্তর ও শিকড়ের গভীরতা দেখানো হচ্ছে' : '3D Soil Cross-Section & Root Depth Enabled')
+                : (state.lang === 'bn' ? 'সাধারণ ভূমি ভিউ' : 'Standard Surface View'));
+        }
+
+        function executeFarmAction(action) {
+            const level = GAME_LEVELS.findIndex(item => item.action === action) + 1;
+            if (level !== state.level) {
+                showToast(state.lang === 'bn' ? `আগে লেভেল ${state.level} সম্পন্ন করুন।` : `Complete Level ${state.level} first.`);
+                return;
+            }
+
+            if (action === 'prepare') {
+                state.growthStage = 0;
+                state.tilled = true;
+                state.planted = false;
+                state.irrigated = false;
+                state.fertilized = false;
+                generateCrops();
+                showToast(state.lang === 'bn' ? 'জমি চাষ ও সমতল করা সম্পন্ন হয়েছে!' : 'Land preparation & tilling completed!');
+            } else if (action === 'plant') {
+                if (!state.tilled) {
+                    showToast(state.lang === 'bn' ? 'আগে জমি তৈরি করুন।' : 'Prepare the land first.');
+                    return;
+                }
+                state.growthStage = 1;
+                state.planted = true;
+                generateCrops();
+                showToast(state.lang === 'bn' ? `${CROPS[state.crop].nameBn} চারা রোপণ করা হয়েছে!` : `Planted ${CROPS[state.crop].nameEn}!`);
+            } else if (action === 'irrigate') {
+                if (!state.planted) {
+                    showToast(state.lang === 'bn' ? 'আগে চারা রোপণ করুন।' : 'Plant the crop first.');
+                    return;
+                }
+                state.irrigated = true;
+                showToast(state.lang === 'bn' ? 'জমিতে পরিমিত সেচ প্রদান করা হয়েছে!' : 'Irrigation applied to field!');
+            } else if (action === 'fertilize') {
+                if (!state.irrigated) {
+                    showToast(state.lang === 'bn' ? 'আগে সেচ দিন।' : 'Irrigate the field first.');
+                    return;
+                }
+                state.fertilized = true;
+                showToast(state.lang === 'bn' ? 'গেমের উদাহরণভিত্তিক সুষম সার প্রয়োগ করা হয়েছে!' : 'Illustrative game fertilizer applied!');
+            } else if (action === 'grow') {
+                if (!state.fertilized) {
+                    showToast(state.lang === 'bn' ? 'আগে সুষম সার প্রয়োগ করুন।' : 'Apply fertilizer first.');
+                    return;
+                }
+                state.growthStage = Math.min(4, state.growthStage + 1);
+                generateCrops();
+                if (state.growthStage < 4) {
+                    saveGameProgress();
+                    updateGameProgress();
+                    recalculateSimulation();
+                    showToast(state.lang === 'bn' ? `ফসলের বৃদ্ধি ${state.growthStage - 1}/3 ধাপ সম্পন্ন।` : `Crop growth ${state.growthStage - 1}/3 stages complete.`);
+                    return;
+                }
+                showToast(state.lang === 'bn' ? 'ফসল পরিপক্ব হয়েছে! এখন কর্তন করুন।' : 'Crop is mature! Harvest it to finish the season.');
+            } else if (action === 'harvest') {
+                if (state.growthStage < 4) {
+                    showToast(state.lang === 'bn' ? 'কর্তনের আগে ফসল পরিপক্ব করুন।' : 'Grow the crop to maturity before harvesting.');
+                    return;
+                }
+                showToast(state.lang === 'bn' ? 'ফসল সংগ্রহ সফল! ডানপাশে সম্ভাব্য ফলন ও আয় দেখুন।' : 'Harvest complete! Check yield & revenue on the right panel.');
+            }
+            recalculateSimulation();
+            completeGameLevel(action);
+        }
+
+        let signStream = null;
+        let signHands = null;
+        let signAnimationFrame = null;
+        let signRunning = false;
+        let signStarting = false;
+        let signStartGeneration = 0;
+        let signBusy = false;
+        let signPose = null;
+        let signPoseFrames = 0;
+        let signPoseLatched = false;
+
+        function openSignControl() {
+            document.getElementById('sign-control-modal').classList.remove('hidden');
+        }
+
+        function closeSignControl() {
+            stopSignControl();
+            document.getElementById('sign-control-modal').classList.add('hidden');
+        }
+
+        function loadHandTrackingScript() {
+            if (window.Hands) return Promise.resolve();
+            return new Promise((resolve, reject) => {
+                let script = document.querySelector('script[data-game-hands]');
+                if (!script) {
+                    script = document.createElement('script');
+                    script.src = new URL('mediapipe/hands/hands.js', document.baseURI).toString();
+                    script.async = true;
+                    script.dataset.gameHands = 'true';
+                    document.head.appendChild(script);
+                }
+                script.addEventListener('load', () => resolve(), { once: true });
+                script.addEventListener('error', () => reject(new Error('Could not load the locally hosted hand-tracking library.')), { once: true });
+            });
+        }
+
+        function classifyGameHandPose(landmarks) {
+            if (!landmarks || landmarks.length < 21) return null;
+            const distance = (a, b) => Math.hypot(landmarks[a].x - landmarks[b].x, landmarks[a].y - landmarks[b].y);
+            const wrist = landmarks[0];
+            const extended = (tip, joint) => distance(tip, 0) > distance(joint, 0) * 1.12;
+            const thumb = distance(4, 17) > distance(3, 17) * 1.04 && distance(4, 5) > distance(3, 5) * 1.15;
+            const fingers = [extended(8, 6), extended(12, 10), extended(16, 14), extended(20, 18)];
+            const count = fingers.filter(Boolean).length + (thumb ? 1 : 0);
+            if (count === 0) return 0;
+            if (count === 1 && fingers[0]) return 1;
+            if (count === 2 && fingers[0] && fingers[1]) return 2;
+            if (count === 3 && fingers[0] && fingers[1] && fingers[2]) return 3;
+            if (count === 4 && fingers.every(Boolean)) return 4;
+            if (count === 5 && fingers.every(Boolean)) return 5;
+            return null;
+        }
+
+        async function startSignControl() {
+            if (signRunning || signStarting) return;
+            const status = document.getElementById('sign-status');
+            const video = document.getElementById('sign-preview');
+            const startButton = document.getElementById('sign-start-btn');
+            if (!navigator.mediaDevices?.getUserMedia) {
+                status.textContent = state.lang === 'bn' ? 'এই ব্রাউজারে ক্যামেরা নেই; HTTPS বা localhost ব্যবহার করুন।' : 'Camera unavailable; use HTTPS or localhost.';
+                return;
+            }
+            const generation = ++signStartGeneration;
+            signStarting = true;
+            startButton.disabled = true;
+            status.textContent = state.lang === 'bn' ? 'ক্যামেরার অনুমতির অপেক্ষায়…' : 'Waiting for camera permission…';
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } },
+                    audio: false
+                });
+                if (generation !== signStartGeneration) {
+                    stream.getTracks().forEach(track => track.stop());
+                    return;
+                }
+                signStream = stream;
+                video.srcObject = signStream;
+                video.classList.remove('hidden');
+                video.playsInline = true;
+                await video.play();
+                await loadHandTrackingScript();
+                if (generation !== signStartGeneration) return;
+                if (!window.Hands) throw new Error('Hand tracking loaded without the Hands API.');
+                const base = new URL('mediapipe/hands/', document.baseURI).pathname.replace(/\/$/, '');
+                signHands = new window.Hands({ locateFile: file => `${base}/${file}` });
+                signHands.setOptions({ maxNumHands: 1, modelComplexity: 0, minDetectionConfidence: 0.6, minTrackingConfidence: 0.5, selfieMode: true });
+                signHands.onResults(results => {
+                    const pose = classifyGameHandPose(results.multiHandLandmarks?.[0]);
+                    if (pose === null) {
+                        signPose = null;
+                        signPoseFrames = 0;
+                        signPoseLatched = false;
+                        return;
+                    }
+                    if (pose !== signPose) {
+                        signPose = pose;
+                        signPoseFrames = 0;
+                        signPoseLatched = false;
+                    }
+                    signPoseFrames += 1;
+                    if (signPoseFrames >= 10 && !signPoseLatched) {
+                        signPoseLatched = true;
+                        executeFarmAction(GAME_LEVELS[pose].action);
+                        status.textContent = state.lang === 'bn'
+                            ? `${GAME_LEVELS[pose].nameBn} ভঙ্গি শনাক্ত · ক্যামেরা ডিভাইসেই প্রক্রিয়াকরণ করছে`
+                            : `${GAME_LEVELS[pose].nameEn} pose detected · processed on this device`;
+                    }
+                });
+                signRunning = true;
+                signStarting = false;
+                startButton.disabled = false;
+                document.getElementById('sign-start-btn').classList.add('hidden');
+                document.getElementById('sign-stop-btn').classList.remove('hidden');
+                status.textContent = state.lang === 'bn' ? 'ক্যামেরা চালু · হাত দেখান ও ভঙ্গি ধরে রাখুন' : 'Camera on · show your hand and hold a pose';
+                const processFrame = async () => {
+                    if (!signRunning || !signHands) return;
+                    if (!signBusy && video.readyState >= 2) {
+                        signBusy = true;
+                        try {
+                            await signHands.send({ image: video });
+                        } catch (error) {
+                            console.error('Hand tracking frame failed.', error);
+                            stopSignControl();
+                            status.textContent = state.lang === 'bn' ? 'হাত শনাক্তকরণ বন্ধ হয়েছে। আবার ক্যামেরা চালু করুন।' : 'Hand tracking stopped. Start the camera again.';
+                            return;
+                        } finally {
+                            signBusy = false;
+                        }
+                    }
+                    signAnimationFrame = requestAnimationFrame(processFrame);
+                };
+                signAnimationFrame = requestAnimationFrame(processFrame);
+            } catch (error) {
+                console.error('Could not start camera hand controls.', error);
+                if (generation !== signStartGeneration) return;
+                stopSignControl();
+                const name = error?.name;
+                status.textContent = name === 'NotAllowedError' || name === 'SecurityError'
+                    ? (state.lang === 'bn' ? 'ক্যামেরার অনুমতি দেওয়া হয়নি।' : 'Camera permission was denied.')
+                    : (state.lang === 'bn' ? 'ক্যামেরা চালু করা যায়নি; HTTPS/localhost ও ক্যামেরা পরীক্ষা করুন।' : 'Could not start camera; check HTTPS/localhost and camera availability.');
+            }
+        }
+
+        function stopSignControl() {
+            signStartGeneration += 1;
+            signRunning = false;
+            signStarting = false;
+            if (signAnimationFrame !== null) cancelAnimationFrame(signAnimationFrame);
+            signAnimationFrame = null;
+            if (signStream) signStream.getTracks().forEach(track => track.stop());
+            signStream = null;
+            const video = document.getElementById('sign-preview');
+            video.pause();
+            video.srcObject = null;
+            video.classList.add('hidden');
+            if (signHands) {
+                signHands.close().catch(error => console.error('Could not close hand tracking.', error));
+                signHands = null;
+            }
+            signPose = null;
+            signPoseFrames = 0;
+            signPoseLatched = false;
+            document.getElementById('sign-start-btn').classList.remove('hidden');
+            document.getElementById('sign-start-btn').disabled = false;
+            document.getElementById('sign-stop-btn').classList.add('hidden');
+            document.getElementById('sign-status').textContent = state.lang === 'bn' ? 'ক্যামেরা বন্ধ' : 'Camera off';
+        }
+
+        function switchRightTab(tab) {
+            ['ai', 'calc', 'econ'].forEach(t => {
+                document.getElementById(`panel-${t}`).classList.add('hidden');
+                document.getElementById(`tab-${t}`).className = "py-1.5 rounded-lg text-slate-300 hover:text-white transition";
+            });
+            document.getElementById(`panel-${tab}`).classList.remove('hidden');
+            document.getElementById(`tab-${tab}`).className = "py-1.5 rounded-lg bg-emerald-600 text-white transition";
+        }
+
+        function toggleLanguage() {
+            state.lang = state.lang === 'bn' ? 'en' : 'bn';
+            document.getElementById('top-lang-btn').textContent = state.lang === 'bn' ? 'EN' : 'বাংলা';
+            document.getElementById('onboard-lang-btn').textContent = state.lang === 'bn' ? 'English' : 'বাংলা';
+
+            document.querySelectorAll('[data-bn]').forEach(el => {
+                el.textContent = state.lang === 'bn' ? el.getAttribute('data-bn') : el.getAttribute('data-en');
+            });
+            updateFarmerHud();
+            updateGameProgress();
+            recalculateSimulation();
+        }
+
+        function toggle2DMode() {
+            state.is2DMode = !state.is2DMode;
+            const view2D = document.getElementById('fallback-2d-view');
+            if (state.is2DMode) {
+                view2D.classList.remove('hidden');
+            } else {
+                view2D.classList.add('hidden');
+            }
+        }
+
+        function update2DFallbackCards(year, reg, crop, simTemp, simRain, simMoisture, simSalinity, minYield, maxYield) {
+            const container = document.getElementById('fallback-2d-cards');
+            if (!container) return;
+            container.innerHTML = `
+                <div class="glass-card p-5 rounded-2xl space-y-2">
+                    <div class="text-xs font-bold text-sky-400 uppercase">NASA Earthdata (${year})</div>
+                    <h3 class="text-lg font-bold text-white">${reg.nameBn} (${reg.aez})</h3>
+                    <p class="text-sm text-slate-300">তাপমাত্রা: <b>${simTemp} °C</b> • বৃষ্টিপাত: <b>${simRain} mm</b></p>
+                    <p class="text-sm text-slate-300">মাটির আর্দ্রতা: <b>${simMoisture}%</b> • লবণাক্ততা: <b>${simSalinity} dS/m</b></p>
+                </div>
+                <div class="glass-card p-5 rounded-2xl space-y-2">
+                    <div class="text-xs font-bold text-emerald-400 uppercase">Agronomic Output</div>
+                    <h3 class="text-lg font-bold text-white">${crop.nameBn}</h3>
+                    <p class="text-sm text-slate-300">সম্ভাব্য ফলন: <b class="text-emerald-300">${minYield} – ${maxYield} tons/ha</b></p>
+                    <p class="text-sm text-slate-300">মাটির ধরন: ${reg.soilTypeBn}</p>
+                </div>
+                <div class="glass-card p-5 rounded-2xl space-y-2">
+                    <div class="text-xs font-bold text-amber-400 uppercase">AI Decision Support</div>
+                    <p class="text-xs text-slate-200 leading-relaxed">${document.getElementById('ai-advice-text').textContent}</p>
+                </div>
+            `;
+        }
+
+        // ==================== 8. VOICE COMMANDS & SPEECH SYNTHESIS ====================
+        function runPresetCommand(cmd) {
+            if (cmd === '2029') {
+                document.getElementById('year-slider').value = 1;
+                updateYearStep(1);
+                showToast('ভয়েস কমান্ড: ২০২৯ সালের জলবায়ু সিমুলেশন চালু হয়েছে।');
+            } else if (cmd === 'soil') {
+                if (!state.soilCrossSection) toggleSoilCrossSection();
+                showToast('ভয়েস কমান্ড: মাটির ৩ডি স্তর ও আর্দ্রতা দেখানো হচ্ছে।');
+            } else if (cmd === 'flood') {
+                setDisasterScenario('flood');
+                showToast('ভয়েস কমান্ড: আকস্মিক বন্যার ঝুঁকি সিমুলেশন চালু হয়েছে।');
+            } else if (cmd === 'fertilizer') {
+                switchRightTab('calc');
+                showToast('ভয়েস কমান্ড: BARC সার ও সেচ ক্যালকুলেটর খোলা হয়েছে।');
+            }
+            speakCurrentAdvice();
+        }
+
+        function startVoiceRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                showToast('আপনার ব্রাউজারে সরাসরি মাইক্রোফোন সমর্থিত নয়; নিচের কুইক কমান্ড বাটনগুলো ব্যবহার করুন।');
+                return;
+            }
+            const recognition = new SpeechRecognition();
+            recognition.lang = state.lang === 'bn' ? 'bn-BD' : 'en-US';
+            const btn = document.getElementById('voice-mic-btn');
+            btn.classList.add('mic-listening');
+            document.getElementById('mic-status-text').textContent = state.lang === 'bn' ? 'শুনছি...' : 'Listening...';
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript.toLowerCase();
+                if (transcript.includes('২০২৯') || transcript.includes('2029')) runPresetCommand('2029');
+                else if (transcript.includes('মাটি') || transcript.includes('soil')) runPresetCommand('soil');
+                else if (transcript.includes('বন্যা') || transcript.includes('flood')) runPresetCommand('flood');
+                else if (transcript.includes('সার') || transcript.includes('fertilizer')) runPresetCommand('fertilizer');
+                else showToast(`আপনি বলেছেন: "${transcript}"`);
+            };
+            recognition.onend = () => {
+                btn.classList.remove('mic-listening');
+                document.getElementById('mic-status-text').textContent = state.lang === 'bn' ? 'কথা বলুন' : 'Speak';
+            };
+            recognition.start();
+        }
+
+        function speakCurrentAdvice() {
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            const text = document.getElementById('ai-advice-text').textContent;
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = state.lang === 'bn' ? 'bn-BD' : 'en-US';
+            utterance.rate = 0.95;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function openProvenanceModal() { document.getElementById('provenance-modal').classList.remove('hidden'); }
+        function closeProvenanceModal() { document.getElementById('provenance-modal').classList.add('hidden'); }
+
+        window.addEventListener('beforeunload', stopSignControl);
+
+        let toastTimeout;
+        function showToast(msg) {
+            const box = document.getElementById('toast-box');
+            document.getElementById('toast-message').textContent = msg;
+            box.classList.remove('opacity-0', '-translate-y-3');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                box.classList.add('opacity-0', '-translate-y-3');
+            }, 3400);
+        }
+
+        // ==================== 9. INITIALIZE ON WINDOW LOAD ====================
+        window.onload = async function () {
+            populateCropOptions();
+            try {
+                await loadDistrictCatalog();
+            } catch (error) {
+                console.error('Could not load the Bangladesh district catalog.', error);
+                showToast(state.lang === 'bn' ? 'বাংলাদেশের জেলা তালিকা লোড হয়নি। পেজ রিফ্রেশ করে আবার চেষ্টা করুন।' : 'Bangladesh district list failed to load. Refresh and try again.');
+            }
+            initThreeJS();
+            recalculateSimulation();
+            updateGameProgress();
+            animate();
+        };
+    </script>
+</body>
+</html>

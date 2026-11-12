@@ -8,6 +8,8 @@ export const SITE_CONFIG = {
 };
 
 export const NAV_LINKS = [
+  { label: "Time Travel VR", href: "/time-travel" },
+  { label: "Agrilume Farming Game", href: "/agrilume-farming-game.html" },
   { label: "Mission", href: "#mission" },
   { label: "How It Works", href: "#how-it-works" },
   { label: "Science", href: "#science" },
