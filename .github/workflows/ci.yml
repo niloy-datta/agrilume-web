@@ -1,0 +1,46 @@
+name: Validate AgriLume web
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [NB]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: ESLint
+        run: npm run lint
+      - name: TypeScript
+        run: npm run typecheck
+      - name: Unit tests
+        run: npm test
+      - name: Static export
+        run: npm run build
+      - name: Verify exported routes and game assets
+        run: |
+          test -f out/index.html
+          test -f out/agrilume-farming-game.html
+          test -f out/mediapipe/hands/hands.js
+          test -f out/api/farming-game/catalog.json
+          for route in time-travel nasa-data bangladesh-agriculture recycling; do
+            if [ ! -f "out/${route}.html" ] && [ ! -f "out/${route}/index.html" ]; then
+              echo "::error::Missing static route: ${route}"
+              exit 1
+            fi
+          done

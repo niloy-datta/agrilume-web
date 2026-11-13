@@ -1,0 +1,4 @@
+Self-hosted copy of Google MediaPipe Hands (legacy JS solution), npm package @mediapipe/hands 0.4.1675469240.
+Licensed under the Apache License 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Hosted locally so hand-gesture control never sends camera frames to any server; all processing runs in the browser.
+Only the "lite" model is shipped (modelComplexity: 0).
