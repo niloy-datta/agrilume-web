@@ -80,17 +80,17 @@ export function NdviCard({ districtId, lang, year }: { districtId: string; lang:
             <caption>{tt(lang, "মাসিক NDVI", "Monthly NDVI")}</caption>
             <thead>
               <tr>
-                <th scope="col">Month</th>
-                <th scope="col">2021–2025 mean</th>
+                <th scope="col">{tt(lang, "মাস", "Month")}</th>
+                <th scope="col">{tt(lang, "২০২১–২০২৫ গড়", "2021–2025 mean")}</th>
                 {showYear && <th scope="col">{showYear}</th>}
               </tr>
             </thead>
             <tbody>
               {f.climatology.map((v, m) => (
                 <tr key={m}>
-                  <th scope="row">{M_FULL[m]}</th>
-                  <td>{v == null ? "no clear data" : v.toFixed(2)}</td>
-                  {showYear && <td>{f.monthlyByYear[String(showYear)][m]?.toFixed(2) ?? "no clear data"}</td>}
+                  <th scope="row">{lang === "bn" ? M_BN[m] : M_FULL[m]}</th>
+                  <td>{v == null ? tt(lang, "তথ্য নেই", "no clear data") : v.toFixed(2)}</td>
+                  {showYear && <td>{f.monthlyByYear[String(showYear)][m]?.toFixed(2) ?? tt(lang, "তথ্য নেই", "no clear data")}</td>}
                 </tr>
               ))}
             </tbody>
@@ -101,7 +101,7 @@ export function NdviCard({ districtId, lang, year }: { districtId: string; lang:
               `NDVI ০ = খালি মাটি/পানি, ~০.৮ = ঘন সবুজ। ${f.quality.compositesUsable}/${f.quality.compositesTotal}টি ১৬-দিনের ছবি ব্যবহারযোগ্য। এলাকায় শহর, পানি ও গাছ মিশে আছে; ফসলের মডেলে এটি ব্যবহৃত হয় না।`,
               `NDVI 0 = bare soil/water, ~0.8 = dense green. ${f.quality.compositesUsable}/${f.quality.compositesTotal} 16-day composites usable. The window mixes town, water and trees; NDVI is not used by the crop model.`,
             )}{" "}
-            <ExtLink href="https://modis.ornl.gov/data/modis_webservice.html">ORNL DAAC</ExtLink>
+            <ExtLink href="https://modis.ornl.gov/data/modis_webservice.html" lang={lang}>ORNL DAAC</ExtLink>
           </p>
         </>
       )}

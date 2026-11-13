@@ -185,11 +185,11 @@ export function Stat({ label, value, sub }: { label: string; value: React.ReactN
   );
 }
 
-export function ExtLink({ href, children }: { href: string; children: React.ReactNode }) {
+export function ExtLink({ href, children, lang }: { href: string; children: React.ReactNode; lang?: Lang }) {
   return (
     <a href={href} target="_blank" rel="noopener noreferrer" className="text-earth-cyan underline decoration-earth-cyan/40 underline-offset-2 hover:decoration-earth-cyan focus:outline-none focus-visible:ring-2 focus-visible:ring-earth-cyan">
       {children}
-      <span className="sr-only"> (opens in a new tab)</span>
+      <span className="sr-only"> {lang === "bn" ? "(নতুন ট্যাবে খুলবে)" : "(opens in a new tab)"}</span>
     </a>
   );
 }
