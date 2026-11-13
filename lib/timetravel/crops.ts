@@ -168,6 +168,21 @@ export const CROPS: Record<CropId, CropDef> = {
 
 export const CROP_LIST: CropDef[] = Object.values(CROPS);
 
+/** Returns a list of problems with a crop definition (empty = valid). Guards against silently nonsensical parameters. */
+export function cropDefProblems(def: CropDef): string[] {
+  const p: string[] = [];
+  const fin = (x: number) => typeof x === "number" && Number.isFinite(x);
+  if (![def.tbase, def.topt1, def.topt2, def.tmaxCrop, def.tcap, def.gddMaturity].every(fin)) p.push("non-finite temperature/GDD parameter");
+  if (!(def.tbase < def.topt1 && def.topt1 <= def.topt2 && def.topt2 < def.tmaxCrop)) p.push("need tbase < topt1 <= topt2 < tmaxCrop");
+  if (!(def.tcap > def.tbase)) p.push("tcap must exceed tbase");
+  if (!(def.gddMaturity > 0)) p.push("gddMaturity must be positive");
+  for (const k of ["init", "mid", "end"] as const) if (!(def.kc[k] > 0 && def.kc[k] < 2)) p.push(`kc.${k} outside (0, 2)`);
+  if (!(def.heat.maxLoss >= 0 && def.heat.maxLoss <= 1) || !(def.heat.range > 0)) p.push("heat loss parameters invalid");
+  if (def.cold && (!(def.cold.maxLoss >= 0 && def.cold.maxLoss <= 1) || !(def.cold.range > 0))) p.push("cold loss parameters invalid");
+  if (!(def.salinity.thresholdDsM >= 0 && def.salinity.slopePctPerDsM >= 0)) p.push("salinity parameters invalid");
+  return p;
+}
+
 export const STAGE_ORDER: StageId[] = [
   "landprep",
   "germination",
@@ -208,7 +223,7 @@ export function kcAtFraction(def: CropDef, frac: number): number {
   if (frac < 0.2) return init;
   if (frac < 0.5) return init + ((mid - init) * (frac - 0.2)) / 0.3;
   if (frac < 0.85) return mid;
-  return mid + ((end - mid) * Math.min(1, frac - 0.85)) / 0.15;
+  return mid + (end - mid) * Math.min(1, (frac - 0.85) / 0.15);
 }
 
 export function canopyAtFraction(frac: number): number {
@@ -284,7 +299,13 @@ export function simulateSeason(input: SimInput): SeasonResult {
   const { crop, lat } = input;
   const events = input.events ?? [];
   const whc = input.whcMm ?? 120;
+  const problems = cropDefProblems(crop);
+  if (problems.length) throw new Error(`invalid crop "${crop.id}": ${problems.join("; ")}`);
+  if (!Number.isFinite(input.soilEc) || input.soilEc < 0) throw new Error("soilEc must be a finite, non-negative dS/m value");
   const weather: DailyWeather = buildDailyWeather(lat, input.getYear, input.sowYear, input.sowDoy, MAX_DAYS);
+  for (const arr of [weather.tmax, weather.tmin, weather.rain]) {
+    if (arr.some((v) => !Number.isFinite(v))) throw new Error("weather contains missing/non-finite values; refusing to simulate");
+  }
 
   // Apply hazard modifications to the daily weather
   let ecEff = input.soilEc;
