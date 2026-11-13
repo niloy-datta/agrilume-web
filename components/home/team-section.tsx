@@ -47,12 +47,12 @@ export function TeamSection() {
       image: "/images/team/monisha-das.jpg",
     },
     {
-      name: "Arpita Bhattacharjee",
+      name: "Monika Dash",
       role: "Data Analysis & UX/UI",
       tag: "UX/UI Designer",
-      initials: "AB",
+      initials: "MD",
       accent: "#59D98E",
-      image: "/images/team/arpita-bhattacharjee.jpg",
+      image: "/images/team/monika-dash.png",
     },
   ];
 
