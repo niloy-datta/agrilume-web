@@ -8,12 +8,12 @@ export const SITE_CONFIG = {
 };
 
 export const NAV_LINKS = [
-  { label: "Time Travel VR", href: "/time-travel" },
-  { label: "Agrilume Farming Game", href: "/agrilume-farming-game.html" },
-  { label: "Mission", href: "#mission" },
-  { label: "How It Works", href: "#how-it-works" },
-  { label: "Science", href: "#science" },
-  { label: "App", href: "#app" },
+  { label: "Earth Intelligence", href: "/earth-intelligence" },
+  { label: "Decision Lab", href: "/decision-lab" },
+  { label: "Climate Risk", href: "/climate-risk" },
+  { label: "Time Travel 3D", href: "/time-travel" },
+  { label: "Farming Game", href: "/agrilume-farming-game.html" },
+  { label: "NASA Data", href: "/nasa-data" },
 ] as const;
 
 export const HERO_CONTENT = {

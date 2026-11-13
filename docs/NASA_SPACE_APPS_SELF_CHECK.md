@@ -18,6 +18,16 @@ The team (not this document) must decide:
 Until that is resolved, the "if-conditions-met" score below must not exceed ~89 and nothing here should be submitted
 as the official entry.
 
+**Update 2026-11-13:** the team states that organizer permission for pre-event development has been obtained.
+No written approval (who approved, date, approved window, reusable files, old/new SHA) is stored in this repository,
+so it cannot be verified from here. Before submission, save the approval text (or a reference to it) in
+`docs/AUTHORIZATION.md` and confirm it covers this branch's work (`upgrade/scientific-integrity`, started from
+`3b64616`). The 13 Nov Submission & Judging Guide must also be checked against the final submission.
+
+Also since 2026-11-08: all 64 districts now use bundled NASA POWER daily-derived data (the previous live path used
+monthly *extremes* by mistake), MODIS NDVI context was added, and a Scenario A vs B comparison exists. See
+`docs/AUDIT_2026-11-13.md`. The scores below were not re-scored.
+
 ## Two scores (never assume a target is met)
 
 | Area (weight) | Now | If conditions met | Evidence / what is missing |

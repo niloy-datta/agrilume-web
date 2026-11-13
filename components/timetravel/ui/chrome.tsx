@@ -14,11 +14,12 @@ import { Btn, KindBadge, tt } from "./primitives";
 export const TABS: { id: PanelId; icon: string; bn: string; en: string }[] = [
   { id: "place", icon: "📍", bn: "স্থান", en: "Place" },
   { id: "crop", icon: "🌾", bn: "ফসল", en: "Crop" },
+  { id: "compare", icon: "⚖️", bn: "তুলনা", en: "Compare" },
   { id: "hazard", icon: "⛈️", bn: "দুর্যোগ", en: "Hazards" },
   { id: "recycle", icon: "♻️", bn: "পুনর্ব্যবহার", en: "Recycling" },
   { id: "data", icon: "🛰️", bn: "NASA ডেটা", en: "NASA data" },
   { id: "gov", icon: "🏛️", bn: "সরকারি", en: "Government" },
-  { id: "assistant", icon: "🤖", bn: "AI সহকারী", en: "AI assistant" },
+  { id: "assistant", icon: "💬", bn: "সহায়ক (অফলাইন)", en: "Helper (offline)" },
   { id: "access", icon: "🤟", bn: "সহজলভ্যতা", en: "Access" },
 ];
 
@@ -142,8 +143,8 @@ export function TopBar({
         <Btn onClick={onCardboard} ariaLabel={tt(lang, "কার্ডবোর্ড মোড", "Cardboard mode")} title={tt(lang, "ফোন + কার্ডবোর্ড ভিউয়ার", "Phone + Cardboard viewer")}>
           📱 <span className="hidden sm:inline">{tt(lang, "কার্ডবোর্ড", "Cardboard")}</span>
         </Btn>
-        <Btn onClick={onAssistant} ariaLabel={tt(lang, "AI সহকারী খুলুন", "Open AI assistant")} title={tt(lang, "কৃষি সহায়ক", "Farming assistant")}>
-          🤖 <span className="hidden sm:inline">AI</span>
+        <Btn onClick={onAssistant} ariaLabel={tt(lang, "অফলাইন সহায়ক খুলুন", "Open offline helper")} title={tt(lang, "কৃষি সহায়ক", "Farming assistant")}>
+          💬 <span className="hidden sm:inline">{tt(lang, "সহায়ক", "Helper")}</span>
         </Btn>
         <Btn onClick={onMic} pressed={listening} ariaLabel={tt(lang, "ভয়েস কমান্ড", "Voice command")} className={listening ? "!border-agri-green !bg-agri-green/20" : ""}>
           🎤
@@ -161,7 +162,7 @@ export function TopBar({
           {lang === "bn" ? "EN" : "বাং"}
         </Btn>
         <Btn onClick={onQuality} title={tt(lang, "গ্রাফিক্স মান", "Graphics quality")} ariaLabel={tt(lang, "গ্রাফিক্স মান", "Graphics quality")}>
-          ⚙ {quality === "auto" ? "Auto" : quality === "low" ? "Low" : "High"}
+          ⚙ {quality === "auto" ? tt(lang, "স্বয়ংক্রিয়", "Auto") : quality === "low" ? tt(lang, "কম", "Low") : tt(lang, "উচ্চ", "High")}
         </Btn>
         <Btn onClick={onHelp} ariaLabel={tt(lang, "সাহায্য ও শর্টকাট", "Help and shortcuts")}>
           ?

@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import { rajshahiFixture, parseMonthly, monthlyUrl } from "@/lib/timetravel/power";
+import { rajshahiFixture, parseDaily, monthlyUrl, standInSeries } from "@/lib/timetravel/power";
 import {
   annualTrend,
   climatology,
@@ -119,29 +119,46 @@ describe("monthlyForYear (honest data kinds)", () => {
     expect(b.rain[0]).toBeCloseTo(a.rain[0] * 1.1, 10); // January
     expect(b.perturbed).toBe(true);
   });
-  it("uses a NASA delta pack only when one exists for that year, and says so", () => {
-    const pack: ProjectionPack = {
-      schema: "agrilume.projection.delta.v1",
-      dataset: "NASA/NEX-GDDP-CMIP6",
-      scenario: "ssp245",
-      ensemble: "TEST-FIXTURE (synthetic, test only)",
-      deltaBaseline: [1995, 2014],
-      projectionWindow: [2039, 2041],
-      rainRatioFallbackMonths: [0],
-      location: { name: "test", lat: 24, lon: 88 },
-      generatedAt: "2026-01-01T00:00:00Z",
-      citation: "Test fixture only - not real projection data",
-      years: { "2040": { dTmax: Array(12).fill(1.5), dTmin: Array(12).fill(1.2), rainRatio: Array(12).fill(1.1) } },
-    };
-    const base = monthlyForYear(s, 2040, DEFAULT_SCENARIO);
+  const testPack = (deltaBaseline: [number, number]): ProjectionPack => ({
+    schema: "agrilume.projection.delta.v1",
+    dataset: "NASA/NEX-GDDP-CMIP6",
+    scenario: "ssp245",
+    ensemble: "TEST-FIXTURE (synthetic, test only)",
+    deltaBaseline,
+    projectionWindow: [2039, 2041],
+    rainRatioFallbackMonths: [0],
+    location: { name: "test", lat: 24, lon: 88 },
+    generatedAt: "2026-01-01T00:00:00Z",
+    citation: "Test fixture only - not real projection data",
+    years: { "2040": { dTmax: Array(12).fill(1.5), dTmin: Array(12).fill(1.2), rainRatio: Array(12).fill(1.1) } },
+  });
+  it("uses a NASA delta pack only when one exists for that year, on the SAME observed baseline window", () => {
+    const pack = testPack([2010, 2014]);
     const withPack = monthlyForYear(s, 2040, { ...DEFAULT_SCENARIO, mode: "pack" }, { pack });
     expect(withPack.kind).toBe("nasa-projection");
-    expect(withPack.tmax[0] - base.tmax[0]).toBeCloseTo(1.5, 6);
+    const c = climatology(s.tmax, s.startYear, 2010, 2014).mean;
+    const r = climatology(s.rain, s.startYear, 2010, 2014).mean;
+    for (let m = 0; m < 12; m++) {
+      expect(withPack.tmax[m]).toBeCloseTo(c[m] + 1.5, 9);
+      expect(withPack.rain[m]).toBeCloseTo(r[m] * 1.1, 9);
+    }
     expect(withPack.notes.join(" ")).toContain("2039-2041 mean");
-    expect(withPack.notes.join(" ")).toContain("1995-2014");
+    expect(withPack.notes.join(" ")).toContain("2010-2014 mean (same window as the model baseline)");
     expect(withPack.notes.join(" ")).toContain("multiplicative ratio is undefined or unstable");
     const noYear = monthlyForYear(s, 2041, { ...DEFAULT_SCENARIO, mode: "pack" }, { pack });
     expect(noYear.kind).toBe("trend-what-if");
+    expect(noYear.notes.join(" ")).toContain("No NASA projection for 2041");
+  });
+  it("refuses a pack whose baseline window is outside the observed record", () => {
+    const out = monthlyForYear(s, 2040, { ...DEFAULT_SCENARIO, mode: "pack" }, { pack: testPack([1995, 2014]) });
+    expect(out.kind).toBe("trend-what-if");
+    expect(out.notes.join(" ")).toContain("does not cover the projection pack's baseline window");
+  });
+  it("never applies a district's projection to stand-in observations from another place", () => {
+    const stand = standInSeries("Dhaka");
+    const out = monthlyForYear(stand, 2040, { ...DEFAULT_SCENARIO, mode: "pack" }, { pack: testPack([2010, 2014]) });
+    expect(out.kind).toBe("trend-what-if");
+    expect(out.notes.join(" ")).toContain("Projection pack NOT applied");
   });
   it("validates projection packs strictly", () => {
     expect(() => validateProjectionPack({})).toThrow();
@@ -214,17 +231,36 @@ describe("NASA POWER response parsing", () => {
     parameters: { PRECTOTCORR: { units: "mm/day" }, T2M_MAX: { units: "C" }, T2M_MIN: { units: "C" } },
   });
   const meta = { name: "t", lat: 24, lon: 88, startYear: 2020, endYear: 2021, url: "u", origin: "nasa-power-live" as const, retrievedAt: "x" };
-  it("turns -999 fill into null (never 0) and ignores the annual month-13 key", () => {
-    const out = parseMonthly(mk({ "202001": 10, "202002": -999, "202013": 99, "202101": 11 }), meta);
-    expect(out.tmax[0][0]).toBe(10);
-    expect(out.tmax[0][1]).toBeNull();
-    expect(out.tmax[1][0]).toBe(11);
-    expect(out.tmax[0].length).toBe(12);
+  const days = (ym: string, n: number, f: (d: number) => number) =>
+    Object.fromEntries(Array.from({ length: n }, (_, i) => [`${ym}${String(i + 1).padStart(2, "0")}`, f(i)]));
+  it("averages DAILY values per month (not the monthly extreme) and drops -999 fill", () => {
+    // Jan 2020: 31 days alternating 10 / 20 (mean 15, max 20) + one fill value that must be ignored
+    const jan = days("202001", 31, (i) => (i === 5 ? -999 : i % 2 ? 20 : 10));
+    const out = parseDaily(mk(jan), meta);
+    const valid = Object.values(jan).filter((v) => v !== -999);
+    expect(out.tmax[0][0]).toBeCloseTo(valid.reduce((s, v) => s + v, 0) / valid.length, 10);
+    expect(out.tmax[0][0]).toBeLessThan(20); // the monthly extreme would be 20
+    expect(out.tmax[0][1]).toBeNull(); // February has no data -> null, never 0
+  });
+  it("refuses a monthly mean built from fewer than 20 valid days", () => {
+    const out = parseDaily(mk(days("202003", 19, () => 30)), meta);
+    expect(out.tmax[0][2]).toBeNull();
+    expect(parseDaily(mk(days("202003", 20, () => 30)), meta).tmax[0][2]).toBe(30);
+  });
+  it("ignores monthly-format keys (YYYYMM / YYYY13)", () => {
+    const out = parseDaily(mk({ "202001": 10, "202013": 99 }), meta);
+    expect(out.tmax[0].every((v) => v === null)).toBe(true);
+  });
+  it("derives day-to-day Tmax SD from the daily values", () => {
+    const vals: Record<string, number> = {};
+    for (const y of ["2020", "2021"]) for (let m = 1; m <= 12; m++) Object.assign(vals, days(`${y}${String(m).padStart(2, "0")}`, 28, (i) => (i % 2 ? 31 : 29)));
+    const out = parseDaily(mk(vals), meta);
+    for (const sd of out.tmaxDailySd) expect(sd).toBeCloseTo(Math.sqrt(56 / 55), 6); // +/-1 deviations, n-1
   });
   it("rejects unexpected rainfall units instead of guessing", () => {
-    const j = mk({ "202001": 1 });
+    const j = mk(days("202001", 31, () => 1));
     j.parameters.PRECTOTCORR.units = "kg/m2/s";
-    expect(() => parseMonthly(j, meta)).toThrow(/units/);
+    expect(() => parseDaily(j, meta)).toThrow(/units/);
   });
   it("builds the documented monthly URL", () => {
     const u = monthlyUrl(24.37, 88.6, 1981, 2025, ["T2M_MAX"]);

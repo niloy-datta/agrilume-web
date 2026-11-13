@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: [NB]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -38,9 +38,21 @@ jobs:
           test -f out/agrilume-farming-game.html
           test -f out/mediapipe/hands/hands.js
           test -f out/api/farming-game/catalog.json
+          test "$(ls out/data/power/*.json | wc -l)" -eq 64 || { echo "::error::Expected 64 NASA POWER district files"; exit 1; }
+          test "$(ls out/data/projections/*.json | wc -l)" -eq 64 || { echo "::error::Expected 64 projection packs"; exit 1; }
           for route in time-travel nasa-data bangladesh-agriculture recycling; do
             if [ ! -f "out/${route}.html" ] && [ ! -f "out/${route}/index.html" ]; then
               echo "::error::Missing static route: ${route}"
               exit 1
             fi
           done
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      - name: End-to-end tests (desktop + mobile viewport)
+        run: npm run test:e2e
+      - name: Upload Playwright traces on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-traces
+          path: test-results/

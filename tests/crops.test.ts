@@ -196,7 +196,7 @@ describe("static reference data integrity", () => {
   });
   it("NASA registry never claims 'used' for a dataset it does not actually use", () => {
     const used = NASA_DATASETS.filter((d) => d.integration === "live-in-browser" || d.integration === "bundled-real").map((d) => d.id);
-    expect(used.sort()).toEqual(["nex-gddp-cmip6", "power-daily-fixture", "power-monthly"]);
+    expect(used.sort()).toEqual(["modis-ndvi", "nex-gddp-cmip6", "power-daily-fixture", "power-monthly"]); // modis-ndvi: Place-panel card, see ndvi.test.ts
     for (const d of NASA_DATASETS) expect(new URL(d.portal).protocol).toBe("https:");
   });
 });

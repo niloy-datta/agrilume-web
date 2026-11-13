@@ -15,7 +15,10 @@ import rajshahiRaw from "./data/rajshahi-power-monthly.json";
 
 export const POWER_BASE = "https://power.larc.nasa.gov/api/temporal";
 export const POWER_START_YEAR = 1981;
-const CACHE_PREFIX = "agrilume.power.v1:";
+/** First year requested by the live (browser) fallback. */
+export const LIVE_START_YEAR = 2001;
+// v2: v1 entries were built from monthly EXTREMES (see parseDaily) and must never be read again.
+const CACHE_PREFIX = "agrilume.power.v2:";
 const CACHE_TTL_MS = 14 * 24 * 3600 * 1000;
 
 export interface PowerOk {
@@ -28,6 +31,7 @@ export interface PowerErr {
 }
 export type PowerResult = PowerOk | PowerErr;
 
+/** URL builder for the POWER monthly endpoint. NOTE: its T2M_MAX/T2M_MIN are monthly extremes - not used by the model. */
 export function monthlyUrl(lat: number, lon: number, startYear: number, endYear: number, params: string[]): string {
   const q = new URLSearchParams({
     parameters: params.join(","),
@@ -66,8 +70,17 @@ function emptyGrid(years: number): MonthlyGrid {
   return Array.from({ length: years }, () => Array.from({ length: 12 }, () => null as number | null));
 }
 
-/** Parse a POWER monthly response into a ClimateSeries. Exported for tests. */
-export function parseMonthly(
+/** Minimum valid days for a monthly mean; fewer -> null (never a guess). */
+export const MIN_DAYS_PER_MONTH = 20;
+
+/**
+ * Parse a POWER DAILY response into monthly means (+ day-to-day Tmax SD). Exported for tests.
+ *
+ * Why not the monthly endpoint: POWER's monthly T2M_MAX / T2M_MIN are the month's EXTREMES (hottest / coldest day),
+ * not the mean of daily maxima / minima that the crop model needs. Using them biased Tmax by about +3 degC and Tmin by
+ * about -3 degC. Aggregating the daily values ourselves gives the correct quantity.
+ */
+export function parseDaily(
   json: PowerJson,
   meta: { name: string; lat: number; lon: number; startYear: number; endYear: number; url: string; origin: Provenance["origin"]; retrievedAt: string },
 ): ClimateSeries {
@@ -77,36 +90,56 @@ export function parseMonthly(
   const n = meta.endYear - meta.startYear + 1;
   const grids: Record<string, MonthlyGrid> = {};
   const units: Record<string, string> = {};
+  let tmaxCells: number[][][] = [];
   for (const name of ["T2M_MAX", "T2M_MIN", "PRECTOTCORR"]) {
     const data = P[name];
     if (!data) throw new Error(`POWER response is missing ${name}`);
-    const g = emptyGrid(n);
+    const cells: number[][][] = Array.from({ length: n }, () => Array.from({ length: 12 }, () => []));
     for (const [key, v] of Object.entries(data)) {
-      // keys are YYYYMM; YYYY13 is the annual value and is ignored on purpose
-      if (!/^\d{6}$/.test(key)) continue;
+      if (!/^\d{8}$/.test(key)) continue; // daily keys are YYYYMMDD
+      if (v === fill || !Number.isFinite(v)) continue;
       const y = Number(key.slice(0, 4));
       const m = Number(key.slice(4, 6));
       if (m < 1 || m > 12 || y < meta.startYear || y > meta.endYear) continue;
-      g[y - meta.startYear][m - 1] = v === fill || !Number.isFinite(v) ? null : v;
+      cells[y - meta.startYear][m - 1].push(v);
     }
+    const g = emptyGrid(n);
+    cells.forEach((row, yi) =>
+      row.forEach((vals, m) => {
+        if (vals.length >= MIN_DAYS_PER_MONTH) g[yi][m] = vals.reduce((s, x) => s + x, 0) / vals.length;
+      }),
+    );
     grids[name] = g;
+    if (name === "T2M_MAX") tmaxCells = cells;
     units[name] = json.parameters?.[name]?.units ?? (name === "PRECTOTCORR" ? "mm/day" : "C");
   }
   if (units.PRECTOTCORR && !/mm\/day|mm\/d/i.test(units.PRECTOTCORR)) {
     throw new Error(`Unexpected rainfall units: ${units.PRECTOTCORR}`);
   }
+  const dev: number[][] = Array.from({ length: 12 }, () => []);
+  tmaxCells.forEach((row, yi) =>
+    row.forEach((vals, m) => {
+      const mu = grids.T2M_MAX[yi][m];
+      if (mu != null) for (const v of vals) dev[m].push(v - mu);
+    }),
+  );
+  const tmaxDailySd = dev.map((a) => {
+    if (a.length < 30) return null;
+    const mu = a.reduce((s, x) => s + x, 0) / a.length;
+    return Math.sqrt(a.reduce((s, x) => s + (x - mu) ** 2, 0) / (a.length - 1));
+  });
   const provenance: Provenance = {
     origin: meta.origin,
     provider: "NASA POWER",
-    dataset: "POWER Monthly (AG community)",
-    endpoint: "/api/temporal/monthly/point",
+    dataset: "POWER Daily (AG community), aggregated to monthly means",
+    endpoint: "/api/temporal/daily/point",
     sourceUrl: meta.url,
     community: "AG",
     retrievedAt: meta.retrievedAt,
     parameters: ["T2M_MAX", "T2M_MIN", "PRECTOTCORR"],
     units,
     spatial: "NASA POWER grid (about 0.5 x 0.625 deg) - not a farm-level measurement",
-    temporal: "monthly means",
+    temporal: `monthly means of daily values (>= ${MIN_DAYS_PER_MONTH} valid days per month)`,
     synthetic: false,
   };
   return {
@@ -118,7 +151,7 @@ export function parseMonthly(
     tmax: grids.T2M_MAX,
     tmin: grids.T2M_MIN,
     rain: grids.PRECTOTCORR,
-    tmaxDailySd: Array.from({ length: 12 }, () => null),
+    tmaxDailySd,
     provenance,
   };
 }
@@ -175,6 +208,86 @@ export function rajshahiFixture(): ClimateSeries {
       synthetic: false,
     },
   };
+}
+
+const DISTRICT_SCHEMA = "agrilume.power.monthly.v1";
+
+function isGrid(g: unknown, rows: number): g is MonthlyGrid {
+  return (
+    Array.isArray(g) &&
+    g.length === rows &&
+    g.every((r) => Array.isArray(r) && r.length === 12 && r.every((v) => v === null || (typeof v === "number" && Number.isFinite(v))))
+  );
+}
+
+/**
+ * Validate one bundled district file (public/data/power/<id>.json) and convert it to a ClimateSeries.
+ * Throws with a readable reason; physically implausible values are rejected rather than displayed.
+ */
+export function parseDistrictFile(raw: unknown, expectedId?: string): ClimateSeries {
+  if (typeof raw !== "object" || raw === null) throw new Error("district file is not an object");
+  const r = raw as Record<string, unknown>;
+  if (r.schema !== DISTRICT_SCHEMA) throw new Error("unknown district file schema");
+  const loc = r.location as { id: string; name: string; lat: number; lon: number } | undefined;
+  if (!loc || typeof loc.id !== "string") throw new Error("location missing");
+  if (expectedId && loc.id !== expectedId) throw new Error(`file is for ${loc.id}, expected ${expectedId}`);
+  if (!(loc.lat > 20 && loc.lat < 27 && loc.lon > 88 && loc.lon < 93)) throw new Error("location outside Bangladesh");
+  const startYear = r.startYear as number;
+  const endYear = r.endYear as number;
+  if (!Number.isInteger(startYear) || !Number.isInteger(endYear) || endYear < startYear) throw new Error("bad year range");
+  const rows = endYear - startYear + 1;
+  if (!isGrid(r.tmax, rows) || !isGrid(r.tmin, rows) || !isGrid(r.rain, rows)) throw new Error("grids must be years x 12");
+  for (const v of r.tmax.flat()) if (v != null && (v < -10 || v > 55)) throw new Error("implausible Tmax");
+  for (const v of r.rain.flat()) if (v != null && (v < 0 || v > 150)) throw new Error("implausible rainfall (mm/day)");
+  const p = r.provenance as Record<string, unknown> | undefined;
+  if (!p || typeof p.sourceUrl !== "string" || typeof p.sourceFileSha256 !== "string") throw new Error("provenance missing");
+  const units = p.units as Record<string, string>;
+  if (!units || !/mm\/day/i.test(units.PRECTOTCORR ?? "")) throw new Error("unexpected rainfall units");
+  return {
+    name: loc.name,
+    lat: loc.lat,
+    lon: loc.lon,
+    startYear,
+    endYear,
+    tmax: r.tmax,
+    tmin: r.tmin,
+    rain: r.rain,
+    tmaxDailySd: Array.isArray(r.tmaxDailySd) && r.tmaxDailySd.length === 12
+      ? (r.tmaxDailySd as unknown[]).map((v) => (typeof v === "number" && v > 0 && v < 10 ? v : null))
+      : Array.from({ length: 12 }, () => null),
+    provenance: {
+      origin: "nasa-power-bundled",
+      provider: String(p.provider),
+      dataset: String(p.dataset),
+      endpoint: String(p.endpoint),
+      sourceUrl: p.sourceUrl,
+      community: "AG",
+      retrievedAt: String(p.retrievedAt),
+      parameters: p.parameters as string[],
+      units,
+      spatial: String(p.spatial),
+      temporal: String(p.temporal),
+      derived: String(p.derived),
+      sourceFileSha256: p.sourceFileSha256,
+      synthetic: false,
+    },
+  };
+}
+
+/** Load the build-time NASA POWER file for one district (same-origin static file; no API call). */
+export async function loadBundledDistrict(
+  districtId: string,
+  basePath = "",
+  fetchImpl: typeof fetch = fetch,
+): Promise<PowerResult> {
+  if (!/^[a-z]+$/.test(districtId)) return { ok: false, error: "invalid district id" };
+  try {
+    const res = await fetchImpl(`${basePath}/data/power/${districtId}.json`, { cache: "force-cache" });
+    if (!res.ok) return { ok: false, error: `bundled file HTTP ${res.status}` };
+    return { ok: true, series: parseDistrictFile(await res.json(), districtId) };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : String(e) };
+  }
 }
 
 /** Same real Rajshahi data, relabelled so the UI can warn: "this is NOT data for your place". */
@@ -244,16 +357,17 @@ export async function loadPowerMonthly(
     const c = readCache(lat, lon);
     if (c) return { ok: true, series: { ...c, name } };
   }
-  // POWER monthly data lags real time; ask up to the previous calendar year to keep the request valid.
+  // POWER data lags real time; ask up to the previous calendar year. 2001+ keeps the browser download to ~0.5 MB.
   const endYear = now.getUTCFullYear() - 1;
-  const url = monthlyUrl(lat, lon, POWER_START_YEAR, endYear, ["T2M_MAX", "T2M_MIN", "PRECTOTCORR"]);
+  const startYear = LIVE_START_YEAR;
+  const url = dailyUrl(lat, lon, `${startYear}0101`, `${endYear}1231`, ["T2M_MAX", "T2M_MIN", "PRECTOTCORR"]);
   try {
-    const json = await getJson(url, opts.timeoutMs ?? 25000, fetchImpl);
-    const series = parseMonthly(json, {
+    const json = await getJson(url, opts.timeoutMs ?? 30000, fetchImpl);
+    const series = parseDaily(json, {
       name,
       lat,
       lon,
-      startYear: POWER_START_YEAR,
+      startYear,
       endYear,
       url,
       origin: "nasa-power-live",

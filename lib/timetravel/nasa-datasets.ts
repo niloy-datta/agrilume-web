@@ -17,6 +17,38 @@ export type Integration =
 
 export type Access = "open-no-login" | "earthdata-login" | "open-cloud" | "free-key";
 
+/**
+ * Five separate questions, never conflated: is the dataset documented? is there code to read it? has real data been
+ * fetched? has it been processed into the app's format? does any number or visual on screen come from it?
+ */
+export interface PipelineStages {
+  registered: boolean;
+  adapter: boolean;
+  fetched: boolean;
+  processed: boolean;
+  displayed: boolean;
+}
+
+export function pipelineStages(d: { integration: Integration }): PipelineStages {
+  const used = d.integration === "live-in-browser" || d.integration === "bundled-real";
+  return {
+    registered: true,
+    // "backend-client" lives in a separate mobile-app repository that is not part of this build, so it is not counted.
+    adapter: used || d.integration === "adapter-script",
+    fetched: used,
+    processed: used,
+    displayed: used,
+  };
+}
+
+export const STAGE_LABELS: Record<keyof PipelineStages, LocalizedText> = {
+  registered: { bn: "নথিভুক্ত", en: "Registered" },
+  adapter: { bn: "কোড আছে", en: "Adapter" },
+  fetched: { bn: "আনা হয়েছে", en: "Fetched" },
+  processed: { bn: "প্রক্রিয়াকৃত", en: "Processed" },
+  displayed: { bn: "পর্দায় ব্যবহৃত", en: "Used on screen" },
+};
+
 export interface NasaDataset {
   id: string;
   name: LocalizedText;
@@ -37,27 +69,27 @@ export interface NasaDataset {
 export const NASA_DATASETS: NasaDataset[] = [
   {
     id: "power-monthly",
-    name: { bn: "NASA POWER কৃষি-আবহাওয়া (মাসিক)", en: "NASA POWER agroclimatology (monthly)" },
+    name: { bn: "NASA POWER কৃষি-আবহাওয়া (৬৪ জেলা, ১৯৮১–২০২৫)", en: "NASA POWER agroclimatology (64 districts, 1981–2025)" },
     shortName: "POWER (AG)",
     provider: "NASA Langley / POWER project",
     variables: "T2M_MAX, T2M_MIN, PRECTOTCORR (also T2M, ALLSKY_SFC_SW_DWN, RH2M, WS2M, GWET*)",
     spatial: "≈0.5° × 0.625° meteorology grid (≈50 km); solar 1° × 1°",
-    temporal: "daily / monthly",
-    coverage: "1981 – near present",
+    temporal: "daily, aggregated by AgriLume to monthly means",
+    coverage: "1981-01-01 – 2025-12-31 (bundled); live fallback 2001 – last full year",
     access: "open-no-login",
     farmingUse: {
       bn: "তাপমাত্রা ও বৃষ্টির ইতিহাস; সময়-ভ্রমণের ‘অতীত’ অংশ; ET₀ ও জলহিসাব।",
       en: "Temperature and rainfall history; the ‘past’ half of Time Travel; ET₀ and water balance.",
     },
     limitation: {
-      bn: "৫০ কিমি গ্রিড — একটি ছোট জমির মাপ নয়।",
-      en: "≈50 km grid — not a measurement of one small field.",
+      bn: "৫০ কিমি গ্রিড — একটি ছোট জমির মাপ নয়। ৬৪ জেলা মাত্র ৩৯টি আলাদা গ্রিড-ঘরে পড়ে। রিঅ্যানালাইসিস/স্যাটেলাইট-ভিত্তিক তথ্য, আবহাওয়া কেন্দ্রের মাপ নয়; BMD কেন্দ্রের সাথে মিলিয়ে দেখা হয়নি।",
+      en: "≈50 km grid — not a measurement of one small field. The 64 district centres fall in only 39 distinct grid cells. Reanalysis/satellite-derived, not station measurements; not yet compared with BMD stations.",
     },
     portal: "https://power.larc.nasa.gov/data-access-viewer/",
-    integration: "live-in-browser",
+    integration: "bundled-real",
     integrationNote: {
-      bn: "ব্রাউজার থেকে সরাসরি আনা হয় (কোনো কী লাগে না)। অফলাইনে শুধু রাজশাহীর আসল সংরক্ষিত ফাইল।",
-      en: "Fetched live by your browser (no key). Offline, only the real bundled Rajshahi extract is available.",
+      bn: "scripts/fetch-power-districts.mjs দিয়ে প্রতিটি জেলার দৈনিক তথ্য এনে মাসিক গড় করা হয়েছে (URL ও SHA-256 সংরক্ষিত)। মানচিত্রে বেছে নেওয়া বিন্দুর জন্য ব্রাউজার সরাসরি NASA থেকে আনে।",
+      en: "scripts/fetch-power-districts.mjs downloads daily data per district and averages it to monthly means (URL and SHA-256 recorded). Custom map points are fetched live by the browser.",
     },
   },
   {
@@ -126,10 +158,10 @@ export const NASA_DATASETS: NasaDataset[] = [
     },
     limitation: { bn: "Earthdata লগইন দরকার; স্যাটেলাইট অনুমান।", en: "Needs Earthdata login; satellite estimate." },
     portal: "https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGDF_07/summary",
-    integration: "backend-client",
+    integration: "adapter-script",
     integrationNote: {
-      bn: "মোবাইল প্রজেক্টের FastAPI backend-এ imerg_client আছে; এই ওয়েব পেজে সংযুক্ত নয়।",
-      en: "Implemented as imerg_client in the mobile project's FastAPI backend; not wired into this web page.",
+      bn: "lib/earth-intelligence/adapters/gpm-imerg.ts অ্যাডাপ্টার এবং চরম বৃষ্টিপাত/বন্যার আসল রেকর্ড সংযুক্ত।",
+      en: "Typed adapter in lib/earth-intelligence/adapters/gpm-imerg.ts with real precipitation anomalies and monsoon onset.",
     },
   },
   {
@@ -148,8 +180,11 @@ export const NASA_DATASETS: NasaDataset[] = [
     },
     limitation: { bn: "৯ কিমি পিক্সেল — জমি-পর্যায়ের মাপ নয়।", en: "9 km pixel — not field-scale." },
     portal: "https://nsidc.org/data/spl4smgp/versions/7",
-    integration: "registered",
-    integrationNote: { bn: "শুধু নথিভুক্ত; কোনো সংখ্যা এখান থেকে আসে না।", en: "Documented only; no on-screen number comes from it." },
+    integration: "adapter-script",
+    integrationNote: {
+      bn: "lib/earth-intelligence/adapters/smap-soil-moisture.ts অ্যাডাপ্টারে ৯ কিমি মাটির আর্দ্রতা ও বরেন্দ্র খরার সূচক যুক্ত।",
+      en: "Typed adapter in lib/earth-intelligence/adapters/smap-soil-moisture.ts with volumetric moisture and Barind drought index.",
+    },
   },
   {
     id: "fldas",
@@ -176,12 +211,15 @@ export const NASA_DATASETS: NasaDataset[] = [
     spatial: "250 m",
     temporal: "16-day composite",
     coverage: "2000 – present",
-    access: "earthdata-login",
+    access: "open-no-login",
     farmingUse: { bn: "ফসলের সবুজ হওয়া, শীষ আসা ও কাটার সময়কাল যাচাই।", en: "Validate green-up, heading and harvest timing." },
-    limitation: { bn: "250 মি — ছোট জমি মিশে যায়; মেঘ প্রভাব।", en: "250 m mixes small plots; cloud effects." },
+    limitation: { bn: "250 মি — ছোট জমি মিশে যায়; বর্ষায় মেঘে তথ্য হারায়; জেলা-কেন্দ্র শহর হওয়ায় ৩×৩ কিমি এলাকায় শহর, পানি ও গাছ মিশে থাকে।", en: "250 m mixes small plots; monsoon cloud removes data; district centres are towns, so the 3×3 km window mixes town, water and trees." },
     portal: "https://lpdaac.usgs.gov/products/mod13q1v061/",
-    integration: "registered",
-    integrationNote: { bn: "শুধু নথিভুক্ত।", en: "Documented only." },
+    integration: "bundled-real",
+    integrationNote: {
+      bn: "scripts/fetch-modis-ndvi.mjs দিয়ে ORNL DAAC থেকে ২০২১–২০২৫ NDVI আনা; ‘স্থান’ প্যানেলে প্রসঙ্গ হিসেবে দেখানো, ফসলের মডেলে নয়। যেসব জেলা এখনো প্রক্রিয়া হয়নি সেখানে ‘তৈরি হয়নি’ লেখা।",
+      en: "2021–2025 NDVI from ORNL DAAC via scripts/fetch-modis-ndvi.mjs; shown as context in the Place panel, not used by the crop model. Districts not yet processed say so.",
+    },
   },
   {
     id: "modis-et",
@@ -260,8 +298,49 @@ export const NASA_DATASETS: NasaDataset[] = [
     farmingUse: { bn: "জমির সীমানা-পর্যায়ে সবুজতা; ফসলের স্বাস্থ্য।", en: "Field-scale greenness and crop condition." },
     limitation: { bn: "বর্ষায় মেঘ।", en: "Monsoon cloud cover." },
     portal: "https://lpdaac.usgs.gov/products/hlsl30v002/",
-    integration: "registered",
-    integrationNote: { bn: "শুধু নথিভুক্ত।", en: "Documented only." },
+    integration: "adapter-script",
+    integrationNote: {
+      bn: "lib/earth-intelligence/adapters/hls-imagery.ts অ্যাডাপ্টারে ৩০ মি Landsat/Sentinel-2 বর্ণালী ডেটা ও CMR সার্চ যুক্ত।",
+      en: "Typed adapter in lib/earth-intelligence/adapters/hls-imagery.ts with 30m resolution and CMR query interface.",
+    },
+  },
+  {
+    id: "opera-dswx",
+    name: { bn: "NASA OPERA গতিশীল ভূপৃষ্ঠের পানি (DSWx-HLS)", en: "NASA OPERA dynamic surface water extent (DSWx-HLS)" },
+    shortName: "OPERA DSWx-HLS",
+    provider: "NASA JPL / LP DAAC",
+    variables: "open water, partial surface water, dry land, cloud mask",
+    spatial: "30 m",
+    temporal: "2–3 days",
+    coverage: "2022 – present",
+    access: "open-cloud",
+    farmingUse: { bn: "হাওর ও প্লাবনভূমিতে বন্যার সঠিক বিস্তার এবং জলাবদ্ধতা নিরূপণ।", en: "Accurate flood extent and waterlogging detection in haors and floodplains." },
+    limitation: { bn: "ঘন মেঘের সময় অপটিক্যাল তথ্যে আংশিক বাধা থাকে।", en: "Optical data has cloud gaps during heavy monsoon overcast." },
+    portal: "https://www.jpl.nasa.gov/go/opera/products/dswx-hls",
+    integration: "adapter-script",
+    integrationNote: {
+      bn: "lib/earth-intelligence/adapters/opera-surface-water.ts অ্যাডাপ্টারে ৩০ মি প্লাবন মানচিত্র ও ঐতিহাসিক বন্যার উপাত্ত যুক্ত।",
+      en: "Typed adapter in lib/earth-intelligence/adapters/opera-surface-water.ts with 30m inundation and historical flood benchmarks.",
+    },
+  },
+  {
+    id: "power-projection",
+    name: { bn: "NASA POWER জলবায়ু প্রক্ষেপণ API", en: "NASA POWER climate projections API" },
+    shortName: "POWER Projection API",
+    provider: "NASA Langley / POWER project",
+    variables: "T2M_MAX, T2M_MIN, PRECTOTCORR delta projections",
+    spatial: "0.5° × 0.625°",
+    temporal: "monthly",
+    coverage: "2031–2040 (decadal mean)",
+    access: "open-no-login",
+    farmingUse: { bn: "ভবিষ্যৎ দশকে তাপমাত্রা বৃদ্ধি ও বৃষ্টির পরিবর্তন হিসাব।", en: "Assess future decadal temperature and rainfall shifts for irrigation planning." },
+    limitation: { bn: "৫০ কিমি গ্রিড সেল; স্থানীয় ক্ষুদ্র জলবায়ু প্রতিফলিত হয় না।", en: "50 km grid cell; does not reflect microclimate nuances." },
+    portal: "https://power.larc.nasa.gov/docs/services/api/projection/",
+    integration: "adapter-script",
+    integrationNote: {
+      bn: "lib/earth-intelligence/adapters/power-projection.ts অ্যাডাপ্টারে NASA POWER Projection API সরাসরি যুক্ত।",
+      en: "Typed adapter in lib/earth-intelligence/adapters/power-projection.ts directly wired to the NASA POWER Projection API.",
+    },
   },
   {
     id: "ecostress",

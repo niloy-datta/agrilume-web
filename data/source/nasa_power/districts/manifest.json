@@ -1,0 +1,467 @@
+{
+  "files": {
+    "dhaka": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=90.4100&latitude=23.8100&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:02:36.568Z",
+      "sha256": "616b0e34d0a177e15607ebf702938184575778167d632240e8d1ce23bcb4a160",
+      "bytes": 814589,
+      "synthetic": false
+    },
+    "faridpur": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=89.8400&latitude=23.6000&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:02:37.981Z",
+      "sha256": "6f29f2aa974f8e423ae81a64aa73b25e2b827e1bc1549d3b9097e8b5e8fdbab2",
+      "bytes": 814011,
+      "synthetic": false
+    },
+    "gazipur": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=90.4200&latitude=24.0000&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:02:40.992Z",
+      "sha256": "8aec8e54c30cc217ebd92115e3bb4be9f5883b6b66c2d23d278d16c31b48b7d8",
+      "bytes": 814588,
+      "synthetic": false
+    },
+    "gopalganj": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=89.8300&latitude=23.0100&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:02:42.590Z",
+      "sha256": "e6f7e95eb0249d9969157250f24811ecc139ba9893b23960d2c8a1d778b45fd7",
+      "bytes": 813880,
+      "synthetic": false
+    },
+    "kishoreganj": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=90.7800&latitude=24.4300&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:02:45.467Z",
+      "sha256": "5ce444a930bf291ab0add874786e4e9cc369bfd4d9f18189e0da285c0d3d1f98",
+      "bytes": 815089,
+      "synthetic": false
+    },
+    "madaripur": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=90.2000&latitude=23.1700&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:02:46.840Z",
+      "sha256": "a66e8349e4edb3446df554ebdfd116c505b3d8eaa0de56569f19811e9f6fb496",
+      "bytes": 813879,
+      "synthetic": false
+    },
+    "manikganj": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=90.0000&latitude=23.8600&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:02:48.323Z",
+      "sha256": "e42793b3511824eb77868e6d40ac580e6477c8a9f86534514871d399ab1102da",
+      "bytes": 814003,
+      "synthetic": false
+    },
+    "munshiganj": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=90.5300&latitude=23.5500&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:02:51.463Z",
+      "sha256": "01d7688ca79f20710dfd5da3662be854bd6e4106fc3689c22dd1a9e3fec2b6bc",
+      "bytes": 814644,
+      "synthetic": false
+    },
+    "narayanganj": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=90.5000&latitude=23.6300&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:02:54.414Z",
+      "sha256": "62511c3d0e47460b8ef72f4ad4085a89044b42e4d8c2497297f50d44abc8e727",
+      "bytes": 814643,
+      "synthetic": false
+    },
+    "narsingdi": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=90.7200&latitude=23.9200&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:02:57.324Z",
+      "sha256": "e83f1ea63b05e3b276d5a09f6f34a63d5761067c4db7926943a713fee1d62d21",
+      "bytes": 814589,
+      "synthetic": false
+    },
+    "rajbari": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=89.6400&latitude=23.7600&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:03:00.610Z",
+      "sha256": "0eaa3f378bea9ff8d012621ade82da38a7aae989a885723ab2ed036f0db87a81",
+      "bytes": 813449,
+      "synthetic": false
+    },
+    "shariatpur": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=90.4300&latitude=23.2400&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:03:03.619Z",
+      "sha256": "aee7499c096d8c7094da4339e63f51dbc46319a4d38ef99ec28137d00e1efcca",
+      "bytes": 814823,
+      "synthetic": false
+    },
+    "tangail": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=89.9200&latitude=24.2500&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:03:06.455Z",
+      "sha256": "d6629b89075703c40b7ae9ebbcb2625c106404362ed318da53b1a6541334c5ca",
+      "bytes": 814156,
+      "synthetic": false
+    },
+    "bandarban": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=92.2200&latitude=22.1900&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:03:09.556Z",
+      "sha256": "967dc6022dabcfde8f4d6e6a5a26e9f02f429a0877b50504a80dd398413f0463",
+      "bytes": 814014,
+      "synthetic": false
+    },
+    "brahmanbaria": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=91.1100&latitude=23.9600&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:03:12.536Z",
+      "sha256": "97cf4a98daa966436c1083e1741ebf68f04da234d595fbee0420adf48be2ab21",
+      "bytes": 814764,
+      "synthetic": false
+    },
+    "chandpur": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=90.6700&latitude=23.2300&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:03:15.431Z",
+      "sha256": "5d28036e52ab051cbd22b1b4116ac0d35ac9a4147b83cc0d00f7a05735d9e59e",
+      "bytes": 814823,
+      "synthetic": false
+    },
+    "chattogram": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=91.7800&latitude=22.3600&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:03:17.019Z",
+      "sha256": "c6b56c5c5627f06b14a523286a4a0de90aab4ec1337ba9b3e3c367a0dd75cda3",
+      "bytes": 814474,
+      "synthetic": false
+    },
+    "cumilla": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=91.1800&latitude=23.4600&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:03:19.901Z",
+      "sha256": "871fe944f668d2e470e7d2b6826293d51b53c814774ae27ddb6fe91c363224d9",
+      "bytes": 814546,
+      "synthetic": false
+    },
+    "coxsbazar": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=91.9800&latitude=21.4300&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:03:22.883Z",
+      "sha256": "c3bc5dd521b3c08fc19c1600918967b09220cd76f043f58d868f40d625e5eeea",
+      "bytes": 816743,
+      "synthetic": false
+    },
+    "feni": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=91.4000&latitude=23.0200&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:03:25.859Z",
+      "sha256": "5fc88d9919e0a835642649df96ba6b22ddef792bb430604dff176b167f449f9c",
+      "bytes": 814533,
+      "synthetic": false
+    },
+    "khagrachhari": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=91.9800&latitude=23.1200&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:03:28.747Z",
+      "sha256": "d97006bc61facceca5d67d59b30020b31114116179ff6ca23b1fd52661762ea8",
+      "bytes": 814243,
+      "synthetic": false
+    },
+    "lakshmipur": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=90.8400&latitude=22.9400&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:03:30.375Z",
+      "sha256": "6158e6422c0b2b6fcfacd3a664398e0c7bc0e7b25f8200195aa5ae8f03534a6a",
+      "bytes": 814823,
+      "synthetic": false
+    },
+    "noakhali": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=91.1000&latitude=22.8700&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:03:33.275Z",
+      "sha256": "15f69ee1861420d2510adc2014cd6ba48034f842eb52ba97317286ce18e7b3c1",
+      "bytes": 814533,
+      "synthetic": false
+    },
+    "rangamati": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=92.1800&latitude=22.6500&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:03:34.763Z",
+      "sha256": "54065a73c8109e8ea0c6a2dfd20d20161bd40fac19d02209516ad6e09c0d42af",
+      "bytes": 814474,
+      "synthetic": false
+    },
+    "bogura": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=89.3700&latitude=24.8500&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:03:37.649Z",
+      "sha256": "9ec36cb89947239f94fbd1690dba357e354c1634bd5e80f0a76f6c88096afde1",
+      "bytes": 813702,
+      "synthetic": false
+    },
+    "joypurhat": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=89.0200&latitude=25.1000&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:03:39.079Z",
+      "sha256": "833eccee84d920bf5d15240db51189a72c87dc681cbfe8a40128b7e96b47d71c",
+      "bytes": 812532,
+      "synthetic": false
+    },
+    "naogaon": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=88.9300&latitude=24.8000&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:03:40.518Z",
+      "sha256": "372c9ba1d1aeac1f5e6c5b32323a7ab62f5ef0e1e4844daaabec3ffc4e0741bc",
+      "bytes": 812533,
+      "synthetic": false
+    },
+    "natore": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=89.0000&latitude=24.4200&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:03:41.885Z",
+      "sha256": "0aea8a35cdebadc001a75100ad826c666ddc053fbc0c9f3fa8d6dabd049b68ba",
+      "bytes": 812562,
+      "synthetic": false
+    },
+    "chapainawabganj": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=88.2800&latitude=24.6000&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:03:44.758Z",
+      "sha256": "5fe75a921356b421b2a4816b26d9a012297675572a3b2484ddee5cadb1f6749d",
+      "bytes": 812216,
+      "synthetic": false
+    },
+    "pabna": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=89.2300&latitude=24.0000&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:03:47.626Z",
+      "sha256": "842acb468827d403d1b13e649bbe72d477774dc042af444280f320a4d30de1cc",
+      "bytes": 813447,
+      "synthetic": false
+    },
+    "rajshahi": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=88.6000&latitude=24.3700&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:03:50.530Z",
+      "sha256": "f6d363f3ac802ef919753ff8429f1d7504e84e29b14aad6ed6670443c1422d73",
+      "bytes": 812563,
+      "synthetic": false
+    },
+    "sirajganj": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=89.7000&latitude=24.4500&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:03:53.420Z",
+      "sha256": "92afa314e53cd935feb6117bd9933f14e79b587fd29bbe0245835059d4e99c62",
+      "bytes": 814156,
+      "synthetic": false
+    },
+    "bagerhat": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=89.7900&latitude=22.6600&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:03:56.305Z",
+      "sha256": "6d651be395ab69a5e5fc88a8a605641581c2787456c3e1580947b2d9208205ff",
+      "bytes": 814214,
+      "synthetic": false
+    },
+    "chuadanga": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=88.8500&latitude=23.6400&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:03:59.188Z",
+      "sha256": "17f7d5138a47b317e5089b770d0f00498ced3bb180672c007e29e65e0308152d",
+      "bytes": 812952,
+      "synthetic": false
+    },
+    "jashore": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=89.2100&latitude=23.1700&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:04:02.130Z",
+      "sha256": "4bd9e9477ad0cab2d4bb6370ab3f52e032f128c085af299a06b2e59deddd577e",
+      "bytes": 813515,
+      "synthetic": false
+    },
+    "jhenaidah": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=89.1700&latitude=23.5400&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:04:05.046Z",
+      "sha256": "b66ae5c5ee018c960507415dac2133f3226644dbbfb8c185b06df8a42b492740",
+      "bytes": 813387,
+      "synthetic": false
+    },
+    "khulna": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=89.5500&latitude=22.8200&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:04:06.487Z",
+      "sha256": "cb89780a7c8d397fd7efe803968dde25fe8fa29d91c9085285b5fb93fc15a251",
+      "bytes": 813515,
+      "synthetic": false
+    },
+    "kushtia": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=89.1200&latitude=23.9000&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:04:09.448Z",
+      "sha256": "1e4597f0500953df243e7ea14844e9420de7270bddd13e050f4cbe338354c6e2",
+      "bytes": 813448,
+      "synthetic": false
+    },
+    "magura": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=89.4200&latitude=23.4900&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:04:12.420Z",
+      "sha256": "98b9e1e5c62f1c21926292b5e44ebb076519baf001bab53ffec75b51a3fae1a1",
+      "bytes": 813386,
+      "synthetic": false
+    },
+    "meherpur": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=88.6300&latitude=23.7600&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:04:15.358Z",
+      "sha256": "bfb13403bdf6f35346acaf0e5cc81e764b1aa707a0d6f3b05d5714594a26b6af",
+      "bytes": 812745,
+      "synthetic": false
+    },
+    "narail": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=89.5000&latitude=23.1700&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:04:18.322Z",
+      "sha256": "d23aaf68c0c4c252dc431702d222554d3ec5d3283c11759e6467c2a86850164d",
+      "bytes": 813514,
+      "synthetic": false
+    },
+    "satkhira": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=89.0700&latitude=22.7200&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:04:21.232Z",
+      "sha256": "d256acbbdf6eb53332abf2160d0839ab144cbbe4ac77c8896e034f025dbb719c",
+      "bytes": 813870,
+      "synthetic": false
+    },
+    "barguna": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=90.1200&latitude=22.1500&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:04:24.280Z",
+      "sha256": "d587458912ac9c85b0ee605f20866bbd0d8cecd576773dc4446c9cde76d78b4d",
+      "bytes": 815443,
+      "synthetic": false
+    },
+    "barishal": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=90.3700&latitude=22.7000&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:04:27.223Z",
+      "sha256": "a80c660ba131377ec8fdaa0751802ac6a4faa64fc51b324bcf45a6711ecd7442",
+      "bytes": 815066,
+      "synthetic": false
+    },
+    "bhola": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=90.6500&latitude=22.6900&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:04:30.185Z",
+      "sha256": "eb33ff0c7be4c506a33bec3ef4719927ec2a30f69dac42e73d0ccd1ac0b1a590",
+      "bytes": 815067,
+      "synthetic": false
+    },
+    "jhalokati": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=90.2000&latitude=22.6400&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:04:33.128Z",
+      "sha256": "8c9314ae47df49861baec4625a01060e56ed557793f3ac07632945fcc480b809",
+      "bytes": 814214,
+      "synthetic": false
+    },
+    "patuakhali": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=90.3300&latitude=22.3600&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:04:35.584Z",
+      "sha256": "9d47187f219b1b8cb081b73dbfaa12cb177fee41ce522fc4facf2893a0bf620a",
+      "bytes": 815067,
+      "synthetic": false
+    },
+    "pirojpur": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=89.9700&latitude=22.5800&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:04:38.564Z",
+      "sha256": "7fbd07f9e41640c832f60d4c1c643c34d4d690d49c5c25fc172203d2a92fe119",
+      "bytes": 814214,
+      "synthetic": false
+    },
+    "habiganj": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=91.4200&latitude=24.3800&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:04:41.564Z",
+      "sha256": "4d175ae139359f4d10f3420a61ae6dec087df367000e54c00527044c774c3481",
+      "bytes": 815431,
+      "synthetic": false
+    },
+    "moulvibazar": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=91.7700&latitude=24.4800&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:04:44.637Z",
+      "sha256": "cc9cfca43699552f5f48aa82e75306914c09f6a5a0529c334d22962184cad7a4",
+      "bytes": 815328,
+      "synthetic": false
+    },
+    "sunamganj": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=91.4000&latitude=25.0700&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:04:46.155Z",
+      "sha256": "c7fa695b64e192bbe3bcfce30d3fc0a990ab50187b7a21b174ae1eb74e288994",
+      "bytes": 816506,
+      "synthetic": false
+    },
+    "sylhet": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=91.8700&latitude=24.9000&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:04:48.545Z",
+      "sha256": "4a18a6ca34acfcb7a6726f30b71f3c28f3048d58c440bf5807401705795b5cfd",
+      "bytes": 816445,
+      "synthetic": false
+    },
+    "dinajpur": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=88.6400&latitude=25.6300&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:04:51.460Z",
+      "sha256": "b32bb6c7a47e48704ff1e24834714f7b5b50dc51327c4783f95555b19a746b44",
+      "bytes": 813006,
+      "synthetic": false
+    },
+    "gaibandha": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=89.5300&latitude=25.3300&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:04:54.445Z",
+      "sha256": "d74c808a1ef48927ea0ab19f7582dfe649ae532b0f91a80a868f6c087122a6d0",
+      "bytes": 813959,
+      "synthetic": false
+    },
+    "kurigram": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=89.6400&latitude=25.8100&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:04:55.942Z",
+      "sha256": "5afeee1d965232abce9fb727fe6d48bd469cfde602680399ecd0719e53eff01a",
+      "bytes": 813987,
+      "synthetic": false
+    },
+    "lalmonirhat": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=89.4500&latitude=25.9200&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:04:58.907Z",
+      "sha256": "0c9daca86e54839a666aff620e59f52a203909ccfd743046eea562e14d69b5ff",
+      "bytes": 813987,
+      "synthetic": false
+    },
+    "nilphamari": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=88.8600&latitude=25.9300&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:05:01.933Z",
+      "sha256": "40cc54474e31a1d213a94ce4cbfad79fcf5736b1bf08b4ad8297a3423b0530c4",
+      "bytes": 813430,
+      "synthetic": false
+    },
+    "panchagarh": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=88.5500&latitude=26.3400&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:05:04.886Z",
+      "sha256": "19828a0b2ef6f28e9c5ed7be814b30394bd0403b792e20e8d4baf61abaa3225e",
+      "bytes": 814751,
+      "synthetic": false
+    },
+    "rangpur": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=89.2500&latitude=25.7500&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:05:08.099Z",
+      "sha256": "87b36a7a094624f41ff32fb2172c48ef3d595de7aefd3fed65ce119d4422eaad",
+      "bytes": 813987,
+      "synthetic": false
+    },
+    "thakurgaon": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=88.4700&latitude=26.0300&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:05:11.076Z",
+      "sha256": "e1d484370603e2334be47e54966868d1f3fd790448dbcb58ad81e0f7ce086389",
+      "bytes": 813430,
+      "synthetic": false
+    },
+    "jamalpur": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=89.9400&latitude=24.9200&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:05:14.038Z",
+      "sha256": "615824dcf16e81353ff85f4a0995a730064e719457e2e1640d950785ef9080bd",
+      "bytes": 814540,
+      "synthetic": false
+    },
+    "mymensingh": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=90.4100&latitude=24.7500&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:05:17.091Z",
+      "sha256": "06cbaed76fbc7698104937909811eea7e2e793e3b05fbc9c5e80dc23801f1220",
+      "bytes": 815712,
+      "synthetic": false
+    },
+    "netrokona": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=90.7300&latitude=24.8700&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:05:20.061Z",
+      "sha256": "614b72d9445fba62454b3d5b9e32e056c9ae62c1b0f408b55428c48936c8139a",
+      "bytes": 815712,
+      "synthetic": false
+    },
+    "sherpur": {
+      "sourceUrl": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR&community=AG&longitude=90.0200&latitude=25.0200&start=19810101&end=20251231&format=JSON&time-standard=LST",
+      "retrievedAt": "2026-11-13T11:05:24.443Z",
+      "sha256": "bb2c166b36ec6c585853e205c2503780461107e5512de980139fc189cdde7068",
+      "bytes": 814540,
+      "synthetic": false
+    }
+  },
+  "provider": "NASA POWER",
+  "synthetic": false,
+  "note": "Raw daily responses are cached in raw/ (git-ignored, ~50 MB). Re-run the script to refetch; compare SHA-256 to detect upstream revisions.",
+  "request": {
+    "start": "19810101",
+    "end": "20251231",
+    "parameters": [
+      "T2M_MAX",
+      "T2M_MIN",
+      "PRECTOTCORR"
+    ],
+    "community": "AG",
+    "endpoint": "/api/temporal/daily/point",
+    "timeStandard": "LST"
+  }
+}

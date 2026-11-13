@@ -20,7 +20,7 @@ import { DEFAULT_SCENARIO } from "./types";
 export type CameraPreset = "overview" | "walk" | "closeup" | "drone" | "station";
 export type TimeOfDayId = "dawn" | "day" | "dusk" | "night";
 
-export type PanelId = "place" | "crop" | "data" | "hazard" | "recycle" | "gov" | "assistant" | "access" | "none";
+export type PanelId = "place" | "crop" | "compare" | "data" | "hazard" | "recycle" | "gov" | "assistant" | "access" | "none";
 
 export interface TTState {
   lang: Lang;

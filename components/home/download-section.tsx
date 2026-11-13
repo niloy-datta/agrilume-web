@@ -1,18 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Download, ArrowRight, QrCode, Smartphone, Feather, MapPin, Globe2, RefreshCw, Mic } from "lucide-react";
-import { DOWNLOAD_CONTENT } from "@/lib/constants";
-import { APP_DOWNLOAD_CONFIG } from "@/lib/downloads";
+import { Download, ArrowRight, Feather, MapPin, Globe2, Mic, Clock, ShieldCheck } from "lucide-react";
+import { androidRelease, formatBytes } from "@/lib/downloads";
 import { Reveal } from "../motion/reveal";
 
 export function DownloadSection() {
+  const release = androidRelease();
   const specs = [
     { icon: <Mic className="w-4 h-4 text-[#36BFFA]" />, label: "Voice-First & Audio", desc: "Speak & listen • No reading needed" },
-    { icon: <Globe2 className="w-4 h-4 text-[#59D98E]" />, label: "100+ World Languages", desc: "Local dialects & native speech" },
-    { icon: <Feather className="w-4 h-4 text-[#D7A86E]" />, label: "Lightweight & Low RAM", desc: "Runs on budget Android phones" },
+    { icon: <Globe2 className="w-4 h-4 text-[#59D98E]" />, label: "Bangla & English", desc: "Web app today; more languages planned" },
+    { icon: <Feather className="w-4 h-4 text-[#D7A86E]" />, label: "Designed to be lightweight", desc: "Budget-phone testing still pending" },
     { icon: <MapPin className="w-4 h-4 text-[#59D98E]" />, label: "Zero-Literacy Design", desc: "Built for grassroots farmers" },
   ];
 
@@ -27,7 +27,7 @@ export function DownloadSection() {
         {/* Section 06 Index Marker */}
         <div className="flex items-center gap-2 mb-6 text-xs font-mono text-[#94A3B8]/70">
           <span className="text-[#59D98E] font-bold">06</span>
-          <span className="text-white/80 font-medium">Download AgriLume</span>
+          <span className="text-white/80 font-medium">AgriLume for Android</span>
           <span>•</span>
           <span>Take AgriLume to the field.</span>
         </div>
@@ -36,7 +36,7 @@ export function DownloadSection() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
           {/* LEFT: Download info & Action Buttons */}
-          <div className="lg:col-span-8 flex flex-col">
+          <div className="lg:col-span-7 flex flex-col">
             <Reveal delay={0.1} yOffset={16}>
               <h2
                 id="download-title"
@@ -55,22 +55,40 @@ export function DownloadSection() {
             {/* Buttons Row */}
             <Reveal delay={0.3} yOffset={18}>
               <div className="mt-8 flex flex-wrap items-center gap-4">
+                {release ? (
+                  <a
+                    href={release.apkUrl}
+                    download
+                    rel="noopener"
+                    className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full bg-[#59D98E] hover:bg-[#6ef0a4] text-[#050A12] text-sm font-bold tracking-wide transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#36BFFA]"
+                  >
+                    <span>Download for Android ({formatBytes(release.fileSizeBytes)})</span>
+                    <Download className="w-4 h-4 stroke-[2.5]" aria-hidden />
+                  </a>
+                ) : (
+                  <span role="status" className="text-sm text-[#94A3B8]">
+                    Android APK coming soon
+                  </span>
+                )}
+
                 <a
-                  href={APP_DOWNLOAD_CONFIG.apkUrl || "#"}
-                  download={APP_DOWNLOAD_CONFIG.apkFilename}
-                  className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full bg-[#59D98E] hover:bg-[#6ef0a4] text-[#050A12] text-sm font-bold tracking-wide transition-all shadow-[0_0_24px_rgba(89,217,142,0.4)] hover:shadow-[0_0_36px_rgba(89,217,142,0.65)] hover:scale-[1.02]"
+                  href="https://github.com/niloy-datta/agri-guardian"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full bg-[#59D98E] hover:bg-[#6ef0a4] text-[#050A12] text-sm font-bold tracking-wide transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#36BFFA]"
                 >
-                  <span>Download for Android</span>
-                  <Download className="w-4 h-4 stroke-[2.5]" />
+                  <span>Explore Android app source</span>
+                  <ArrowRight className="w-4 h-4 stroke-[2.5]" aria-hidden />
                 </a>
 
                 <Link
-                  href="#app"
-                  className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-[#0B1220] hover:bg-[#1E293B] border border-white/15 hover:border-white/30 text-[#F8FAFC] text-sm font-medium transition-all"
+                  href="/time-travel"
+                  className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-[#0B1220] hover:bg-[#1E293B] border border-white/15 hover:border-white/30 text-[#F8FAFC] text-sm font-medium transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#36BFFA]"
                 >
-                  <span>View App Experience</span>
-                  <ArrowRight className="w-4 h-4 text-[#36BFFA]" />
+                  <span>Try the web app now</span>
+                  <ArrowRight className="w-4 h-4 text-[#36BFFA]" aria-hidden />
                 </Link>
+
               </div>
             </Reveal>
           </div>
@@ -90,22 +108,34 @@ export function DownloadSection() {
               </div>
             </Reveal>
 
-            {/* QR Card */}
+            {/* Release status card: real metadata only when a verified APK exists */}
             <Reveal delay={0.25} yOffset={20}>
-              <div className="flex items-center gap-4 p-4 rounded-2xl bg-[#0B1220]/80 backdrop-blur-md border border-white/15 shadow-[0_15px_40px_rgba(0,0,0,0.6)]">
-                {/* QR Box */}
-                <div className="w-24 h-24 rounded-xl bg-white p-2 flex items-center justify-center shadow-md">
-                  <svg className="w-full h-full text-black fill-current" viewBox="0 0 24 24">
-                    <path d="M2 2h8v8H2V2zm2 2v4h4V4H4zm10-2h8v8h-8V2zm2 2v4h4V4h-4zM2 14h8v8H2v-8zm2 2v4h4v-4H4zm14 2h2v4h-2v-4zm-4-4h2v2h-2v-2zm2 2h2v2h-2v-2zm-2 2h2v2h-2v-2zm4 0h2v2h-2v-2zm2-2h2v2h-2v-2zm-6-2h2v2h-2v-2zm6-4h2v2h-2V8zm-2 2h2v2h-2v-2z" />
-                  </svg>
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-mono text-[#59D98E] font-bold uppercase tracking-wider">
-                    Scan to Download
-                  </span>
-                  <span className="text-xs font-bold text-white mt-0.5">Android APK</span>
-                  <span className="text-[11px] text-[#94A3B8] mt-1 font-mono">Latest release</span>
-                </div>
+              <div className="flex max-w-xs flex-col gap-2 p-4 rounded-2xl bg-[#0B1220]/80 backdrop-blur-md border border-white/15 shadow-[0_15px_40px_rgba(0,0,0,0.6)]">
+                {release ? (
+                  <>
+                    <span className="flex items-center gap-1.5 text-[10px] font-mono text-[#59D98E] font-bold uppercase tracking-wider">
+                      <ShieldCheck className="w-3.5 h-3.5" aria-hidden /> Verified release
+                    </span>
+                    <span className="text-xs font-bold text-white">Android APK {release.version}</span>
+                    <span className="text-[11px] text-[#94A3B8]">
+                      {release.minAndroid} • {formatBytes(release.fileSizeBytes)} • {release.releasedOn}
+                    </span>
+                    <span className="text-[10px] text-[#94A3B8] font-mono break-all">SHA-256 {release.sha256}</span>
+                    <a href={release.releaseNotesUrl} className="text-[11px] text-[#36BFFA] underline" target="_blank" rel="noopener noreferrer">
+                      Release notes
+                    </a>
+                  </>
+                ) : (
+                  <>
+                    <span className="flex items-center gap-1.5 text-[10px] font-mono text-[#F59E0B] font-bold uppercase tracking-wider">
+                      <Clock className="w-3.5 h-3.5" aria-hidden /> Not yet released
+                    </span>
+                    <span className="text-xs font-bold text-white">Android APK</span>
+                    <span className="text-[11px] text-[#94A3B8] leading-relaxed">
+                      No public APK exists yet, so there is no download link or QR code. The web app works today in any modern browser.
+                    </span>
+                  </>
+                )}
               </div>
             </Reveal>
           </div>

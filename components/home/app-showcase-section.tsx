@@ -325,7 +325,7 @@ export function AppShowcaseSection() {
 
           <Reveal delay={0.2} yOffset={14}>
             <p className="mt-4 text-base sm:text-lg text-[#CBD5E1] font-normal leading-relaxed max-w-2xl">
-              From satellite multispectral NDVI to in-field camera diagnostics and IRRI recovery schedules — built to give farmers immediate certainty.
+              Design concept for the companion Android app (in development, not yet released). Screens and numbers shown here are illustrative mock-ups, not live measurements.
             </p>
           </Reveal>
         </div>
@@ -345,7 +345,7 @@ export function AppShowcaseSection() {
                   </span>
                 </div>
                 <p className="text-xs text-[#CBD5E1] mt-1.5 leading-relaxed font-light">
-                  পড়তে না পারা প্রান্তিক কৃষকদের জন্য প্রতিটি পেজে <strong className="text-[#59D98E]">“🔊 শুনুন / Listen”</strong> অডিও বাটন ও ভয়েস কন্ট্রোল যুক্ত। মুখে বাংলায় প্রশ্ন করলে অ্যাপ কথ্য আঞ্চলিক ভাষায় সরাসরি উত্তর ও চিকিৎসা বলে দেয়।
+                  পড়তে না পারা প্রান্তিক কৃষকদের জন্য প্রতিটি পেজে <strong className="text-[#59D98E]">“🔊 শুনুন / Listen”</strong> অডিও বাটন ও ভয়েস কন্ট্রোল যুক্ত। বর্তমান ওয়েব অ্যাপে বাংলা ও ইংরেজি ভয়েস কমান্ড আছে (ব্রাউজারের স্পিচ সেবা লাগে); এটি কৃষি বা চিকিৎসা পরামর্শের বিকল্প নয়।
                 </p>
               </div>
             </div>
@@ -358,13 +358,13 @@ export function AppShowcaseSection() {
               </div>
               <div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-sm font-bold text-white tracking-tight">বিশ্বের ১০০+ ভাষা ও আঞ্চলিক উপভাষা (Global & Dialect)</span>
+                  <span className="text-sm font-bold text-white tracking-tight">বাংলা ও ইংরেজি (আঞ্চলিক উপভাষা পরিকল্পনাধীন)</span>
                   <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#59D98E]/20 border border-[#59D98E]/40 text-[#59D98E] font-bold">
-                    100+ Languages
+                    Bangla &amp; English
                   </span>
                 </div>
                 <p className="text-xs text-[#CBD5E1] mt-1.5 leading-relaxed font-light">
-                  কিশোরগঞ্জ, ময়মনসিংহ, সিলেট বা চট্টগ্রামের গ্রামীণ উপভাষা থেকে শুরু করে ইংরেজি, হিন্দি, স্প্যানিশসহ বিশ্বের প্রধান সকল ভাষায় স্বয়ংক্রিয় রিয়েল-টাইম অনুবাদ ও কথ্য স্পিচ ইঞ্জিন।
+                  বর্তমানে বাংলা ও ইংরেজি সমর্থিত। সিলেটি, চাটগাঁইয়া ইত্যাদি আঞ্চলিক উপভাষা ও অন্য ভাষা ভবিষ্যৎ পরিকল্পনা — এখনো তৈরি বা পরীক্ষা করা হয়নি।
                 </p>
               </div>
             </div>
@@ -412,7 +412,7 @@ export function AppShowcaseSection() {
         </div>
 
         {/* MAIN HERO SHOWCASE STAGE */}
-        <div className="relative rounded-3xl p-6 sm:p-10 lg:p-14 bg-gradient-to-b from-[#0B1528]/50 via-[#070D18]/80 to-[#03060C] border border-white/10 shadow-[0_30px_100px_rgba(0,0,0,0.8)] overflow-hidden">
+        <div className="relative rounded-3xl p-4 sm:p-10 lg:p-14 bg-gradient-to-b from-[#0B1528]/50 via-[#070D18]/80 to-[#03060C] border border-white/10 shadow-[0_30px_100px_rgba(0,0,0,0.8)] overflow-hidden">
           
           {/* Subtle Stage Backlight */}
           <div
@@ -545,7 +545,7 @@ export function AppShowcaseSection() {
                 {/* CENTER HERO PHONE (LARGE, CLEAR, SUPER READABLE!) */}
                 <div
                   onClick={() => setLightboxOpen(true)}
-                  className="relative w-[280px] sm:w-[340px] lg:w-[380px] aspect-[576/1024] rounded-[48px] p-2 bg-gradient-to-b from-[#2A374A] via-[#15202E] to-[#080E18] border-2 shadow-[0_30px_100px_rgba(0,0,0,0.95)] z-20 cursor-pointer transition-all duration-500 group hover:scale-[1.01]"
+                  className="relative w-full max-w-[280px] sm:max-w-[340px] lg:max-w-[380px] aspect-[576/1024] rounded-[48px] p-2 bg-gradient-to-b from-[#2A374A] via-[#15202E] to-[#080E18] border-2 shadow-[0_30px_100px_rgba(0,0,0,0.95)] z-20 cursor-pointer transition-all duration-500 group hover:scale-[1.01]"
                   style={{
                     borderColor: `${active.accent}90`,
                     boxShadow: `0 30px 90px rgba(0,0,0,0.95), 0 0 55px ${active.glowColor}`,
@@ -618,37 +618,36 @@ export function AppShowcaseSection() {
               </div>
 
               {/* Prev / Next Chevrons on Mobile & Quick Selector */}
-              <div className="mt-6 flex items-center justify-between w-full max-w-sm px-4">
+              <div className="mt-6 grid w-full max-w-sm grid-cols-2 gap-y-1 sm:flex sm:items-center sm:justify-between">
                 <button
                   type="button"
                   onClick={() => setActiveIndex(prevIndex)}
-                  className="flex items-center gap-1 text-xs font-mono text-[#94A3B8] hover:text-white transition-colors cursor-pointer"
+                  className="flex min-h-11 items-center gap-1 text-xs font-mono text-[#94A3B8] hover:text-white transition-colors cursor-pointer"
                 >
                   <ChevronLeft className="w-4 h-4" />
                   <span>Previous</span>
                 </button>
 
                 {/* Dot indicators */}
-                <div className="flex items-center gap-1.5">
+                <div className="col-span-2 row-start-2 flex items-center justify-center gap-1 sm:gap-1.5">
                   {APP_SCREENS.map((s, idx) => (
                     <button
                       key={s.id}
                       type="button"
                       onClick={() => setActiveIndex(idx)}
-                      className={`h-2 rounded-full transition-all duration-300 ${
-                        idx === activeIndex
-                          ? "w-7 bg-[#59D98E]"
-                          : "w-2 bg-white/20 hover:bg-white/40"
-                      }`}
+                      className="flex h-11 w-8 items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[#36BFFA]"
+                      aria-pressed={idx === activeIndex}
                       aria-label={`Jump to ${s.label}`}
-                    />
+                    >
+                      <span className={`h-2 rounded-full transition-all duration-300 ${idx === activeIndex ? "w-7 bg-[#59D98E]" : "w-2 bg-white/20 hover:bg-white/40"}`} />
+                    </button>
                   ))}
                 </div>
 
                 <button
                   type="button"
                   onClick={() => setActiveIndex(nextIndex)}
-                  className="flex items-center gap-1 text-xs font-mono text-[#94A3B8] hover:text-white transition-colors cursor-pointer"
+                  className="justify-self-end flex min-h-11 items-center gap-1 text-xs font-mono text-[#94A3B8] hover:text-white transition-colors cursor-pointer"
                 >
                   <span>Next</span>
                   <ChevronRight className="w-4 h-4" />

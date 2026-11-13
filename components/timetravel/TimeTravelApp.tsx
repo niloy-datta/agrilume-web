@@ -6,7 +6,7 @@ import { applyCommand } from "@/lib/timetravel/commands";
 import { activeHazards, computeView, initialState, MAX_YEAR, sceneParams, seasonLength } from "@/lib/timetravel/engine";
 import type { TTState } from "@/lib/timetravel/engine";
 import { getDistrict } from "@/lib/timetravel/locations";
-import { loadPowerMonthly, loadTmaxDailySd, rajshahiFixture, standInSeries } from "@/lib/timetravel/power";
+import { loadBundledDistrict, loadPowerMonthly, rajshahiFixture, standInSeries } from "@/lib/timetravel/power";
 import { loadProjectionPack } from "@/lib/timetravel/projection-pack";
 import type { ProjectionPack } from "@/lib/timetravel/projection-pack";
 import type { ClimateSeries, Lang } from "@/lib/timetravel/types";
@@ -30,6 +30,8 @@ import { Btn, tt } from "./ui/primitives";
 import { CropPanel, HazardPanel, PlacePanel } from "./ui/sim-panels";
 import type { DataStatus } from "./ui/sim-panels";
 import { Fallback2D } from "./ui/Fallback2D";
+import { ComparePanel } from "./ui/ComparePanel";
+import { NdviCard } from "./ui/NdviCard";
 
 const FieldScene = dynamic(() => import("./scene/FieldScene").then((m) => m.FieldScene), {
   ssr: false,
@@ -80,19 +82,21 @@ function useClimate(districtId: string) {
     const d = getDistrict(districtId);
     if (!d) return;
     let cancelled = false;
-    loadPowerMonthly(d.nameEn, d.lat, d.lon).then((r) => {
-      if (cancelled) return;
-      if (r.ok) {
-        setLoaded({ id: districtId, series: r.series, status: r.series.provenance.origin === "nasa-power-cache" ? "cache" : "live" });
-        if (!isRaj) {
-          void loadTmaxDailySd(d.lat, d.lon).then((sd) => {
-            if (!cancelled && sd) setLoaded((l) => (l && l.id === districtId ? { ...l, series: { ...l.series, tmaxDailySd: sd } } : l));
+    // 1) build-time NASA POWER file for this district, 2) live NASA POWER API, 3) labelled stand-in.
+    loadBundledDistrict(districtId, BASE_PATH)
+      .then(async (b) => (b.ok ? { r: b, bundled: true } : { r: await loadPowerMonthly(d.nameEn, d.lat, d.lon), bundled: false }))
+      .then(({ r, bundled }) => {
+        if (cancelled) return;
+        if (r.ok) {
+          setLoaded({
+            id: districtId,
+            series: r.series,
+            status: bundled ? "bundled" : r.series.provenance.origin === "nasa-power-cache" ? "cache" : "live",
           });
+        } else if (!isRaj) {
+          setLoaded({ id: districtId, series: standInSeries(d.nameEn), status: "stand-in" });
         }
-      } else if (!isRaj) {
-        setLoaded({ id: districtId, series: standInSeries(d.nameEn), status: "stand-in" });
-      }
-    });
+      });
     void loadProjectionPack(districtId, BASE_PATH).then((p) => {
       if (!cancelled) setPackState({ id: districtId, pack: p });
     });
@@ -412,9 +416,16 @@ export default function TimeTravelApp({ initialDistrict }: { initialDistrict?: s
   const panel = (() => {
     switch (state.panel) {
       case "place":
-        return <PlacePanel state={state} view={view} series={series} dataStatus={status} dispatch={dispatch} packLoaded={!!pack?.years[String(state.year)]} />;
+        return (
+          <>
+            <PlacePanel state={state} view={view} series={series} dataStatus={status} dispatch={dispatch} packLoaded={!!pack?.years[String(state.year)]} />
+            <NdviCard districtId={state.districtId} lang={state.lang} year={state.year} />
+          </>
+        );
       case "crop":
         return <CropPanel state={state} view={view} base={view.baselineYear} dispatch={dispatch} />;
+      case "compare":
+        return <ComparePanel state={state} series={series} pack={pack} />;
       case "hazard":
         return <HazardPanel state={state} dispatch={dispatch} />;
       case "recycle":
@@ -575,7 +586,15 @@ export default function TimeTravelApp({ initialDistrict }: { initialDistrict?: s
         </div>
 
         {/* captions + alerts */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-2 flex flex-col gap-2 px-3 md:pl-[500px]" style={{ paddingBottom: state.panel !== "none" ? undefined : undefined }}>
+        <div className="pointer-events-none absolute inset-x-0 bottom-2 flex flex-col gap-2 px-3 md:pl-[500px]">
+          {series.provenance.standIn && (
+            <div role="alert" className="pointer-events-auto rounded-lg border border-amber-400/70 bg-amber-950/90 px-3 py-2 text-sm text-amber-100 shadow-lg">
+              <strong>⚠ {status === "loading" ? tt(lang, "লোড হচ্ছে…", "Loading…") : tt(lang, "বদলি তথ্য", "Stand-in data")}</strong>{" "}
+              {status === "loading"
+                ? tt(lang, "এই জেলার NASA POWER তথ্য আসা পর্যন্ত রাজশাহীর তথ্য দেখানো হচ্ছে — এটি এই জেলার নয়।", "Until this district's NASA POWER data arrives, Rajshahi's data is shown — it is NOT this district's.")
+                : tt(lang, "এই জেলার তথ্য লোড করা যায়নি। রাজশাহীর আসল তথ্য দেখানো হচ্ছে — এটি এই জেলার নয়; ভবিষ্যৎ প্রক্ষেপণ বন্ধ।", "This district's data could not be loaded. Real Rajshahi data is shown — it is NOT this district's; projections are disabled.")}
+            </div>
+          )}
           <HazardBanner state={state} activeTypes={hazardsNow} />
           {caption && <CaptionBar text={caption.text} icon={caption.icon} large={largeText} onClose={() => setCaption(null)} />}
         </div>

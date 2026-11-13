@@ -40,3 +40,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# NASA POWER raw daily cache (refetchable; hashes in manifest.json)
+data/source/nasa_power/districts/raw/
+data/source/modis_ndvi/raw/
+# local agent artifacts
+.claude/
+test-results/
+playwright-report/

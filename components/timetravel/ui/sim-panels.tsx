@@ -5,10 +5,11 @@ import type { Command } from "@/lib/timetravel/commands";
 import type { TTState, View } from "@/lib/timetravel/engine";
 import { seasonLength } from "@/lib/timetravel/engine";
 import { CROP_LIST, CROPS, STAGE_LABEL } from "@/lib/timetravel/crops";
-import { DISTRICTS, DIVISIONS, REGION_LABELS, getDistrict } from "@/lib/timetravel/locations";
+import { DISTRICTS, DIVISIONS, REGION_LABELS, asciiToBnDigits, getDistrict } from "@/lib/timetravel/locations";
 import { HAZARD_LIST, describeSeverity } from "@/lib/timetravel/hazards";
 import { AGENCIES, KRISHI_CALL_CENTER, NATIONAL_EMERGENCY } from "@/lib/timetravel/gov";
 import { KIND_EXPLAIN } from "@/lib/timetravel/kind-labels";
+import { localizeNote } from "@/lib/timetravel/notes-bn";
 import { irrigationLabel } from "@/lib/timetravel/crops";
 import type { ClimateSeries, IrrigationMode } from "@/lib/timetravel/types";
 import { ClimateChart, IndexBar, StageTimeline } from "./charts";
@@ -69,7 +70,14 @@ export function PlacePanel({ state, view, series, dataStatus, dispatch, packLoad
           <KindBadge kind={view.dataKind} lang={lang} />
           <span className="text-xs text-muted-text">
             {dataStatus === "loading" && tt(lang, "NASA POWER থেকে লোড হচ্ছে…", "Loading from NASA POWER…")}
-            {dataStatus === "bundled" && tt(lang, "অ্যাপের সঙ্গে আসা আসল NASA POWER ফাইল (রাজশাহী, ২০০১–২০২৫)", "Real NASA POWER file shipped with the app (Rajshahi, 2001–2025)")}
+            {dataStatus === "bundled" &&
+              (series.provenance.origin === "nasa-power-bundled"
+                ? tt(
+                    lang,
+                    `অ্যাপের সঙ্গে আসা আসল NASA POWER মাসিক তথ্য (${asciiToBnDigits(`${series.startYear}–${series.endYear}`)}, সংগ্রহ ${asciiToBnDigits(series.provenance.retrievedAt?.slice(0, 10) ?? "")})`,
+                    `Real NASA POWER monthly data bundled at build time (${series.startYear}–${series.endYear}, retrieved ${series.provenance.retrievedAt?.slice(0, 10)})`,
+                  )
+                : tt(lang, `অ্যাপের সঙ্গে আসা আসল NASA POWER ফাইল (${series.name}, ${series.startYear}–${series.endYear})`, `Real NASA POWER file shipped with the app (${series.name}, ${series.startYear}–${series.endYear})`))}
             {dataStatus === "live" && tt(lang, "NASA POWER থেকে এইমাত্র আনা", "Just fetched from NASA POWER")}
             {dataStatus === "cache" && tt(lang, "NASA POWER (ব্রাউজারে ১৪ দিনের ক্যাশ)", "NASA POWER (14-day browser cache)")}
           </span>
@@ -86,16 +94,18 @@ export function PlacePanel({ state, view, series, dataStatus, dispatch, packLoad
         <p className="text-xs text-muted-text">{lang === "bn" ? KIND_EXPLAIN[view.dataKind].bn : KIND_EXPLAIN[view.dataKind].en}</p>
         {view.notes.length > 0 && (
           <details className="text-xs text-muted-text">
-            <summary className="cursor-pointer text-earth-cyan">{tt(lang, "এই বছরের তথ্য কীভাবে তৈরি (ইংরেজি নোট)", "How this year's data was built")}</summary>
+            <summary className="cursor-pointer text-earth-cyan">{tt(lang, "এই বছরের তথ্য কীভাবে তৈরি", "How this year's data was built")}</summary>
             <ul className="mt-1 list-disc space-y-1 pl-5">
               {view.notes.map((n, i) => (
-                <li key={i}>{n}</li>
+                <li key={i}>{localizeNote(n, lang)}</li>
               ))}
             </ul>
           </details>
         )}
         <p className="text-[11px] text-muted-text">
-          {prov.provider} · {prov.dataset} · {prov.parameters.join(", ")} · {series.startYear}–{series.endYear}
+          {lang === "bn"
+            ? `উৎস: NASA POWER (নাসা ল্যাংলি রিসার্চ সেন্টার) · দৈনিক সর্বোচ্চ ও সর্বনিম্ন তাপমাত্রা এবং বৃষ্টি · ${asciiToBnDigits(`${series.startYear}–${series.endYear}`)}`
+            : `${prov.provider} · ${prov.dataset} · ${prov.parameters.join(", ")} · ${series.startYear}–${series.endYear}`}
         </p>
       </Section>
 
@@ -192,7 +202,7 @@ export function CropPanel({ state, view, base, dispatch }: { state: TTState; vie
         {s.notes.length > 0 && (
           <ul className="list-disc space-y-0.5 pl-5 text-[11px] text-muted-text">
             {s.notes.map((n, i) => (
-              <li key={i}>{n}</li>
+              <li key={i}>{localizeNote(n, lang)}</li>
             ))}
           </ul>
         )}

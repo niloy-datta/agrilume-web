@@ -213,6 +213,11 @@
 
             <!-- Action Controls: NASA Data, 2D Fallback, Language -->
             <div class="glass-panel rounded-2xl px-2.5 py-1.5 flex items-center gap-1.5 pointer-events-auto shadow-lg">
+                <button onclick="openMissionsModal()" class="px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500/25 to-emerald-500/25 hover:from-amber-500/40 hover:to-emerald-500/40 border border-amber-400/50 text-amber-200 text-xs font-bold transition flex items-center gap-1.5 shadow-[0_0_12px_rgba(245,158,11,0.25)]" title="5 Interactive Climate & Agricultural Learning Missions">
+                    <i class="fa-solid fa-graduation-cap text-amber-300"></i>
+                    <span data-bn="শিক্ষা মিশন" data-en="Missions">শিক্ষা মিশন</span>
+                    <span id="mission-progress-pill" class="px-1.5 py-0.2 rounded-full bg-amber-400 text-slate-950 font-bold text-[10px]">0/5</span>
+                </button>
                 <button onclick="openSignControl()" class="px-2.5 py-1.5 rounded-xl bg-violet-600/25 hover:bg-violet-600/40 border border-violet-500/40 text-violet-200 text-xs font-semibold transition flex items-center gap-1.5" aria-label="Open camera hand controls" title="Camera hand controls · not BdSL translation">
                     <span aria-hidden="true">✋</span><span class="hidden sm:inline" data-bn="হাতের ভঙ্গি" data-en="Hand controls">হাতের ভঙ্গি</span>
                 </button>
@@ -593,6 +598,83 @@
                 <button onclick="closeProvenanceModal()" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm transition">
                     <span data-bn="বুঝেছি, সিমুলেশনে ফিরুন" data-en="Understood, Back to Simulator">বুঝেছি, সিমুলেশনে ফিরুন</span>
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5 INTERACTIVE LEARNING MISSIONS MODAL -->
+    <div id="missions-modal" class="hidden fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-3 sm:p-4" role="dialog" aria-modal="true" aria-labelledby="missions-title">
+        <div class="glass-panel max-w-3xl w-full max-h-[90vh] rounded-3xl p-5 sm:p-7 shadow-2xl border border-amber-500/40 flex flex-col justify-between overflow-hidden relative">
+            <div class="absolute -top-20 -right-20 w-44 h-44 bg-amber-500/15 rounded-full blur-3xl pointer-events-none"></div>
+
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between pb-3.5 border-b border-white/10">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-500 to-emerald-600 flex items-center justify-center text-slate-950 text-lg font-bold shadow-md">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <h2 id="missions-title" class="text-base sm:text-lg font-bold text-white leading-tight">
+                            <span data-bn="কৃষি ও জলবায়ু শিক্ষা মিশন" data-en="Earth Intelligence Learning Missions">কৃষি ও জলবায়ু শিক্ষা মিশন</span>
+                        </h2>
+                        <span class="text-[11px] font-inter text-amber-300">5 NASA-GROUNDED AGRONOMIC MISSIONS</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <div class="text-right">
+                        <div class="text-[10px] font-mono uppercase text-slate-400" data-bn="শিক্ষা স্কোর" data-en="Learning Score">শিক্ষা স্কোর</div>
+                        <div id="mission-score-display" class="font-inter font-bold text-amber-300 text-sm">0 / 500</div>
+                    </div>
+                    <button onclick="closeMissionsModal()" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white flex items-center justify-center transition" aria-label="Close missions modal">
+                        ✕
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mission Tabs Strip -->
+            <div class="flex items-center gap-1.5 overflow-x-auto py-2.5 border-b border-white/10 scrollbar-none text-xs">
+                <button onclick="selectMissionTab(0)" id="tab-btn-0" class="mission-tab-btn px-2.5 py-1.5 rounded-lg font-semibold whitespace-nowrap bg-white/15 text-white border border-white/20">
+                    <span data-bn="প্রাক-মূল্যায়ন" data-en="Pre-Test">প্রাক-মূল্যায়ন</span>
+                </button>
+                <button onclick="selectMissionTab(1)" id="tab-btn-1" class="mission-tab-btn px-2.5 py-1.5 rounded-lg font-semibold whitespace-nowrap bg-white/5 text-slate-300 hover:bg-white/10 border border-transparent">
+                    <span data-bn="মিশন ১: নাসা উপাত্ত" data-en="Mission 1: NASA Data">মিশন ১: নাসা উপাত্ত</span>
+                </button>
+                <button onclick="selectMissionTab(2)" id="tab-btn-2" class="mission-tab-btn px-2.5 py-1.5 rounded-lg font-semibold whitespace-nowrap bg-white/5 text-slate-300 hover:bg-white/10 border border-transparent">
+                    <span data-bn="মিশন ২: ফসল ও সময়" data-en="Mission 2: Planting Window">মিশন ২: ফসল ও সময়</span>
+                </button>
+                <button onclick="selectMissionTab(3)" id="tab-btn-3" class="mission-tab-btn px-2.5 py-1.5 rounded-lg font-semibold whitespace-nowrap bg-white/5 text-slate-300 hover:bg-white/10 border border-transparent">
+                    <span data-bn="মিশন ৩: খরা মোকাবেলা" data-en="Mission 3: Drought Action">মিশন ৩: খরা মোকাবেলা</span>
+                </button>
+                <button onclick="selectMissionTab(4)" id="tab-btn-4" class="mission-tab-btn px-2.5 py-1.5 rounded-lg font-semibold whitespace-nowrap bg-white/5 text-slate-300 hover:bg-white/10 border border-transparent">
+                    <span data-bn="মিশন ৪: সেচ তুলনা" data-en="Mission 4: Irrigation AWD">মিশন ৪: সেচ তুলনা</span>
+                </button>
+                <button onclick="selectMissionTab(5)" id="tab-btn-5" class="mission-tab-btn px-2.5 py-1.5 rounded-lg font-semibold whitespace-nowrap bg-white/5 text-slate-300 hover:bg-white/10 border border-transparent">
+                    <span data-bn="মিশন ৫: বিজ্ঞান বিশ্লেষণ" data-en="Mission 5: Science Reasoning">মিশন ৫: বিজ্ঞান বিশ্লেষণ</span>
+                </button>
+                <button onclick="selectMissionTab(6)" id="tab-btn-6" class="mission-tab-btn px-2.5 py-1.5 rounded-lg font-semibold whitespace-nowrap bg-white/5 text-slate-300 hover:bg-white/10 border border-transparent">
+                    <span data-bn="চূড়ান্ত ফলাফল" data-en="Post-Test">চূড়ান্ত ফলাফল</span>
+                </button>
+            </div>
+
+            <!-- Active Mission Content Container (Scrollable) -->
+            <div id="mission-body-container" class="my-4 overflow-y-auto max-h-[55vh] pr-2 space-y-4">
+                <!-- Dynamically populated by renderMissionContent() -->
+            </div>
+
+            <!-- Modal Footer Controls -->
+            <div class="pt-3 border-t border-white/10 flex items-center justify-between text-xs">
+                <div class="text-[11px] text-slate-400 font-mono">
+                    <span data-bn="কিবোর্ড শর্টকাট: বিকল্প বাছতে ১, ২, ৩ চাপুন" data-en="Keys: Press 1, 2, 3 to select answers">কিবোর্ড শর্টকাট: বিকল্প বাছতে ১, ২, ৩ চাপুন</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="resetMissionsProgress()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs transition">
+                        <span data-bn="পুনরায় শুরু" data-en="Reset Progress">পুনরায় শুরু</span>
+                    </button>
+                    <button onclick="closeMissionsModal()" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition">
+                        <span data-bn="সিমুলেটরে ফিরুন" data-en="Return to Game">সিমুলেটরে ফিরুন</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -1882,6 +1964,333 @@
         function openProvenanceModal() { document.getElementById('provenance-modal').classList.remove('hidden'); }
         function closeProvenanceModal() { document.getElementById('provenance-modal').classList.add('hidden'); }
 
+        // ==================== 8.5 INTERACTIVE LEARNING MISSIONS SYSTEM ====================
+        const MISSIONS_DATA = [
+            {
+                id: 0,
+                type: 'pre-test',
+                titleBn: 'প্রাক-মূল্যায়ন (Pre-Test Diagnostic)',
+                titleEn: 'Pre-Test Diagnostic Assessment',
+                descBn: 'মিশন শুরু করার পূর্বে আপনার প্রাথমিক কৃষি ও দূর-অনুধাবন জ্ঞান পরীক্ষা করুন।',
+                descEn: 'Assess your initial knowledge of Earth observation and agricultural climate adaptation.',
+                questionBn: 'স্যাটেলাইট বা পুনর্বিশ্লেষণ ভিত্তিক আবহাওয়া ডেটা (যেমন NASA POWER) সম্পর্কে কোনটি সঠিক?',
+                questionEn: 'Which statement is correct regarding satellite-derived agroclimatology (e.g. NASA POWER)?',
+                options: [
+                    { bn: 'এটি সরাসরি প্রতিটি ক্ষুদ্র জমিতে স্থাপিত মাটির সেন্সরের মতো নিখুঁত মাপ দেয়।', en: 'It functions like an in-situ soil probe on every single farm plot.', correct: false },
+                    { bn: 'এটি প্রায় ৫০ কিমি গ্রিডের আঞ্চলিক জলবায়ু নির্দেশ করে, ক্ষুদ্র জমির মাঠ-পর্যায়ের মাপ নয়।', en: 'It represents a regional ~50 km grid cell, not an individual smallholder plot measurement.', correct: true },
+                    { bn: 'এটি ১০০% নির্ভুলভাবে আগামী তিন মাসের প্রতিদিনের বৃষ্টি বলে দিতে পারে।', en: 'It predicts daily rainfall for the next 90 days with 100% certainty.', correct: false }
+                ],
+                explanationBn: 'সঠিক উত্তর: নাসা POWER প্রায় ৫০ কিমি গ্রিডের আঞ্চলিক ডেটা। তাই কোনো একক ক্ষুদ্র জমির জন্য এটিকে মাঠের সেন্সর মনে করা বিজ্ঞানসম্মত নয়।',
+                explanationEn: 'Correct answer: NASA POWER is a ~50 km grid cell product. It provides regional climatological context, not localized field-scale sensor readings.'
+            },
+            {
+                id: 1,
+                type: 'mission',
+                titleBn: 'মিশন ১: বাস্তব নাসা জলবায়ু উপাত্ত অনুধাবন',
+                titleEn: 'Mission 1: Understand a Real NASA Climate Dataset',
+                descBn: 'নাসা POWER ও GPM IMERG উপাত্ত বিশ্লেষণ করে জলবায়ুর নির্ভরযোগ্যতা যাচাই করুন।',
+                descEn: 'Analyze NASA POWER and GPM IMERG datasets to understand spatial resolution and limits.',
+                questionBn: 'নাসা GPM IMERG এবং POWER এর উপাত্তে কোন মাসের বৃষ্টিপাতের আপেক্ষিক পরিবর্তনশীলতা (Uncertainty) সবচেয়ে বেশি?',
+                questionEn: 'In Bangladesh climate data, which season exhibits the highest relative rainfall uncertainty?',
+                options: [
+                    { bn: 'শীতকাল ও খরিপ-পূর্ব শুষ্ক মাস (ডিসেম্বর–মার্চ), কারণ পরম বৃষ্টির পরিমাণ অত্যন্ত কম (<২০ মিমি)।', en: 'Winter and pre-monsoon dry months (Dec–March) due to very low baseline rainfall (<20 mm).', correct: true },
+                    { bn: 'বর্ষাকাল (জুলাই-আগস্ট), কারণ তখন বৃষ্টি ১০০% স্থির থাকে।', en: 'Monsoon season (July–August), because rainfall is completely constant.', correct: false },
+                    { bn: 'সব মাসে অনিশ্চয়তার মাত্রা সমান থাকে।', en: 'Rainfall uncertainty is identical across all calendar months.', correct: false }
+                ],
+                explanationBn: 'শীতকালে সামান্য বৃষ্টির ওঠানামাও শতকরা অনুপাতে বিশাল তারতম্য তৈরি করে, তাই এই সময়ে আনুপাতিক পরিবর্তনশীলতা সর্বোচ্চ।',
+                explanationEn: 'Winter rainfall is sparse (<20 mm/mo), so minor millimetre shifts create huge relative percentage swings.'
+            },
+            {
+                id: 2,
+                type: 'mission',
+                titleBn: 'মিশন ২: ফসল নির্বাচন ও রোপণ সময় নির্ধারণ',
+                titleEn: 'Mission 2: Select a Crop and Planting Window',
+                descBn: 'তাপমাত্রা বৃদ্ধির মুখে ফসলের ফুল ফোটার সময়কে দাবদাহ থেকে রক্ষা করুন।',
+                descEn: 'Align thermal time and sowing dates to shield reproductive flowering from heatwaves.',
+                questionBn: 'রাজশাহীতে বোরো ধানের চারা রোপণ জানুয়ারির শুরুতে (৫–১৫ জানুয়ারি) এগিয়ে আনলে কী লাভ হয়?',
+                questionEn: 'Why does shifting Boro rice transplanting to early January in Rajshahi protect crop yield?',
+                options: [
+                    { bn: 'এতে এপ্রিলের তীব্র দাবদাহ (>৩৬°সে) আসার আগেই ধান গাছে শিষ ও ফুল ফোটার পর্ব শেষ হয়।', en: 'It completes flowering before intense late April heatwaves (>36°C) cause spikelet sterility.', correct: true },
+                    { bn: 'এতে ধান গাছের কোনো পানির প্রয়োজন হয় না।', en: 'It eliminates the need for crop irrigation entirely.', correct: false },
+                    { bn: 'এতে শীতকালে দ্রুত পোকা আক্রমণ বাড়ে।', en: 'It increases winter pest outbreaks.', correct: false }
+                ],
+                explanationBn: 'ধানের শিষ আসার সময় তাপমাত্রা ৩৬°সে অতিক্রম করলে পরাগায়ন ব্যাহত হয়ে শিষ চিটা হয়ে যায়। আগাম রোপণ এই ঝুঁকি কমায়।',
+                explanationEn: 'Temperatures above 35–36°C during rice anthesis cause pollen sterility. Early transplanting evades peak April heatwaves.'
+            },
+            {
+                id: 3,
+                type: 'mission',
+                titleBn: 'মিশন ৩: খরা পরিস্থিতিতে বিজ্ঞানভিত্তিক সাড়া',
+                titleEn: 'Mission 3: Respond to an Educational Drought Scenario',
+                descBn: 'নাসা SMAP স্যাটেলাইটে মূল-অঞ্চলের আর্দ্রতা আশঙ্কাজনক নিচে নামলে করণীয় নির্ধারণ করুন।',
+                descEn: 'Determine the optimal scientific response when NASA SMAP detects root-zone drought.',
+                questionBn: 'নাসা SMAP উপাত্তে মূল-অঞ্চলের মাটির আর্দ্রতা ০.১৫ মি³/মি³ নিচে নামলে বরেন্দ্র অঞ্চলের জমিতে সবচেয়ে কার্যকর বৈজ্ঞানিক পদক্ষেপ কী?',
+                questionEn: 'When NASA SMAP detects root-zone soil moisture dropping below 0.15 m³/m³, what is the best agronomic action?',
+                options: [
+                    { bn: 'জমিতে অতিরিক্ত ইউরিয়া সার ছিটিয়ে দেওয়া।', en: 'Apply excessive chemical nitrogen fertilizer.', correct: false },
+                    { bn: 'এডব্লিউডি (AWD) নিয়ন্ত্রিত সেচ দেওয়া এবং খড়-তুষের মালচিং দিয়ে মাটির বাষ্পীভবন কমানো।', en: 'Implement Alternate Wetting & Drying (AWD) and apply light crop residue mulch.', correct: true },
+                    { bn: 'মাঠের সব ফসল এখনই কেটে ফেলা।', en: 'Prematurely clear and cut all standing crops.', correct: false }
+                ],
+                explanationBn: 'AWD ও মালচিং মাটির আর্দ্রতা সংরক্ষণ করে এবং কম পানি ব্যবহারেও ধান গাছের মূল অঞ্চলে প্রয়োজনীয় আর্দ্রতা বজায় রাখে।',
+                explanationEn: 'AWD combined with residue mulching conserves capillary moisture, preventing severe xylem cavitation.'
+            },
+            {
+                id: 4,
+                type: 'mission',
+                titleBn: 'মিশন ৪: সেচ কৌশলের তুলনামূলক মূল্যায়ন',
+                titleEn: 'Mission 4: Compare Irrigation Decisions (AWD vs Flood)',
+                descBn: 'সার্বক্ষণিক প্লাবন সেচ বনাম পর্যায়ক্রমিক সেচের (AWD) পানিসম্পদ প্রভাব পরিমাপ করুন।',
+                descEn: 'Quantify the water-saving and yield impact of Alternate Wetting and Drying (AWD).',
+                questionBn: 'BRRI ও FAO-56 এর মাঠ গবেষণা অনুযায়ী, সার্বক্ষণিক পানি দাঁড় করিয়ে রাখার বদলে AWD ব্যবহারে কী ঘটে?',
+                questionEn: 'According to BRRI and FAO-56, what is the proven outcome of AWD compared to continuous flooding?',
+                options: [
+                    { bn: 'ফলন না কমিয়ে ২৫% থেকে ৩০% পর্যন্ত ভূগর্ভস্থ পানি ও পাম্পিং খরচ সাশ্রয় হয়।', en: 'Saves 25% to 30% groundwater and pumping fuel with zero yield reduction.', correct: true },
+                    { bn: 'ধানের ফলন ৫০% কমে যায়।', en: 'Rice yield drops by 50%.', correct: false },
+                    { bn: 'পানির কোনো সঞ্চয় হয় না।', en: 'No water is conserved.', correct: false }
+                ],
+                explanationBn: 'AWD পদ্ধতিতে ছিদ্রযুক্ত পাইপ ব্যবহার করে মাটির নিচে পানির স্তর দেখে সেচ দেওয়া হয়, যা বিপুল পরিমাণ বিদ্যুৎ/ডিজেল ও পানি বাঁচায়।',
+                explanationEn: 'AWD uses a perforated field water pipe to schedule irrigation only when water drops 15 cm below surface, saving ~30% water.'
+            },
+            {
+                id: 5,
+                type: 'mission',
+                titleBn: 'মিশন ৫: সিদ্ধান্তের পেছনের বিজ্ঞান ব্যাখ্যা',
+                titleEn: 'Mission 5: Explain the Science Behind a Farming Decision',
+                descBn: 'মডেলের আপেক্ষিক সূচক এবং বাস্তব কৃষকের সিদ্ধান্তের মধ্যকার যোগসূত্র ব্যাখ্যা করুন।',
+                descEn: 'Articulate why educational simulation indices differ from commercial forecasts.',
+                questionBn: 'এগ্রিলিউম কেন নিশ্চিত টন/হেক্টর ফলনের বদলে ১০০-ভিত্তিক আপেক্ষিক সূচক (Relative Index) ব্যবহার করে?',
+                questionEn: 'Why does AgriLume use a relative index (100 = baseline) rather than claiming an exact tonnes/ha forecast?',
+                options: [
+                    { bn: 'কারণ বাস্তব ফলন কৃষকের সার প্রয়োগ, বালাই ব্যবস্থাপনা ও ক্ষুদ্র ভূসংস্থানের ওপর নির্ভরশীল যা মোটা স্যাটেলাইট দিয়ে মাপা যায় না।', en: 'Because actual field yield depends on fertilizer, pest control, and micro-topography not captured by coarse satellites.', correct: true },
+                    { bn: 'কারণ স্যাটেলাইট ডেটা দিয়ে কোনো হিসাব করা যায় না।', en: 'Because satellite data cannot be processed computationally.', correct: false },
+                    { bn: 'কারণ এটি একটি কাল্পনিক গেম মাত্র।', en: 'Because it is a purely fictitious game.', correct: false }
+                ],
+                explanationBn: 'বিজ্ঞানসম্মত সততার নীতি: মহাকাশ উপাত্তের স্থানিক রেজোলিউশন এবং মাঠের বাস্তবতার মধ্যকার ফারাক স্বীকার করে সিদ্ধান্ত তুলনার উপযোগী আপেক্ষিক সূচক প্রদর্শন করা হয়।',
+                explanationEn: 'Scientific integrity: coarse space sensors capture regional climate forcing, but farm yield requires local agronomic calibration.'
+            },
+            {
+                id: 6,
+                type: 'post-test',
+                titleBn: 'চূড়ান্ত ফলাফল ও মূল্যায়ন (Post-Test)',
+                titleEn: 'Post-Test & Learning Mastery',
+                descBn: 'অভিনন্দন! আপনি ৫টি কৃষি শিক্ষা মিশন সফলভাবে সম্পন্ন করেছেন।',
+                descEn: 'Congratulations! You have completed all 5 Earth Intelligence learning missions.'
+            }
+        ];
+
+        let missionsState = {
+            activeTab: 0,
+            answers: {},
+            score: 0,
+            completed: [false, false, false, false, false, false, false]
+        };
+
+        function loadMissionsState() {
+            try {
+                const saved = localStorage.getItem('agrilume_game_missions_v1');
+                if (saved) {
+                    missionsState = JSON.parse(saved);
+                }
+            } catch (e) {
+                console.warn('Could not read saved missions progress.', e);
+            }
+            updateMissionsHUD();
+        }
+
+        function saveMissionsState() {
+            try {
+                localStorage.setItem('agrilume_game_missions_v1', JSON.stringify(missionsState));
+            } catch (e) {}
+            updateMissionsHUD();
+        }
+
+        function updateMissionsHUD() {
+            const completedCount = Object.keys(missionsState.answers).filter(k => k >= 1 && k <= 5).length;
+            const pill = document.getElementById('mission-progress-pill');
+            if (pill) pill.textContent = `${completedCount}/5`;
+            const scoreDisplay = document.getElementById('mission-score-display');
+            if (scoreDisplay) scoreDisplay.textContent = `${missionsState.score} / 500`;
+        }
+
+        function openMissionsModal() {
+            document.getElementById('missions-modal').classList.remove('hidden');
+            renderMissionContent();
+            updateMissionsHUD();
+        }
+
+        function closeMissionsModal() {
+            document.getElementById('missions-modal').classList.add('hidden');
+        }
+
+        function selectMissionTab(idx) {
+            missionsState.activeTab = idx;
+            document.querySelectorAll('.mission-tab-btn').forEach((btn, i) => {
+                if (i === idx) {
+                    btn.classList.add('bg-white/15', 'text-white', 'border-white/20');
+                    btn.classList.remove('bg-white/5', 'text-slate-300', 'border-transparent');
+                } else {
+                    btn.classList.remove('bg-white/15', 'text-white', 'border-white/20');
+                    btn.classList.add('bg-white/5', 'text-slate-300', 'border-transparent');
+                }
+            });
+            renderMissionContent();
+        }
+
+        function submitMissionAnswer(missionIdx, optIdx) {
+            const mission = MISSIONS_DATA[missionIdx];
+            if (!mission || !mission.options) return;
+
+            const isCorrect = mission.options[optIdx].correct;
+            const alreadyAnswered = missionsState.answers[missionIdx] !== undefined;
+
+            missionsState.answers[missionIdx] = optIdx;
+            if (isCorrect && !alreadyAnswered && missionIdx >= 1 && missionIdx <= 5) {
+                missionsState.score += 100;
+            }
+            missionsState.completed[missionIdx] = true;
+            saveMissionsState();
+            renderMissionContent();
+
+            showToast(isCorrect
+                ? (state.lang === 'bn' ? 'সঠিক উত্তর! +১০০ শিক্ষা স্কোর অর্জিত।' : 'Correct! +100 Learning Points.')
+                : (state.lang === 'bn' ? 'উত্তরটি সঠিক নয়। বৈজ্ঞানিক ব্যাখ্যাটি মনোযোগ দিয়ে পড়ুন।' : 'Incorrect. Read the scientific explanation carefully.')
+            );
+        }
+
+        function resetMissionsProgress() {
+            missionsState = {
+                activeTab: 0,
+                answers: {},
+                score: 0,
+                completed: [false, false, false, false, false, false, false]
+            };
+            saveMissionsState();
+            renderMissionContent();
+            showToast(state.lang === 'bn' ? 'মিশন অগ্রগতি রিসেট করা হয়েছে।' : 'Missions progress has been reset.');
+        }
+
+        function renderMissionContent() {
+            const container = document.getElementById('mission-body-container');
+            if (!container) return;
+
+            const m = MISSIONS_DATA[missionsState.activeTab];
+            const bn = state.lang === 'bn';
+            const userAnswer = missionsState.answers[m.id];
+
+            if (m.type === 'post-test') {
+                const totalCorrect = Object.entries(missionsState.answers).filter(([k, v]) => {
+                    const idx = Number(k);
+                    return MISSIONS_DATA[idx]?.options?.[v]?.correct;
+                }).length;
+
+                container.innerHTML = `
+                    <div class="glass-card p-6 rounded-2xl border border-amber-500/30 text-center space-y-4">
+                        <div class="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-400/50 flex items-center justify-center text-emerald-400 text-3xl mx-auto">
+                            <i class="fa-solid fa-award"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white">${bn ? 'শিক্ষা মিশন সম্পন্ন সার্টিফিকেট' : 'Learning Mastery Completed'}</h3>
+                        <p class="text-sm text-slate-300 max-w-lg mx-auto">
+                            ${bn
+                                ? `আপনি ৫টি শিক্ষা মিশন এবং প্রাক-মূল্যায়নের মধ্যে ${totalCorrect}টি প্রশ্নের সঠিক বৈজ্ঞানিক সিদ্ধান্ত দিয়েছেন।`
+                                : `You correctly answered and analyzed ${totalCorrect} scientific decision scenarios across the missions.`}
+                        </p>
+                        <div class="inline-block p-4 rounded-xl bg-black/40 border border-white/10 font-mono text-amber-300 text-2xl font-bold">
+                            Score: ${missionsState.score} / 500 PTS
+                        </div>
+                        <div class="pt-2 flex justify-center gap-3">
+                            <button onclick="selectMissionTab(1)" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-semibold">
+                                ${bn ? 'মিশন পুনরাবৃত্তি করুন' : 'Review Missions'}
+                            </button>
+                            <button onclick="closeMissionsModal()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold shadow-lg">
+                                ${bn ? 'সিমুলেটরে প্রয়োগ করুন' : 'Apply in Simulator'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            let optionsHtml = '';
+            if (m.options) {
+                optionsHtml = m.options.map((opt, i) => {
+                    const isSelected = userAnswer === i;
+                    const hasAnswered = userAnswer !== undefined;
+                    let style = 'bg-slate-900/80 border-slate-700 hover:border-slate-500 text-slate-200';
+                    let badge = `<span class="w-6 h-6 rounded-full bg-slate-800 text-xs flex items-center justify-center font-mono mr-3">${i + 1}</span>`;
+
+                    if (hasAnswered) {
+                        if (opt.correct) {
+                            style = 'bg-emerald-950/70 border-emerald-500 text-emerald-200 shadow-[0_0_12px_rgba(16,185,129,0.2)]';
+                            badge = `<span class="w-6 h-6 rounded-full bg-emerald-500 text-slate-950 text-xs flex items-center justify-center font-bold mr-3">✓</span>`;
+                        } else if (isSelected && !opt.correct) {
+                            style = 'bg-red-950/70 border-red-500 text-red-200';
+                            badge = `<span class="w-6 h-6 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold mr-3">✕</span>`;
+                        }
+                    }
+
+                    return `
+                        <button onclick="submitMissionAnswer(${m.id}, ${i})" class="w-full text-left p-3.5 rounded-xl border transition-all flex items-center ${style} cursor-pointer">
+                            ${badge}
+                            <span class="text-xs sm:text-sm font-medium leading-relaxed">${bn ? opt.bn : opt.en}</span>
+                        </button>
+                    `;
+                }).join('');
+            }
+
+            let explanationHtml = '';
+            if (userAnswer !== undefined && m.explanationBn) {
+                explanationHtml = `
+                    <div class="p-4 rounded-xl border border-sky-500/30 bg-sky-950/40 text-xs text-sky-200 space-y-1.5 leading-relaxed">
+                        <div class="font-bold text-sky-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-lightbulb"></i>
+                            <span>${bn ? 'বৈজ্ঞানিক ব্যাখ্যা ও সারসংক্ষেপ' : 'Scientific Insight & Evidence'}</span>
+                        </div>
+                        <p>${bn ? m.explanationBn : m.explanationEn}</p>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = `
+                <div class="space-y-3">
+                    <div class="space-y-1">
+                        <span class="text-[11px] font-mono uppercase text-amber-400 font-bold">${bn ? m.titleBn : m.titleEn}</span>
+                        <p class="text-xs text-slate-300">${bn ? m.descBn : m.descEn}</p>
+                    </div>
+
+                    <div class="p-4 rounded-2xl border border-white/10 bg-[#0B1528] space-y-3">
+                        <h4 class="text-sm font-bold text-white flex items-start gap-2">
+                            <span class="text-amber-400 font-mono">Q:</span>
+                            <span>${bn ? m.questionBn : m.questionEn}</span>
+                        </h4>
+
+                        <div class="space-y-2 pt-1">
+                            ${optionsHtml}
+                        </div>
+                    </div>
+
+                    ${explanationHtml}
+
+                    <div class="flex justify-between items-center pt-2">
+                        ${m.id > 0 ? `<button onclick="selectMissionTab(${m.id - 1})" class="text-xs text-slate-400 hover:text-white">← ${bn ? 'পূর্ববর্তী' : 'Previous'}</button>` : '<span></span>'}
+                        ${m.id < 6 ? `<button onclick="selectMissionTab(${m.id + 1})" class="px-4 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-semibold">${bn ? 'পরবর্তী মিশন →' : 'Next Mission →'}</button>` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Keyboard handler for accessible mission options selection
+        window.addEventListener('keydown', (e) => {
+            const modal = document.getElementById('missions-modal');
+            if (modal && !modal.classList.contains('hidden')) {
+                if (e.key === 'Escape') {
+                    closeMissionsModal();
+                } else if (['1', '2', '3'].includes(e.key)) {
+                    const optIdx = parseInt(e.key, 10) - 1;
+                    submitMissionAnswer(missionsState.activeTab, optIdx);
+                }
+            }
+        });
+
         window.addEventListener('beforeunload', stopSignControl);
 
         let toastTimeout;
@@ -1898,6 +2307,7 @@
         // ==================== 9. INITIALIZE ON WINDOW LOAD ====================
         window.onload = async function () {
             populateCropOptions();
+            loadMissionsState();
             try {
                 await loadDistrictCatalog();
             } catch (error) {

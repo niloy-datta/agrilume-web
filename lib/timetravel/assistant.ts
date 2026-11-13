@@ -408,6 +408,54 @@ function contextAnswer(t: string, view: View, lang: Lang): AssistantReply | null
       sources: [],
     };
   }
+  if (has(t, ["কোন নাসা", "which nasa", "nasa data used", "কি ডাটা", "উপাত্ত কি", "what data", "datasets used"])) {
+    return {
+      kind: "answer",
+      text: bn
+        ? `এই সিমুলেশনে NASA POWER কৃষি-আবহাওয়া (১৯৮১-২০২৫ দৈনিক Tmax, Tmin, বৃষ্টি), NASA NEX-GDDP-CMIP6 ভবিষ্যৎ জলবায়ু প্রক্ষেপণ, এবং MODIS/HLS উদ্ভিদের সবুজতা সূচক (NDVI) ব্যবহৃত হয়েছে।`
+        : `This simulation uses NASA POWER Agroclimatology (1981–2025 daily Tmax, Tmin, rain), NASA NEX-GDDP-CMIP6 downscaled climate projections, and MODIS/HLS vegetation indices (NDVI).`,
+      commands: [],
+      sources: [{ label: "NASA POWER", url: "https://power.larc.nasa.gov" }, { label: "NEX-GDDP-CMIP6", url: "https://registry.opendata.aws/nex-gddp-cmip6/" }],
+      openPanel: "data",
+    };
+  }
+  if (has(t, ["কেন পরিবর্তন", "why change", "কেন কমল", "কেন বাড়ল", "why did it change", "কেন ফলন", "কারণ কি", "what is the reason"])) {
+    const losses = view.sim.loss;
+    const dominant = Object.entries(losses).sort((a, b) => b[1] - a[1])[0];
+    const causeBn = dominant && dominant[1] > 0.05
+      ? `মূল কারণ হলো ${dominant[0] === "heat" ? "অতিরিক্ত তাপমাত্রা ও তাপপ্রবাহের চাপ" : dominant[0] === "water" ? "মূল-অঞ্চলে পানির ঘাটতি ও খরা চাপ" : dominant[0] === "salinity" ? "মাটির অতিরিক্ত লবণাক্ততা" : "প্রাকৃতিক দুর্যোগের ক্ষতি"} (${(dominant[1] * 100).toFixed(0)}% ক্ষতি)।`
+      : "আবহাওয়া এবং সেচ অবস্থা ফসলের জন্য তুলনামূলকভাবে অনুকূল ছিল।";
+    const causeEn = dominant && dominant[1] > 0.05
+      ? `Primary driver was ${dominant[0] === "heat" ? "extreme temperature stress during reproductive stages" : dominant[0] === "water" ? "root-zone soil water deficit" : dominant[0] === "salinity" ? "soil salinity stress" : "hazard damage"} (${(dominant[1] * 100).toFixed(0)}% loss).`
+      : "Weather and moisture conditions were relatively favorable for this crop.";
+    return {
+      kind: "answer",
+      text: `${bn ? "ফলাফল পরিবর্তনের বৈজ্ঞানিক কারণ: " : "Scientific reason for outcome shift: "}${bn ? causeBn : causeEn}`,
+      commands: [],
+      sources: [{ label: "FAO-56 Crop Model", url: "https://www.fao.org/land-water/databases-and-software/cropwat/en/" }],
+      openPanel: "crop",
+    };
+  }
+  if (has(t, ["ধারণা কি", "কী ধরে", "assumptions", "what does it assume", "মডেল ধারণা"])) {
+    return {
+      kind: "answer",
+      text: bn
+        ? `সিমুলেশনের বৈজ্ঞানিক ধারণা: (১) FAO-56 ডুয়াল ফসল গুণাঙ্ক (Kc) পদ্ধতি, (২) Hargreaves পদ্ধতিতে সম্ভাব্য বাষ্পীভবন (ET₀) হিসাব, (৩) সার ও বালাই ব্যবস্থাপনা স্বাভাবিক ধরে নেওয়া হয়েছে। এটি বাস্তব ফলন পূর্বাভাস নয়, আপেক্ষিক সিদ্ধান্ত যাচাইয়ের মডেল।`
+        : `Scientific simulation assumptions: (1) FAO-56 dual crop coefficient (Kc) method, (2) Hargreaves reference evapotranspiration (ET₀), (3) fertilizer and pest management are assumed non-limiting. It evaluates relative climate impacts, not operational yields.`,
+      commands: [],
+      sources: [{ label: "FAO-56 Methodology", url: "https://www.fao.org/3/x0490e/x0490e00.htm" }],
+    };
+  }
+  if (has(t, ["অনিশ্চয়তা", "uncertainty", "কেন অনিশ্চিত", "why uncertainty", "নির্ভুল"])) {
+    return {
+      kind: "answer",
+      text: bn
+        ? `অনিশ্চয়তার কারণ: (১) NASA POWER গ্রিড প্রায় ৫০ কিমি—একটি নির্দিষ্ট ক্ষুদ্র জমির জন্য নয়, (২) মৌসুমি বৃষ্টির আন্তঃবার্ষিক প্রাকৃতিক পরিবর্তনশীলতা, (৩) ভবিষ্যৎ জলবায়ু মডেলে বিভিন্ন GCM-এর মধ্যে পার্থক্যের বিস্তার (multi-model spread)।`
+        : `Sources of uncertainty: (1) NASA POWER grid is ~50 km—not a micro-scale field sensor, (2) high inter-annual variability of monsoon rains, (3) inter-model spread across different CMIP6 climate models.`,
+      commands: [],
+      sources: [{ label: "NASA POWER Docs", url: "https://power.larc.nasa.gov/docs/" }],
+    };
+  }
   return null;
 }
 

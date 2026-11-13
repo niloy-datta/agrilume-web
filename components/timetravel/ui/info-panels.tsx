@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 import type { Lang } from "@/lib/timetravel/types";
-import { ACCESS_LABEL, INTEGRATION_LABEL, NASA_DATASETS, usedCount } from "@/lib/timetravel/nasa-datasets";
+import { ACCESS_LABEL, INTEGRATION_LABEL, NASA_DATASETS, STAGE_LABELS, pipelineStages, usedCount } from "@/lib/timetravel/nasa-datasets";
 import { AGENCIES, KRISHI_CALL_CENTER, NATIONAL_EMERGENCY, ROLE_LABEL } from "@/lib/timetravel/gov";
 import type { AgencyRole } from "@/lib/timetravel/gov";
 import { CIRCULAR_LOOPS, DEFAULT_SHARES, PATHWAYS, RESIDUE_COEFFS, computeRecycling, fromHectares, irrigationVolumeM3, pondAreaM2, toHectares } from "@/lib/timetravel/recycling";
@@ -10,6 +10,7 @@ import type { AreaUnit, PathwayId, Shares } from "@/lib/timetravel/recycling";
 import { CROPS, CROP_LIST } from "@/lib/timetravel/crops";
 import type { CropId } from "@/lib/timetravel/crops";
 import { asciiToBnDigits } from "@/lib/timetravel/locations";
+import { localizeNote } from "@/lib/timetravel/notes-bn";
 import { ExtLink, Notice, RangeField, Section, Stat, tt } from "./primitives";
 
 const num = (lang: Lang, n: number, d = 1) => {
@@ -42,6 +43,15 @@ export function DataRegistry({ lang }: { lang: Lang }) {
                   {lang === "bn" ? INTEGRATION_LABEL[d.integration].bn : INTEGRATION_LABEL[d.integration].en}
                 </span>
               </div>
+              <ol className="mt-2 flex flex-wrap gap-1.5" aria-label={tt(lang, "একীকরণের ধাপ", "Integration stages")}>
+                {(Object.entries(pipelineStages(d)) as [keyof typeof STAGE_LABELS, boolean][]).map(([k, done]) => (
+                  <li key={k} className={`rounded-md border px-2 py-0.5 text-[11px] ${done ? "border-agri-green/50 text-agri-green" : "border-white/15 text-muted-text line-through decoration-white/30"}`}>
+                    <span aria-hidden>{done ? "✓ " : "✗ "}</span>
+                    <span className="sr-only">{done ? tt(lang, "হ্যাঁ: ", "yes: ") : tt(lang, "না: ", "no: ")}</span>
+                    {lang === "bn" ? STAGE_LABELS[k].bn : STAGE_LABELS[k].en}
+                  </li>
+                ))}
+              </ol>
               <dl className="mt-2 grid grid-cols-1 gap-x-4 gap-y-1 text-xs text-muted-text sm:grid-cols-2">
                 <div>
                   <dt className="inline text-primary-text">{tt(lang, "ভেরিয়েবল", "Variables")}: </dt>
@@ -282,7 +292,7 @@ export function RecycleCalculator({ lang, crop: cropProp, onPickPathway, activeP
           ))}
         </ul>
       </Section>
-      {res.notes.length > 0 && <p className="text-xs text-muted-text">{res.notes.join(" ")}</p>}
+      {res.notes.length > 0 && <p className="text-xs text-muted-text">{res.notes.map((n) => localizeNote(n, lang)).join(" ")}</p>}
       <p className="mt-2 text-xs text-muted-text">{tt(lang, "প্রযুক্তি-সহায়তা: DAE, BARI, SRDI, BRRI।", "For technical help ask DAE, BARI, SRDI or BRRI.")}</p>
       <p className="mt-1 text-[11px] text-muted-text">{CROPS[crop][lang === "bn" ? "nameBn" : "nameEn"]}</p>
     </div>

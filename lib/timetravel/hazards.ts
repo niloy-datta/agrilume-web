@@ -118,7 +118,7 @@ export const HAZARDS: Record<HazardType, HazardDef> = {
       en: "Educational scene of rising soil/irrigation-water salinity with white salt crust.",
     },
     cropEffect: {
-      bn: "লবণাক্ততা বাড়লে ফলন ধাপে ধাপে কমে (FAO Maas–Hoffman সম্পর্ক)। ভুট্টা সবচেয়ে সংবেদনশীল, গম তুলনায় সহনশীল।",
+      bn: "লবণাক্ততা বাড়লে ফলন ধাপে ধাপে কমে (FAO-র মাস–হফম্যান সম্পর্ক)। ভুট্টা সবচেয়ে সংবেদনশীল, গম তুলনায় সহনশীল।",
       en: "Yield falls stepwise as salinity rises (FAO Maas–Hoffman response). Maize is most sensitive, wheat more tolerant.",
     },
     mitigation: [
