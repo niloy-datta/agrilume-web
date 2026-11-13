@@ -10,6 +10,7 @@ import type { AreaUnit, PathwayId, Shares } from "@/lib/timetravel/recycling";
 import { CROPS, CROP_LIST } from "@/lib/timetravel/crops";
 import type { CropId } from "@/lib/timetravel/crops";
 import { asciiToBnDigits } from "@/lib/timetravel/locations";
+import { localizeNote } from "@/lib/timetravel/notes-bn";
 import { ExtLink, Notice, RangeField, Section, Stat, tt } from "./primitives";
 
 const num = (lang: Lang, n: number, d = 1) => {
@@ -291,7 +292,7 @@ export function RecycleCalculator({ lang, crop: cropProp, onPickPathway, activeP
           ))}
         </ul>
       </Section>
-      {res.notes.length > 0 && <p className="text-xs text-muted-text">{res.notes.join(" ")}</p>}
+      {res.notes.length > 0 && <p className="text-xs text-muted-text">{res.notes.map((n) => localizeNote(n, lang)).join(" ")}</p>}
       <p className="mt-2 text-xs text-muted-text">{tt(lang, "প্রযুক্তি-সহায়তা: DAE, BARI, SRDI, BRRI।", "For technical help ask DAE, BARI, SRDI or BRRI.")}</p>
       <p className="mt-1 text-[11px] text-muted-text">{CROPS[crop][lang === "bn" ? "nameBn" : "nameEn"]}</p>
     </div>

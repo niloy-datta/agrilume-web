@@ -8,6 +8,7 @@ import { ExtLink, Section, tt } from "./primitives";
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || "";
 const M_EN = ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"];
+const M_BN = ["জা", "ফে", "মা", "এ", "মে", "জুন", "জু", "আ", "সে", "অ", "ন", "ডি"];
 const M_FULL = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 /** Satellite vegetation context for the area around the district centre (MODIS NDVI, 2021–2025). */
@@ -60,7 +61,7 @@ export function NdviCard({ districtId, lang, year }: { districtId: string; lang:
             )}
             {showYear &&
               f.monthlyByYear[String(showYear)].map((v, m) => (v == null ? null : <circle key={m} cx={m * bw + bw / 2} cy={y(v)} r={2.6} fill="#36BFFA" />))}
-            {M_EN.map((l, m) => (
+            {(lang === "bn" ? M_BN : M_EN).map((l, m) => (
               <text key={m} x={m * bw + bw / 2} y={H + 11} textAnchor="middle" fontSize={8} fill="currentColor" opacity={0.7}>
                 {l}
               </text>

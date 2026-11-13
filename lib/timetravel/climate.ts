@@ -287,7 +287,7 @@ export function monthlyForYear(
           "The observed temperature trend in this record is not statistically distinguishable from zero, so none was applied.",
         );
       }
-      notes.push("Rainfall: no trend applied (monsoon rainfall is too variable for a 25-year linear trend).");
+      notes.push("Rainfall: no trend applied (monsoon rainfall varies too much from year to year for a reliable linear trend).");
     }
   }
 
