@@ -9,6 +9,7 @@ import type { ProjectionPack } from "@/lib/timetravel/projection-pack";
 import type { ClimateSeries, IrrigationMode, Lang } from "@/lib/timetravel/types";
 import { DEFAULT_SCENARIO } from "@/lib/timetravel/types";
 import { monthDayOf } from "@/lib/timetravel/climate";
+import { asciiToBnDigits, getDistrict } from "@/lib/timetravel/locations";
 import { irrigationLabel } from "@/lib/timetravel/crops";
 import { KindBadge, Notice, Section, tt } from "./primitives";
 
@@ -22,6 +23,8 @@ interface Side {
 }
 
 const MONTHS_EN = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const MONTHS_BN = ["জানু", "ফেব্রু", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগস্ট", "সেপ্টে", "অক্টো", "নভে", "ডিসে"];
+const bnNum = (lang: Lang, s: string | number) => (lang === "bn" ? asciiToBnDigits(String(s)) : String(s));
 
 function toInput(side: Side, label: string, baseSowDoy: number): ScenarioInput {
   return {
@@ -123,15 +126,15 @@ export function ComparePanel({ state, series, pack }: { state: TTState; series: 
 
   const sow = (shift: number) => {
     const { m0, d } = monthDayOf(2021, Math.min(365, Math.max(1, state.sowDoy + shift)));
-    return `${MONTHS_EN[m0]} ${d}`;
+    return lang === "bn" ? `${MONTHS_BN[m0]} ${bnNum(lang, d)}` : `${MONTHS_EN[m0]} ${d}`;
   };
-  const fmt = (n: number, d = 0) => (Number.isFinite(n) ? n.toFixed(d) : "—");
-  const dfmt = (n: number, d = 0) => (Number.isFinite(n) ? `${n > 0 ? "+" : n < 0 ? "−" : "±"}${Math.abs(n).toFixed(d)}` : "—");
+  const fmt = (n: number, d = 0) => (Number.isFinite(n) ? bnNum(lang, n.toFixed(d)) : "—");
+  const dfmt = (n: number, d = 0) => (Number.isFinite(n) ? bnNum(lang, `${n > 0 ? "+" : n < 0 ? "−" : "±"}${Math.abs(n).toFixed(d)}`) : "—");
 
   return (
     <div>
       <Section
-        title={tt(lang, `${series.name}: ${crop.nameBn} — দুই সম্ভাবনার তুলনা`, `${series.name}: ${crop.nameEn} — compare two scenarios`)}
+        title={tt(lang, `${getDistrict(state.districtId)?.nameBn ?? series.name}: ${crop.nameBn} — দুই সম্ভাবনার তুলনা`, `${series.name}: ${crop.nameEn} — compare two scenarios`)}
         hint={tt(lang, "জেলা ও ফসল বদলাতে ‘স্থান’ ও ‘ফসল’ ট্যাব ব্যবহার করুন।", "Change district and crop in the Place and Crop tabs.")}
       >
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -165,7 +168,7 @@ export function ComparePanel({ state, series, pack }: { state: TTState; series: 
                   </tr>
                   {(
                     [
-                      [tt(lang, "বছর · বপন", "Year · sowing"), `${result.cmp.a.year} · ${sow(a.sowShift)}`, `${result.cmp.b.year} · ${sow(b.sowShift)}`, ""],
+                      [tt(lang, "বছর · বপন", "Year · sowing"), `${bnNum(lang, result.cmp.a.year)} · ${sow(a.sowShift)}`, `${bnNum(lang, result.cmp.b.year)} · ${sow(b.sowShift)}`, ""],
                       [tt(lang, "মৌসুমের বৃষ্টি (মিমি)", "Season rain (mm)"), fmt(result.cmp.a.seasonRainMm), fmt(result.cmp.b.seasonRainMm), dfmt(result.cmp.diff.rainMm)],
                       [tt(lang, "গড় সর্বোচ্চ তাপ (°C)", "Mean max temp (°C)"), fmt(result.cmp.a.seasonTmaxC, 1), fmt(result.cmp.b.seasonTmaxC, 1), dfmt(result.cmp.diff.tmaxC, 1)],
                       [tt(lang, `গরম দিন (≥${crop.heat.threshold} °C)`, `Hot days (≥${crop.heat.threshold} °C)`), fmt(result.cmp.a.hotDays), fmt(result.cmp.b.hotDays), dfmt(result.cmp.diff.hotDays)],

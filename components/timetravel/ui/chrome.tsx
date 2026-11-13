@@ -144,7 +144,7 @@ export function TopBar({
           📱 <span className="hidden sm:inline">{tt(lang, "কার্ডবোর্ড", "Cardboard")}</span>
         </Btn>
         <Btn onClick={onAssistant} ariaLabel={tt(lang, "অফলাইন সহায়ক খুলুন", "Open offline helper")} title={tt(lang, "কৃষি সহায়ক", "Farming assistant")}>
-          🤖 <span className="hidden sm:inline">AI</span>
+          💬 <span className="hidden sm:inline">{tt(lang, "সহায়ক", "Helper")}</span>
         </Btn>
         <Btn onClick={onMic} pressed={listening} ariaLabel={tt(lang, "ভয়েস কমান্ড", "Voice command")} className={listening ? "!border-agri-green !bg-agri-green/20" : ""}>
           🎤
@@ -162,7 +162,7 @@ export function TopBar({
           {lang === "bn" ? "EN" : "বাং"}
         </Btn>
         <Btn onClick={onQuality} title={tt(lang, "গ্রাফিক্স মান", "Graphics quality")} ariaLabel={tt(lang, "গ্রাফিক্স মান", "Graphics quality")}>
-          ⚙ {quality === "auto" ? "Auto" : quality === "low" ? "Low" : "High"}
+          ⚙ {quality === "auto" ? tt(lang, "স্বয়ংক্রিয়", "Auto") : quality === "low" ? tt(lang, "কম", "Low") : tt(lang, "উচ্চ", "High")}
         </Btn>
         <Btn onClick={onHelp} ariaLabel={tt(lang, "সাহায্য ও শর্টকাট", "Help and shortcuts")}>
           ?

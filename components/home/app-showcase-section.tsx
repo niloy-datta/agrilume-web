@@ -412,7 +412,7 @@ export function AppShowcaseSection() {
         </div>
 
         {/* MAIN HERO SHOWCASE STAGE */}
-        <div className="relative rounded-3xl p-6 sm:p-10 lg:p-14 bg-gradient-to-b from-[#0B1528]/50 via-[#070D18]/80 to-[#03060C] border border-white/10 shadow-[0_30px_100px_rgba(0,0,0,0.8)] overflow-hidden">
+        <div className="relative rounded-3xl p-4 sm:p-10 lg:p-14 bg-gradient-to-b from-[#0B1528]/50 via-[#070D18]/80 to-[#03060C] border border-white/10 shadow-[0_30px_100px_rgba(0,0,0,0.8)] overflow-hidden">
           
           {/* Subtle Stage Backlight */}
           <div
@@ -545,7 +545,7 @@ export function AppShowcaseSection() {
                 {/* CENTER HERO PHONE (LARGE, CLEAR, SUPER READABLE!) */}
                 <div
                   onClick={() => setLightboxOpen(true)}
-                  className="relative w-[280px] sm:w-[340px] lg:w-[380px] aspect-[576/1024] rounded-[48px] p-2 bg-gradient-to-b from-[#2A374A] via-[#15202E] to-[#080E18] border-2 shadow-[0_30px_100px_rgba(0,0,0,0.95)] z-20 cursor-pointer transition-all duration-500 group hover:scale-[1.01]"
+                  className="relative w-full max-w-[280px] sm:max-w-[340px] lg:max-w-[380px] aspect-[576/1024] rounded-[48px] p-2 bg-gradient-to-b from-[#2A374A] via-[#15202E] to-[#080E18] border-2 shadow-[0_30px_100px_rgba(0,0,0,0.95)] z-20 cursor-pointer transition-all duration-500 group hover:scale-[1.01]"
                   style={{
                     borderColor: `${active.accent}90`,
                     boxShadow: `0 30px 90px rgba(0,0,0,0.95), 0 0 55px ${active.glowColor}`,
@@ -618,37 +618,36 @@ export function AppShowcaseSection() {
               </div>
 
               {/* Prev / Next Chevrons on Mobile & Quick Selector */}
-              <div className="mt-6 flex items-center justify-between w-full max-w-sm px-4">
+              <div className="mt-6 grid w-full max-w-sm grid-cols-2 gap-y-1 sm:flex sm:items-center sm:justify-between">
                 <button
                   type="button"
                   onClick={() => setActiveIndex(prevIndex)}
-                  className="flex items-center gap-1 text-xs font-mono text-[#94A3B8] hover:text-white transition-colors cursor-pointer"
+                  className="flex min-h-11 items-center gap-1 text-xs font-mono text-[#94A3B8] hover:text-white transition-colors cursor-pointer"
                 >
                   <ChevronLeft className="w-4 h-4" />
                   <span>Previous</span>
                 </button>
 
                 {/* Dot indicators */}
-                <div className="flex items-center gap-1.5">
+                <div className="col-span-2 row-start-2 flex items-center justify-center gap-1 sm:gap-1.5">
                   {APP_SCREENS.map((s, idx) => (
                     <button
                       key={s.id}
                       type="button"
                       onClick={() => setActiveIndex(idx)}
-                      className={`h-2 rounded-full transition-all duration-300 ${
-                        idx === activeIndex
-                          ? "w-7 bg-[#59D98E]"
-                          : "w-2 bg-white/20 hover:bg-white/40"
-                      }`}
+                      className="flex h-11 w-8 items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[#36BFFA]"
+                      aria-pressed={idx === activeIndex}
                       aria-label={`Jump to ${s.label}`}
-                    />
+                    >
+                      <span className={`h-2 rounded-full transition-all duration-300 ${idx === activeIndex ? "w-7 bg-[#59D98E]" : "w-2 bg-white/20 hover:bg-white/40"}`} />
+                    </button>
                   ))}
                 </div>
 
                 <button
                   type="button"
                   onClick={() => setActiveIndex(nextIndex)}
-                  className="flex items-center gap-1 text-xs font-mono text-[#94A3B8] hover:text-white transition-colors cursor-pointer"
+                  className="justify-self-end flex min-h-11 items-center gap-1 text-xs font-mono text-[#94A3B8] hover:text-white transition-colors cursor-pointer"
                 >
                   <span>Next</span>
                   <ChevronRight className="w-4 h-4" />

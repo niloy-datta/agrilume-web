@@ -132,18 +132,45 @@ export function Btn({
 
 /** Data-kind badge. The leading symbol means the kind is never conveyed by colour alone. */
 export function KindBadge({ kind, lang, compact }: { kind: DataKind; lang: Lang; compact?: boolean }) {
-  const real = kind === "observed" || kind === "observed-filled";
-  const sym = kind === "observed" ? "●" : kind === "observed-filled" ? "◐" : kind === "nasa-projection" ? "▲" : kind === "trend-what-if" ? "◇" : "■";
-  const l = KIND_LABEL[kind];
+  let sym = "●";
+  let style = "border-agri-green/60 bg-agri-green/10 text-agri-green";
+  let shortLabel = tt(lang, "পর্যবেক্ষিত", "Observed");
+
+  if (kind === "observed") {
+    sym = "●";
+    style = "border-[#59D98E]/60 bg-[#59D98E]/10 text-[#59D98E]";
+    shortLabel = tt(lang, "আসল পর্যবেক্ষণ", "Real Observation");
+  } else if (kind === "cached-observation") {
+    sym = "◎";
+    style = "border-[#36BFFA]/60 bg-[#36BFFA]/10 text-[#36BFFA]";
+    shortLabel = tt(lang, "ক্যাশ পর্যবেক্ষণ", "Cached Observation");
+  } else if (kind === "observed-filled") {
+    sym = "◐";
+    style = "border-[#2DD4BF]/60 bg-[#2DD4BF]/10 text-[#2DD4BF]";
+    shortLabel = tt(lang, "আংশিক পূরণ", "Observed-Filled");
+  } else if (kind === "nasa-projection" || kind === "model-projection") {
+    sym = "▲";
+    style = "border-[#A78BFA]/60 bg-[#A78BFA]/10 text-[#A78BFA]";
+    shortLabel = tt(lang, "মডেল প্রক্ষেপণ", "Model Projection");
+  } else if (kind === "unavailable-data") {
+    sym = "⊘";
+    style = "border-[#F87171]/60 bg-[#F87171]/10 text-[#F87171]";
+    shortLabel = tt(lang, "তথ্য অপ্রাপ্য", "Unavailable Data");
+  } else {
+    // trend-what-if, simulator, educational-simulation
+    sym = "◇";
+    style = "border-[#F59E0B]/70 bg-[#F59E0B]/10 text-[#F59E0B]";
+    shortLabel = tt(lang, "শিক্ষামূলক সিমুলেশন", "Educational Simulation");
+  }
+
+  const l = KIND_LABEL[kind] || KIND_LABEL.simulator;
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold ${
-        real ? "border-agri-green/60 bg-agri-green/10 text-agri-green" : "border-warning/70 bg-warning/10 text-warning"
-      }`}
+      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold ${style}`}
       role="status"
     >
       <span aria-hidden>{sym}</span>
-      <span>{compact ? (real ? tt(lang, "পর্যবেক্ষিত", "Observed") : tt(lang, "ধরে-নিই", "What-if")) : lang === "bn" ? l.bn : l.en}</span>
+      <span>{compact ? shortLabel : lang === "bn" ? l.bn : l.en}</span>
     </span>
   );
 }
@@ -158,11 +185,11 @@ export function Stat({ label, value, sub }: { label: string; value: React.ReactN
   );
 }
 
-export function ExtLink({ href, children }: { href: string; children: React.ReactNode }) {
+export function ExtLink({ href, children, lang }: { href: string; children: React.ReactNode; lang?: Lang }) {
   return (
     <a href={href} target="_blank" rel="noopener noreferrer" className="text-earth-cyan underline decoration-earth-cyan/40 underline-offset-2 hover:decoration-earth-cyan focus:outline-none focus-visible:ring-2 focus-visible:ring-earth-cyan">
       {children}
-      <span className="sr-only"> (opens in a new tab)</span>
+      <span className="sr-only"> {lang === "bn" ? "(নতুন ট্যাবে খুলবে)" : "(opens in a new tab)"}</span>
     </a>
   );
 }

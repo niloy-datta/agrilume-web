@@ -38,12 +38,12 @@ test("home: every image has alt text", async ({ page }) => {
 test("download section is honest while no APK is released", async ({ page }) => {
   await page.goto("/#download");
   const section = page.locator("#download");
-  await expect(section.getByText("Android app: coming soon")).toBeVisible();
+  await expect(section.getByText("Android APK coming soon")).toBeVisible();
   await expect(section.getByText("Not yet released")).toBeVisible();
   await expect(section.getByText(/Latest release/i)).toHaveCount(0);
   await expect(section.getByText(/Scan to download/i)).toHaveCount(0);
   await expect(section.locator('a[download], a[href="#"]')).toHaveCount(0);
-  await expect(section.getByRole("link", { name: /Watch releases on GitHub/ })).toHaveAttribute("href", /github\.com\/niloy-datta\/agrilume-web\/releases/);
+  await expect(section.getByRole("link", { name: /Explore Android app source/ })).toHaveAttribute("href", /github\.com\/niloy-datta\/agri-guardian/);
 });
 
 /** Panels exist twice (desktop sidebar, mobile sheet); act on the visible copy and open the tab if needed. */

@@ -13,6 +13,7 @@ import type { ProjectionPack } from "./projection-pack";
 import type { ClimateSeries, DataKind, IrrigationMode, LocalizedText, MonthlyYear, ScenarioSpec } from "./types";
 import { climatology } from "./climate";
 import { defaultBaseline } from "./climate";
+import { asciiToBnDigits } from "./locations";
 
 export interface ScenarioInput {
   label: string;
@@ -191,5 +192,7 @@ export function compareScenarios(
       en: "WARNING: observations are a stand-in from another district; this comparison is not about your district.",
       bn: "সতর্কতা: অন্য জেলার বদলি তথ্য ব্যবহৃত; এই তুলনা আপনার জেলার নয়।",
     });
-  return { a: A, b: B, diff, explanations: ex, caveats };
+  // Bangla text uses Bangla digits (numbers only; product names like SSP2-4.5 live in the caveats and stay as-is)
+  const explanations = ex.map((e) => ({ ...e, bn: asciiToBnDigits(e.bn) }));
+  return { a: A, b: B, diff, explanations, caveats };
 }

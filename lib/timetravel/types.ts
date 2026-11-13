@@ -40,10 +40,14 @@ export interface LocalizedText {
 /** What kind of number is this? Drives labels, colours and the honesty banner. */
 export type DataKind =
   | "observed" // NASA POWER observation/reanalysis-derived value for that year
+  | "cached-observation" // Cached real observation
   | "observed-filled" // observed year with some missing months filled by the multi-year mean
   | "trend-what-if" // multi-year mean (+ statistically supported trend) + user what-if deltas
   | "nasa-projection" // NEX-GDDP-CMIP6 delta pack (only if a pack has been generated)
-  | "simulator"; // output of the educational crop/hazard simulator
+  | "model-projection" // NASA climate model projection
+  | "simulator" // output of the educational crop/hazard simulator
+  | "educational-simulation" // Educational simulation output
+  | "unavailable-data"; // Data is unavailable or failed to load (never faked)
 
 export type DataOrigin =
   | "nasa-power-live"
