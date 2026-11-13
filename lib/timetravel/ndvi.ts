@@ -35,8 +35,25 @@ export function parseNdviFile(raw: unknown, expectedId?: string): NdviFile {
   return r as NdviFile;
 }
 
+let indexPromise: Promise<Set<string> | null> | null = null;
+
+/** Districts that have a processed NDVI file (public/data/ndvi/index.json); null if the index is unavailable. */
+async function processedDistricts(basePath: string, fetchImpl: typeof fetch): Promise<Set<string> | null> {
+  indexPromise ??= fetchImpl(`${basePath}/data/ndvi/index.json`, { cache: "force-cache" })
+    .then(async (r) => (r.ok ? new Set<string>(((await r.json()) as { districts?: string[] }).districts ?? []) : null))
+    .catch(() => null);
+  return indexPromise;
+}
+
+/** Test hook: forget the cached index. */
+export function resetNdviIndex(): void {
+  indexPromise = null;
+}
+
 export async function loadNdvi(districtId: string, basePath = "", fetchImpl: typeof fetch = fetch): Promise<NdviFile | null> {
   if (!/^[a-z]+$/.test(districtId)) return null;
+  const listed = await processedDistricts(basePath, fetchImpl);
+  if (!listed || !listed.has(districtId)) return null;
   try {
     const res = await fetchImpl(`${basePath}/data/ndvi/${districtId}.json`, { cache: "force-cache" });
     if (!res.ok) return null;

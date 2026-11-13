@@ -14,7 +14,7 @@
 // Raw cache: data/source/modis_ndvi/raw/<id>/<band>_<start>.json (git-ignored)
 // Manifest : data/source/modis_ndvi/manifest.json
 // Derived  : public/data/ndvi/<id>.json  (schema agrilume.ndvi.v1)
-import { readFileSync, writeFileSync, mkdirSync, existsSync, statSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, existsSync, statSync, readdirSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
@@ -161,6 +161,12 @@ async function processDistrict(d, manifest) {
   };
 }
 
+/** index.json lists processed districts so the app never requests a file that does not exist. */
+function writeIndex() {
+  const ids = readdirSync(outDir).filter((f) => f.endsWith(".json") && f !== "index.json").map((f) => f.slice(0, -5)).sort();
+  writeFileSync(join(outDir, "index.json"), JSON.stringify({ schema: "agrilume.ndvi.index.v1", districts: ids }));
+}
+
 async function main() {
   mkdirSync(rawDir, { recursive: true });
   mkdirSync(outDir, { recursive: true });
@@ -178,6 +184,7 @@ async function main() {
       try {
         const out = await processDistrict(d, manifest);
         writeFileSync(join(outDir, `${d.id}.json`), JSON.stringify(out));
+        writeIndex();
         console.log(`ok  ${d.id.padEnd(16)} usable ${out.quality.compositesUsable}/${out.quality.compositesTotal}`);
       } catch (e) {
         failures.push(d.id);
@@ -186,6 +193,7 @@ async function main() {
       save();
     }
   }
+  writeIndex();
   await Promise.all(Array.from({ length: Number(process.env.NDVI_CONCURRENCY || 6) }, worker));
   save();
   if (failures.length) {

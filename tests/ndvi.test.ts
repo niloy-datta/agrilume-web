@@ -1,11 +1,11 @@
 import { describe, it, expect } from "vitest";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import { loadNdvi, ndviAnomaly, parseNdviFile } from "@/lib/timetravel/ndvi";
+import { loadNdvi, ndviAnomaly, parseNdviFile, resetNdviIndex } from "@/lib/timetravel/ndvi";
 import { DISTRICTS } from "@/lib/timetravel/locations";
 
 const DIR = join(__dirname, "..", "public/data/ndvi");
-const files = existsSync(DIR) ? readdirSync(DIR).filter((f) => f.endsWith(".json")) : [];
+const files = existsSync(DIR) ? readdirSync(DIR).filter((f) => f.endsWith(".json") && f !== "index.json") : [];
 const read = (f: string) => JSON.parse(readFileSync(join(DIR, f), "utf8"));
 
 describe("MODIS NDVI files (ORNL DAAC pipeline)", () => {
@@ -13,6 +13,10 @@ describe("MODIS NDVI files (ORNL DAAC pipeline)", () => {
     expect(files.length).toBeGreaterThan(0);
     const ids = new Set(DISTRICTS.map((d) => d.id));
     for (const f of files) expect(ids.has(f.replace(".json", ""))).toBe(true);
+  });
+  it("index.json lists exactly the processed files (the app requests nothing else)", () => {
+    const idx = JSON.parse(readFileSync(join(DIR, "index.json"), "utf8"));
+    expect([...idx.districts].sort()).toEqual(files.map((f) => f.replace(".json", "")).sort());
   });
   it("parse strictly and carry provenance + quality information", () => {
     for (const f of files) {
@@ -51,7 +55,19 @@ describe("NDVI parsing and anomalies", () => {
     const m = n.climatology.findIndex((v, i) => v != null && n.monthlyByYear[y][i] != null);
     expect(ndviAnomaly(n, Number(y), m)).toBeCloseTo(n.monthlyByYear[y][m]! - n.climatology[m]!, 12);
   });
+  it("loader does not request a district missing from the index", async () => {
+    resetNdviIndex();
+    const urls: string[] = [];
+    const f = (async (u: string) => {
+      urls.push(u);
+      return new Response(JSON.stringify({ districts: ["dhaka"] }));
+    }) as unknown as typeof fetch;
+    expect(await loadNdvi("sylhet", "", f)).toBeNull();
+    expect(urls).toEqual(["/data/ndvi/index.json"]);
+    resetNdviIndex();
+  });
   it("loader returns null instead of throwing on network failure or bad ids", async () => {
+    resetNdviIndex();
     expect(await loadNdvi("dhaka", "", (async () => { throw new Error("offline"); }) as unknown as typeof fetch)).toBeNull();
     expect(await loadNdvi("../x")).toBeNull();
   });
