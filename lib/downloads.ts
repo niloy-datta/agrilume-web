@@ -28,6 +28,7 @@ export interface UnreleasedApp {
 export type AndroidRelease = AvailableRelease | UnreleasedApp;
 
 export const REPO_URL = "https://github.com/niloy-datta/agrilume-web";
+export const ANDROID_APP_REPO_URL = "https://github.com/niloy-datta/agri-guardian";
 /** GitHub lets anyone "Watch → Custom → Releases" here; no personal data is collected by this site. */
 export const RELEASES_URL = `${REPO_URL}/releases`;
 

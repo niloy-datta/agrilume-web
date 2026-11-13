@@ -3,7 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Download, ArrowRight, Globe, BarChart3, Sprout } from "lucide-react";
+import { ExternalLink, ArrowRight, Globe, BarChart3, Sprout } from "lucide-react";
 import { HERO_CONTENT } from "@/lib/constants";
 import { Reveal, StaggerContainer, StaggerItem } from "../motion/reveal";
 
@@ -101,19 +101,27 @@ export function HeroSection() {
           <Reveal delay={0.4} yOffset={20}>
             <div className="mt-8 sm:mt-10 flex flex-wrap items-center gap-4">
               <Link
-                href="#download"
+                href="/decision-lab"
                 className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#59D98E] hover:bg-[#6ef0a4] text-[#050A12] text-sm font-bold tracking-wide transition-all shadow-[0_0_28px_rgba(89,217,142,0.5)] hover:shadow-[0_0_36px_rgba(89,217,142,0.7)] hover:scale-[1.02]"
               >
-                <span>Download AgriLume</span>
-                <Download className="w-4 h-4 stroke-[2.5]" />
+                <span>Launch Decision Lab</span>
+                <Sprout className="w-4 h-4 stroke-[2.5]" />
               </Link>
 
               <Link
-                href="#how-it-works"
+                href="/earth-intelligence"
                 className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-[#0B1220]/80 hover:bg-[#1E293B] border border-white/15 hover:border-white/30 text-[#F8FAFC] text-sm font-medium transition-all"
               >
-                <span>Explore How It Works</span>
-                <ArrowRight className="w-4 h-4 text-[#36BFFA]" />
+                <span>Earth Intelligence Map</span>
+                <Globe className="w-4 h-4 text-[#36BFFA]" />
+              </Link>
+
+              <Link
+                href="/time-travel"
+                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-[#0B1220]/80 hover:bg-[#1E293B] border border-white/15 hover:border-white/30 text-[#F8FAFC] text-sm font-medium transition-all"
+              >
+                <span>Time Travel 3D</span>
+                <ArrowRight className="w-4 h-4 text-[#D7A86E]" />
               </Link>
             </div>
           </Reveal>
