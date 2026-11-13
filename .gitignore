@@ -46,5 +46,6 @@ data/source/nasa_power/districts/raw/
 data/source/modis_ndvi/raw/
 # local agent artifacts
 .claude/
+*.zip
 test-results/
 playwright-report/
