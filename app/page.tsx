@@ -89,7 +89,8 @@ export default function Home() {
               <Link href="#science" className="hover:text-white transition-colors">Science</Link>
               <Link href="#app" className="hover:text-white transition-colors">App</Link>
               <Link href="/time-travel" className="hover:text-white transition-colors">Time Travel</Link>
-              <Link href="/agrilume-farming-game.html" className="hover:text-white transition-colors">Agrilume Farming Game</Link>
+              {/* Plain <a>: a static HTML file, not a Next route (a <Link> triggers a 404 RSC prefetch) */}
+              <a href={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/agrilume-farming-game.html`} className="hover:text-white transition-colors">Agrilume Farming Game</a>
               <Link href="/nasa-data" className="hover:text-white transition-colors">NASA data</Link>
               <Link href="/bangladesh-agriculture" className="hover:text-white transition-colors">Gov resources</Link>
               <Link href="/recycling" className="hover:text-white transition-colors">Recycling</Link>

@@ -4,6 +4,20 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Menu, X, Download } from "lucide-react";
 import { NAV_LINKS, SITE_CONFIG } from "@/lib/constants";
+import { androidRelease } from "@/lib/downloads";
+
+/** Static .html pages (e.g. the farming game) are not Next routes: use a plain <a> so no RSC prefetch 404s. */
+function NavItem(props: React.ComponentProps<typeof Link> & { href: string }) {
+  if (props.href.endsWith(".html")) {
+    const { href, children, className, onClick } = props;
+    return (
+      <a href={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}${href}`} className={className} onClick={onClick}>
+        {children}
+      </a>
+    );
+  }
+  return <Link {...props} />;
+}
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -62,13 +76,13 @@ export function Navbar() {
           aria-label="Main Navigation"
         >
           {NAV_LINKS.map((link) => (
-            <Link
+            <NavItem
               key={link.label}
               href={link.href}
               className="text-sm font-medium text-[#94A3B8] hover:text-[#F8FAFC] transition-colors duration-200"
             >
               {link.label}
-            </Link>
+            </NavItem>
           ))}
         </nav>
 
@@ -78,7 +92,7 @@ export function Navbar() {
             href="#download"
             className="group inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs font-bold text-[#050A12] bg-[#59D98E] hover:bg-[#6ef0a4] rounded-full transition-all duration-200 shadow-[0_0_24px_rgba(89,217,142,0.45)] hover:shadow-[0_0_32px_rgba(89,217,142,0.7)] hover:scale-[1.02]"
           >
-            <span>Download App</span>
+            <span>{androidRelease() ? "Download App" : "Android app: soon"}</span>
             <Download className="w-3.5 h-3.5 stroke-[2.5]" />
           </Link>
         </div>
@@ -108,14 +122,14 @@ export function Navbar() {
             Navigation
           </span>
           {NAV_LINKS.map((link) => (
-            <Link
+            <NavItem
               key={link.label}
               href={link.href}
               onClick={() => setMobileMenuOpen(false)}
               className="text-2xl font-space font-medium text-[#F8FAFC] hover:text-[#59D98E] transition-colors py-2 border-b border-white/5"
             >
               {link.label}
-            </Link>
+            </NavItem>
           ))}
         </div>
 
@@ -125,7 +139,7 @@ export function Navbar() {
             onClick={() => setMobileMenuOpen(false)}
             className="w-full flex items-center justify-center gap-2 py-3.5 text-sm font-bold text-[#050A12] bg-[#59D98E] rounded-full shadow-[0_0_24px_rgba(89,217,142,0.45)] text-center"
           >
-            <span>Download App</span>
+            <span>{androidRelease() ? "Download App" : "Android app: soon"}</span>
             <Download className="w-4 h-4 stroke-[2.5]" />
           </Link>
           <div className="text-center">
