@@ -31,6 +31,7 @@ import { CropPanel, HazardPanel, PlacePanel } from "./ui/sim-panels";
 import type { DataStatus } from "./ui/sim-panels";
 import { Fallback2D } from "./ui/Fallback2D";
 import { ComparePanel } from "./ui/ComparePanel";
+import { NdviCard } from "./ui/NdviCard";
 
 const FieldScene = dynamic(() => import("./scene/FieldScene").then((m) => m.FieldScene), {
   ssr: false,
@@ -415,7 +416,12 @@ export default function TimeTravelApp({ initialDistrict }: { initialDistrict?: s
   const panel = (() => {
     switch (state.panel) {
       case "place":
-        return <PlacePanel state={state} view={view} series={series} dataStatus={status} dispatch={dispatch} packLoaded={!!pack?.years[String(state.year)]} />;
+        return (
+          <>
+            <PlacePanel state={state} view={view} series={series} dataStatus={status} dispatch={dispatch} packLoaded={!!pack?.years[String(state.year)]} />
+            <NdviCard districtId={state.districtId} lang={state.lang} year={state.year} />
+          </>
+        );
       case "crop":
         return <CropPanel state={state} view={view} base={view.baselineYear} dispatch={dispatch} />;
       case "compare":

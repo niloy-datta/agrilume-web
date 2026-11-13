@@ -1,55 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AgriLume Web
 
-## Getting Started
+Earth-observation learning tool for Bangladeshi farming decisions: real NASA climate history for all 64 districts,
+clearly labelled future scenarios, and a transparent educational crop model, in Bangla and English.
 
-First, run the development server:
+**Live:** https://agrilume-web.vercel.app · **Time Travel:** https://agrilume-web.vercel.app/time-travel
+
+> Educational demonstration — **not** a validated forecast or advisory service. Crop results are a relative index
+> (100 = average past climate), never tonnes per hectare. For farm decisions contact your Upazila Agriculture Office
+> or the Krishi Call Centre (16123). Not endorsed by NASA.
+
+## What is real today
+
+| Feature | Data | Status |
+|---|---|---|
+| Climate history, 1981–2025, every district | NASA POWER daily → monthly means (bundled at build time, SHA-256 traced) | ✓ |
+| Future 2033 (2031–2035) | NASA NEX-GDDP-CMIP6 SSP2-4.5, 2-model subset | ✓ one window only |
+| Other future years | Observed climate + significant trend + your what-if changes | ✓ labelled "what-if" |
+| Scenario A vs B comparison | Same model, two inputs, plain-language reasons | ✓ |
+| Vegetation greenness | MODIS NDVI 2021–2025 via ORNL DAAC | ✓ for processed districts |
+| Soil moisture, IMERG, HLS, ET, elevation | — | registered only, not used |
+| Android app | — | not released (no APK exists) |
+
+Every number carries a data-kind label: observed · observed-filled · NASA projection · what-if · simulator.
+
+## Documentation
+* [docs/METHODOLOGY.md](docs/METHODOLOGY.md) — formulas, assumptions, delta method, crop model
+* [docs/DATA_PROVENANCE.md](docs/DATA_PROVENANCE.md) — NASA dataset matrix, endpoints, licences
+* [docs/VALIDATION.md](docs/VALIDATION.md) — what was checked and what was **not**
+* [docs/AUDIT_2026-11-13.md](docs/AUDIT_2026-11-13.md) — issues found and fixed in this upgrade
+* [docs/DEMO.md](docs/DEMO.md) — 5-minute demonstration script
+* [docs/NASA_SPACE_APPS_SELF_CHECK.md](docs/NASA_SPACE_APPS_SELF_CHECK.md) — competition self-check, including the build-window gate
+
+## Run it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm ci
+npm run dev                 # http://localhost:3000
+npm run typecheck && npm run lint && npm test
+npm run build               # static export to out/
+npm run test:e2e            # Playwright, desktop + mobile viewport (after build)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Requires Node 22+. On Windows, run tests from a path with an upper-case drive letter (`D:\…`); a lower-case `d:`
+working directory makes Vitest load twice and every suite fails with "Cannot read properties of undefined (reading
+'config')".
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Rebuild the NASA data
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run data:power          # NASA POWER, 64 districts (~3 min)
+npm run data:ndvi           # MODIS NDVI via ORNL DAAC (slow public service; resumable)
+node scripts/fetch-power-districts.mjs --derive   # offline rebuild from cached raw responses
+python scripts/nex_gddp_cmip6_extract.py          # CMIP6 packs (needs rasterio)
+```
 
-## Learn More
+## Deployment
 
-To learn more about Next.js, take a look at the following resources:
+Static export (`output: "export"`): no server, secrets or API keys are needed. All NASA data are fetched at build
+time; the browser calls NASA POWER directly only for custom map points. Vercel serves the site (`vercel.json`
+keeps the farming-game URL). `.github/workflows/deploy.yml` is a manual GitHub Pages alternative. On plain static
+hosts, Next 16 RSC prefetch files use dotted names that only Vercel maps; navigation still works (full page load).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Other routes
+`/nasa-data` dataset registry · `/bangladesh-agriculture` official agencies · `/recycling` residue estimate ·
+`/agrilume-farming-game.html` standalone educational game (illustrative economics; camera hand-poses are control
+gestures, **not** sign-language translation).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
-## Agrilume Time Travel (VR) — `/time-travel`
-
-3D/VR farm simulator for Bangladesh: observed NASA POWER history (2001–2025) → clearly-labelled what-if futures.
-Works on PC (mouse/keyboard), phone (touch, Cardboard mode with gyro), and WebXR headsets. 2D fallback if WebGL is missing.
-
-- Also: `/nasa-data` (dataset registry with honest integration status), `/bangladesh-agriculture` (official agencies; links only),
-  `/recycling` (straw/husk circular-farm estimate), assistant + voice (Bangla/English) + hand-gesture control + captions.
-- Honesty rules: every number is labelled observed / what-if / simulator; yield is a relative index; hazard scenes are not forecasts.
-- Commands: `npm run dev`, `npm test`, `npm run typecheck`, `npm run lint`, `npm run build` (static export to `out/`).
-- NASA NEX-GDDP-CMIP6 SSP2-4.5 packs are bundled at `public/data/projections/` for district centers. The current pack covers 2033 (2031–2035 mean, relative to 2010–2014); other years use the labelled fallback. Near-zero rainfall months keep a neutral multiplier rather than inventing a ratio. Regenerate with `python -m pip install rasterio` and `python scripts/nex_gddp_cmip6_extract.py`.
-- Bangla Sign Language clips: see `public/bdsl/README.md` (only expert-verified clips are shown).
-- **Read `docs/NASA_SPACE_APPS_SELF_CHECK.md` — includes the Gate 0 (build-window) warning and known limitations.**
-
-## Agrilume Farming Game — `/agrilume-farming-game.html`
-
-Standalone farming game with all 64 Bangladesh district choices, the current AgriLume crop set plus major local crop types, and six sequential levels: prepare, plant, irrigate, fertilize, grow and harvest. Level completions award coins and stars, saved locally in the browser.
-
-Camera hand-pose controls are an optional hands-free prototype, processed locally. They are **not BdSL recognition or translation**; use verified BdSL materials only when reviewed by Deaf signers and qualified interpreters. Crop yields, fertilizer values and game economics are illustrative, not farming advice.
+## Licences
+Code: see repository. Data: NASA open data (see provenance). Fonts: SIL OFL. MediaPipe: Apache-2.0.
