@@ -3,8 +3,8 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Download, ArrowRight, Feather, MapPin, Globe2, Mic, Clock, BellRing, ShieldCheck } from "lucide-react";
-import { androidRelease, formatBytes, RELEASES_URL } from "@/lib/downloads";
+import { Download, ArrowRight, Feather, MapPin, Globe2, Mic, Clock, ShieldCheck } from "lucide-react";
+import { androidRelease, formatBytes } from "@/lib/downloads";
 import { Reveal } from "../motion/reveal";
 
 export function DownloadSection() {
@@ -27,7 +27,7 @@ export function DownloadSection() {
         {/* Section 06 Index Marker */}
         <div className="flex items-center gap-2 mb-6 text-xs font-mono text-[#94A3B8]/70">
           <span className="text-[#59D98E] font-bold">06</span>
-          <span className="text-white/80 font-medium">Download AgriLume</span>
+          <span className="text-white/80 font-medium">AgriLume for Android</span>
           <span>•</span>
           <span>Take AgriLume to the field.</span>
         </div>
@@ -66,25 +66,20 @@ export function DownloadSection() {
                     <Download className="w-4 h-4 stroke-[2.5]" aria-hidden />
                   </a>
                 ) : (
-                  <>
-                    <span
-                      role="status"
-                      className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full border border-dashed border-[#59D98E]/60 text-[#59D98E] text-sm font-bold tracking-wide"
-                    >
-                      <Clock className="w-4 h-4" aria-hidden />
-                      Android app: coming soon
-                    </span>
-                    <a
-                      href={RELEASES_URL}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-[#0B1220] hover:bg-[#1E293B] border border-white/15 hover:border-white/30 text-[#F8FAFC] text-sm font-medium transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#36BFFA]"
-                    >
-                      <BellRing className="w-4 h-4 text-[#59D98E]" aria-hidden />
-                      <span>Watch releases on GitHub</span>
-                    </a>
-                  </>
+                  <span role="status" className="text-sm text-[#94A3B8]">
+                    Android APK coming soon
+                  </span>
                 )}
+
+                <a
+                  href="https://github.com/niloy-datta/agri-guardian"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full bg-[#59D98E] hover:bg-[#6ef0a4] text-[#050A12] text-sm font-bold tracking-wide transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#36BFFA]"
+                >
+                  <span>Explore Android app source</span>
+                  <ArrowRight className="w-4 h-4 stroke-[2.5]" aria-hidden />
+                </a>
 
                 <Link
                   href="/time-travel"
