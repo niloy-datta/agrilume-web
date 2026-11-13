@@ -49,7 +49,7 @@ export function HowItWorksSection() {
     {
       num: "04",
       title: "Act",
-      subtitle: "Voice-first guidance in 100+ languages & local dialects — no reading required.",
+      subtitle: "Voice-first guidance in Bangla and English, designed to need little reading.",
       badge: "Voice & Field Action",
       badgeColor: "#59D98E",
       graphic: (

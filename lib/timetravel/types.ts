@@ -49,6 +49,7 @@ export type DataOrigin =
   | "nasa-power-live"
   | "nasa-power-cache"
   | "nasa-power-fixture"
+  | "nasa-power-bundled" // per-district monthly file fetched at build time (scripts/fetch-power-districts.mjs)
   | "stand-in-fixture";
 
 export interface Provenance {

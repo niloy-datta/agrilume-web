@@ -69,7 +69,14 @@ export function PlacePanel({ state, view, series, dataStatus, dispatch, packLoad
           <KindBadge kind={view.dataKind} lang={lang} />
           <span className="text-xs text-muted-text">
             {dataStatus === "loading" && tt(lang, "NASA POWER থেকে লোড হচ্ছে…", "Loading from NASA POWER…")}
-            {dataStatus === "bundled" && tt(lang, "অ্যাপের সঙ্গে আসা আসল NASA POWER ফাইল (রাজশাহী, ২০০১–২০২৫)", "Real NASA POWER file shipped with the app (Rajshahi, 2001–2025)")}
+            {dataStatus === "bundled" &&
+              (series.provenance.origin === "nasa-power-bundled"
+                ? tt(
+                    lang,
+                    `অ্যাপের সঙ্গে আসা আসল NASA POWER মাসিক তথ্য (${series.startYear}–${series.endYear}, সংগ্রহ ${series.provenance.retrievedAt?.slice(0, 10)})`,
+                    `Real NASA POWER monthly data bundled at build time (${series.startYear}–${series.endYear}, retrieved ${series.provenance.retrievedAt?.slice(0, 10)})`,
+                  )
+                : tt(lang, `অ্যাপের সঙ্গে আসা আসল NASA POWER ফাইল (${series.name}, ${series.startYear}–${series.endYear})`, `Real NASA POWER file shipped with the app (${series.name}, ${series.startYear}–${series.endYear})`))}
             {dataStatus === "live" && tt(lang, "NASA POWER থেকে এইমাত্র আনা", "Just fetched from NASA POWER")}
             {dataStatus === "cache" && tt(lang, "NASA POWER (ব্রাউজারে ১৪ দিনের ক্যাশ)", "NASA POWER (14-day browser cache)")}
           </span>

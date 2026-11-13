@@ -145,9 +145,27 @@ export interface BaselineWindow {
   to: number;
 }
 
-/** Default baseline = all available years (the bundled Rajshahi file covers 2001-2025). */
+/** WMO standard climate normal period. */
+export const WMO_NORMAL: BaselineWindow = { from: 1991, to: 2020 };
+
+/**
+ * Default baseline: the WMO 1991-2020 normal when the record covers it (all 64 bundled NASA POWER district files
+ * cover 1981-2025), otherwise every available year (e.g. the 2001-2025 Rajshahi daily fixture).
+ */
 export function defaultBaseline(series: ClimateSeries): BaselineWindow {
+  if (series.startYear <= WMO_NORMAL.from && series.endYear >= WMO_NORMAL.to) return { ...WMO_NORMAL };
   return { from: series.startYear, to: series.endYear };
+}
+
+/**
+ * Observed baseline used underneath a delta-method projection. The delta is a change relative to the model's own
+ * historical window, so it must be added to observations averaged over the SAME window; otherwise the warming that
+ * happened between the two windows is silently counted twice or dropped. Returns null if the record cannot cover it.
+ */
+export function deltaBaselineWindow(series: ClimateSeries, pack: ProjectionPack): BaselineWindow | null {
+  const [from, to] = pack.deltaBaseline;
+  if (from < series.startYear || to > series.endYear) return null;
+  return { from, to };
 }
 
 export const MONSOON_MONTHS = [5, 6, 7, 8]; // Jun..Sep (0-based)
@@ -205,10 +223,20 @@ export function monthlyForYear(
     tmax = climTmax.mean.slice();
     tmin = climTmin.mean.slice();
     rain = climRain.mean.slice();
-    const pack = spec.mode === "pack" ? opts.pack : null;
+    const pack = spec.mode === "pack" && !series.provenance.standIn ? opts.pack : null;
     const packYear = pack?.years[String(year)];
-    if (pack && packYear) {
+    const packBase = pack ? deltaBaselineWindow(series, pack) : null;
+    if (spec.mode === "pack" && opts.pack && series.provenance.standIn) {
+      notes.push("Projection pack NOT applied: its deltas belong to the selected district, but the observations shown are a stand-in from another place.");
+    }
+    if (pack && packYear && packBase) {
       kind = "nasa-projection";
+      const cTmax = climatology(series.tmax, series.startYear, packBase.from, packBase.to).mean;
+      const cTmin = climatology(series.tmin, series.startYear, packBase.from, packBase.to).mean;
+      const cRain = climatology(series.rain, series.startYear, packBase.from, packBase.to).mean;
+      tmax = cTmax.slice();
+      tmin = cTmin.slice();
+      rain = cRain.slice();
       for (let m = 0; m < 12; m++) {
         tmax[m] += packYear.dTmax[m];
         tmin[m] += packYear.dTmin[m];
@@ -218,7 +246,10 @@ export function monthlyForYear(
         ? ` ${pack.projectionWindow[0]}-${pack.projectionWindow[1]} mean`
         : "";
       notes.push(
-        `NASA NEX-GDDP-CMIP6 ${pack.scenario}${projectionPeriod} ${pack.ensemble} delta from ${pack.deltaBaseline[0]}-${pack.deltaBaseline[1]} applied to the observed ${base.from}-${base.to} mean.`,
+        `NASA NEX-GDDP-CMIP6 ${pack.scenario}${projectionPeriod} ${pack.ensemble} delta from ${pack.deltaBaseline[0]}-${pack.deltaBaseline[1]} applied to the observed NASA POWER ${packBase.from}-${packBase.to} mean (same window as the model baseline).`,
+      );
+      notes.push(
+        `Only ${pack.deltaBaseline[1] - pack.deltaBaseline[0] + 1} baseline years: year-to-year noise in that short window adds uncertainty, especially for rainfall.`,
       );
       if (pack.rainRatioFallbackMonths?.length) {
         notes.push(
@@ -227,8 +258,15 @@ export function monthlyForYear(
       }
     } else {
       kind = "trend-what-if";
-      if (spec.mode === "pack") {
-        notes.push("No NEX-GDDP-CMIP6 projection pack for this place/year; showing the trend what-if instead.");
+      if (spec.mode === "pack" && pack && packYear && !packBase) {
+        notes.push("The observed record does not cover the projection pack's baseline window, so the pack was not applied.");
+      } else if (spec.mode === "pack" && !series.provenance.standIn) {
+        const win = opts.pack?.projectionWindow;
+        notes.push(
+          win
+            ? `No NASA projection for ${year}: the bundled NEX-GDDP-CMIP6 pack only covers the ${win[0]}-${win[1]} mean (shown at ${Object.keys(opts.pack!.years).join(", ")}). Showing a labelled trend what-if instead.`
+            : "No NEX-GDDP-CMIP6 projection pack for this place/year; showing the trend what-if instead.",
+        );
       }
       const centre = (base.from + base.to) / 2;
       const tTmax = annualTrend(series.tmax, series.startYear, series.endYear);

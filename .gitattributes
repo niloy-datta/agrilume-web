@@ -1,0 +1,4 @@
+# Raw NASA source files are hashed for provenance; never let Git rewrite their line endings.
+data/source/** -text
+public/data/** -text
+*.sh text eol=lf
