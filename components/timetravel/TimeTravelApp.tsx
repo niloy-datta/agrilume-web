@@ -30,6 +30,7 @@ import { Btn, tt } from "./ui/primitives";
 import { CropPanel, HazardPanel, PlacePanel } from "./ui/sim-panels";
 import type { DataStatus } from "./ui/sim-panels";
 import { Fallback2D } from "./ui/Fallback2D";
+import { ComparePanel } from "./ui/ComparePanel";
 
 const FieldScene = dynamic(() => import("./scene/FieldScene").then((m) => m.FieldScene), {
   ssr: false,
@@ -417,6 +418,8 @@ export default function TimeTravelApp({ initialDistrict }: { initialDistrict?: s
         return <PlacePanel state={state} view={view} series={series} dataStatus={status} dispatch={dispatch} packLoaded={!!pack?.years[String(state.year)]} />;
       case "crop":
         return <CropPanel state={state} view={view} base={view.baselineYear} dispatch={dispatch} />;
+      case "compare":
+        return <ComparePanel state={state} series={series} pack={pack} />;
       case "hazard":
         return <HazardPanel state={state} dispatch={dispatch} />;
       case "recycle":

@@ -24,7 +24,7 @@ export function HowItWorksSection() {
       num: "02",
       title: "Understand",
       subtitle: "Environmental context is analyzed into clear signals.",
-      badge: "AI Calibration",
+      badge: "Model analysis",
       badgeColor: "#59D98E",
       graphic: (
         <div className="relative w-20 h-20 rounded-2xl bg-gradient-to-br from-[#0B2018] to-[#050A12] border border-[#59D98E]/40 flex items-center justify-center shadow-[0_0_25px_rgba(89,217,142,0.25)]">

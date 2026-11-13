@@ -131,3 +131,18 @@ describe("loadBundledDistrict", () => {
     expect(r.ok && r.series.name).toBe("Sylhet");
   });
 });
+
+describe("NASA dataset registry keeps integration stages separate", () => {
+  it("nothing merely registered is reported as fetched, processed or displayed", async () => {
+    const { NASA_DATASETS, pipelineStages } = await import("@/lib/timetravel/nasa-datasets");
+    for (const d of NASA_DATASETS) {
+      const st = pipelineStages(d);
+      expect(st.registered).toBe(true);
+      if (d.integration === "registered" || d.integration === "backend-client") {
+        expect(st.fetched || st.processed || st.displayed, d.id).toBe(false);
+      }
+      // stages are monotone: you cannot display what you have not fetched
+      if (st.displayed) expect(st.fetched && st.processed && st.adapter).toBe(true);
+    }
+  });
+});

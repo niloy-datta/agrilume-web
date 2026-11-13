@@ -17,6 +17,38 @@ export type Integration =
 
 export type Access = "open-no-login" | "earthdata-login" | "open-cloud" | "free-key";
 
+/**
+ * Five separate questions, never conflated: is the dataset documented? is there code to read it? has real data been
+ * fetched? has it been processed into the app's format? does any number or visual on screen come from it?
+ */
+export interface PipelineStages {
+  registered: boolean;
+  adapter: boolean;
+  fetched: boolean;
+  processed: boolean;
+  displayed: boolean;
+}
+
+export function pipelineStages(d: { integration: Integration }): PipelineStages {
+  const used = d.integration === "live-in-browser" || d.integration === "bundled-real";
+  return {
+    registered: true,
+    // "backend-client" lives in a separate mobile-app repository that is not part of this build, so it is not counted.
+    adapter: used || d.integration === "adapter-script",
+    fetched: used,
+    processed: used,
+    displayed: used,
+  };
+}
+
+export const STAGE_LABELS: Record<keyof PipelineStages, LocalizedText> = {
+  registered: { bn: "নথিভুক্ত", en: "Registered" },
+  adapter: { bn: "কোড আছে", en: "Adapter" },
+  fetched: { bn: "আনা হয়েছে", en: "Fetched" },
+  processed: { bn: "প্রক্রিয়াকৃত", en: "Processed" },
+  displayed: { bn: "পর্দায় ব্যবহৃত", en: "Used on screen" },
+};
+
 export interface NasaDataset {
   id: string;
   name: LocalizedText;
@@ -37,27 +69,27 @@ export interface NasaDataset {
 export const NASA_DATASETS: NasaDataset[] = [
   {
     id: "power-monthly",
-    name: { bn: "NASA POWER কৃষি-আবহাওয়া (মাসিক)", en: "NASA POWER agroclimatology (monthly)" },
+    name: { bn: "NASA POWER কৃষি-আবহাওয়া (৬৪ জেলা, ১৯৮১–২০২৫)", en: "NASA POWER agroclimatology (64 districts, 1981–2025)" },
     shortName: "POWER (AG)",
     provider: "NASA Langley / POWER project",
     variables: "T2M_MAX, T2M_MIN, PRECTOTCORR (also T2M, ALLSKY_SFC_SW_DWN, RH2M, WS2M, GWET*)",
     spatial: "≈0.5° × 0.625° meteorology grid (≈50 km); solar 1° × 1°",
-    temporal: "daily / monthly",
-    coverage: "1981 – near present",
+    temporal: "daily, aggregated by AgriLume to monthly means",
+    coverage: "1981-01-01 – 2025-12-31 (bundled); live fallback 2001 – last full year",
     access: "open-no-login",
     farmingUse: {
       bn: "তাপমাত্রা ও বৃষ্টির ইতিহাস; সময়-ভ্রমণের ‘অতীত’ অংশ; ET₀ ও জলহিসাব।",
       en: "Temperature and rainfall history; the ‘past’ half of Time Travel; ET₀ and water balance.",
     },
     limitation: {
-      bn: "৫০ কিমি গ্রিড — একটি ছোট জমির মাপ নয়।",
-      en: "≈50 km grid — not a measurement of one small field.",
+      bn: "৫০ কিমি গ্রিড — একটি ছোট জমির মাপ নয়। ৬৪ জেলা মাত্র ৩৯টি আলাদা গ্রিড-ঘরে পড়ে। রিঅ্যানালাইসিস/স্যাটেলাইট-ভিত্তিক তথ্য, আবহাওয়া কেন্দ্রের মাপ নয়; BMD কেন্দ্রের সাথে মিলিয়ে দেখা হয়নি।",
+      en: "≈50 km grid — not a measurement of one small field. The 64 district centres fall in only 39 distinct grid cells. Reanalysis/satellite-derived, not station measurements; not yet compared with BMD stations.",
     },
     portal: "https://power.larc.nasa.gov/data-access-viewer/",
-    integration: "live-in-browser",
+    integration: "bundled-real",
     integrationNote: {
-      bn: "ব্রাউজার থেকে সরাসরি আনা হয় (কোনো কী লাগে না)। অফলাইনে শুধু রাজশাহীর আসল সংরক্ষিত ফাইল।",
-      en: "Fetched live by your browser (no key). Offline, only the real bundled Rajshahi extract is available.",
+      bn: "scripts/fetch-power-districts.mjs দিয়ে প্রতিটি জেলার দৈনিক তথ্য এনে মাসিক গড় করা হয়েছে (URL ও SHA-256 সংরক্ষিত)। মানচিত্রে বেছে নেওয়া বিন্দুর জন্য ব্রাউজার সরাসরি NASA থেকে আনে।",
+      en: "scripts/fetch-power-districts.mjs downloads daily data per district and averages it to monthly means (URL and SHA-256 recorded). Custom map points are fetched live by the browser.",
     },
   },
   {

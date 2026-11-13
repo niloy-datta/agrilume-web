@@ -43,3 +43,4 @@ next-env.d.ts
 
 # NASA POWER raw daily cache (refetchable; hashes in manifest.json)
 data/source/nasa_power/districts/raw/
+data/source/modis_ndvi/raw/

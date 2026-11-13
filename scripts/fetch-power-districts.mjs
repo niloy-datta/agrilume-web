@@ -136,7 +136,7 @@ function derive(d, raw, meta) {
       units,
       responsePoint: coords,
       sourceFileSha256: meta.sha256,
-      spatial: "NASA POWER grid cell (~0.5° x 0.625° MERRA-2 meteorology; precipitation from GPM IMERG/MERRA-2) containing the district centre; not a farm-level measurement",
+      spatial: "NASA POWER grid cell (~0.5° x 0.625°; reanalysis/satellite-derived meteorology, see POWER documentation for per-parameter sources) containing the district centre; not a farm-level measurement",
       temporal: "monthly means of daily values (local solar time days)",
       derived: `Daily values averaged per calendar month (>= ${MIN_DAYS} valid days, else null); -999 fill values dropped; Tmax day-to-day SD pooled per calendar month; rounded to 0.001.`,
     },
